@@ -39,3 +39,13 @@ jobs:
         run: python3 scripts/regression.py --all --bericht "$RUNNER_TEMP/provoware_regression.json"
       - name: Startdiagnose
         run: bash STARTEN.sh --doctor
+      - name: Browser-Layout ohne Nutzerdaten pruefen
+        run: python3 scripts/layout_check.py --ziel "$RUNNER_TEMP/videozoom-layout"
+      - name: Screenshot- und Messbelege sichern
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videozoom-layout-nachweise
+          path: ${{ runner.temp }}/videozoom-layout/
+          if-no-files-found: warn
+          retention-days: 14
