@@ -77,6 +77,8 @@ window.addEventListener('load', () => {
     horizontalScroll: document.documentElement.scrollWidth > innerWidth + 1,
     horizontalOverflows: invalid,
     textOverflows: textOverflow,
+    pfadfeldBreiten: ['downloads','arbeitsordner'].map(id =>
+      Math.round(document.getElementById(id).getBoundingClientRect().width)),
     controls: elems.filter(el => el.tagName === 'BUTTON').length
   };
   const out = document.createElement('output');
@@ -119,6 +121,11 @@ def auswertung(dom: str) -> dict:
     if parsed["horizontalScroll"] or parsed["horizontalOverflows"] or parsed.get("textOverflows"):
         raise RuntimeError("Unzulässiger horizontaler/Text-Überlauf: " +
                            json.dumps(parsed, ensure_ascii=False))
+    if any(not isinstance(width, (int,float)) or width < 180
+           for width in parsed.get("pfadfeldBreiten", [])):
+        raise RuntimeError("Pfadfelder zu schmal – Ordnerauswahl nicht laientauglich.")
+    if len(parsed.get("pfadfeldBreiten", [])) != 2:
+        raise RuntimeError("Pfadfeldmessung fehlt: kein falsches PASS.")
     if parsed["controls"] < 6:
         raise RuntimeError("Pflichtschaltflächen nicht sichtbar in der Testoberfläche.")
     return parsed
