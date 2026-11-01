@@ -14,7 +14,7 @@
 
 ## P1 – Qualitaetsabschluss vor Kubuntu
 - [x] 2026-11-01 | Regression | Alle technischen Korrekturen zusammen testen und Main-Gesamtpruefung erfolgreich auswerten | prüfen: 82/82 Tests auf main #41354636904; unveraenderter SHA, echtes FFmpeg, Negative und Browser-Sicherheit | fertig wenn: keine bekannten blockierenden Codefehler.
-- [ ] 2026-11-01 | Dokumentation | TODO, STATUS, README, TESTPLAN und CHANGELOG mit der Implementierung und den Testnachweisen synchronisieren | prüfen: Dateien gegen aktuellen main-HEAD und offenes PR-Protokoll | fertig wenn: keine historischen Staende als aktuell markiert.
+- [x] 2026-11-01 | Dokumentation | TODO, STATUS, README, TESTPLAN und CHANGELOG mit der Implementierung und den Testnachweisen synchronisieren | prüfen: PR #17, Main-CI https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41355104172 erfolgreich; Dateien gegen aktuellen main-HEAD und offenes PR-Protokoll | fertig wenn: keine historischen Staende als aktuell markiert.
 - [x] 2026-11-01 | Paket | Deterministisches Offline-ZIP mit prüfbaren Dateifingerabdrücken ohne Nutzer- und Testdaten erstellen | prüfen: PR #15, vier Build-/Negativtests und Main-CI #41354636904 | fertig wenn: reproduzierbarer Entwicklungskandidat ohne Stable-Behauptung.
 - [ ] 2026-11-01 | Bereitstellung | Den aus ZIP entpackten Programmstart in isolierter Umgebung prüfen und Releasekandidaten einfrieren | prüfen: Startskript, Hilfe, Prüfsummen, keine Systemänderungen | fertig wenn: Kandidat für abschließendes Kubuntu bereit.
 
