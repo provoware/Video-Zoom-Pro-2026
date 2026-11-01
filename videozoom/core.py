@@ -65,13 +65,16 @@ def kategorie(name: str) -> str | None:
     words = set(re.findall(r"[a-z0-9]+", Path(name).stem.casefold()))
     if "chatgpt" not in words:
         return None
-    if "coding" in words and not ({"thema", "provoware", "provovare"} & words):
-        return "CODING"
-    if "thema" in words and "coding" not in words:
-        return "THEMA"
-    if ({"provoware", "provovare"} & words) and "coding" not in words:
-        return "PROVOWARE"
-    return None
+    moeglich = set()
+    if "coding" in words:
+        moeglich.add("CODING")
+    if "thema" in words:
+        moeglich.add("THEMA")
+    if {"provoware", "provovare"} & words:
+        moeglich.add("PROVOWARE")
+    # Herkunft ChatGPT ist keine Kategorie. Bei zwei Zweckmarkern darf
+    # eine fremde Datei nicht stillschweigend falsch einsortiert werden.
+    return next(iter(moeglich)) if len(moeglich) == 1 else None
 
 
 def regulaer(pfad: Path) -> bool:
@@ -552,7 +555,7 @@ class Workflow:
             raise RuntimeError("Eine unvollständige Videodatei liegt bereits vor.")
         if not self.testmodus:
             from .diagnose import scope_verfuegbar
-            if not scope_verfuegbar():
+            if not scope_verfuegbar(self.cfg):
                 raise RuntimeError("CPU-/RAM-Begrenzung derzeit nicht verfügbar.")
         def starten(weich=False):
             command = ffmpeg_befehl(audio, images, teil, job["laenge"], self.cfg, weich)
@@ -615,7 +618,7 @@ class Workflow:
                     job["hinweis"] = str(exc)
                     self.speichern()
         ready = [(key, job) for key, job in jobs.items() if job["status"] == "BEREIT"]
-        if ready and not self.testmodus and not scope_verfuegbar():
+        if ready and not self.testmodus and not scope_verfuegbar(self.cfg):
             self.fortschreiben("pausiert_ressourcen", 0, hinweis="systemd-Benutzersitzung prüfen")
             return 0, len(ready)
         done = 0
