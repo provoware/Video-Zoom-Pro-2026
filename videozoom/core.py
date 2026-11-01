@@ -65,13 +65,16 @@ def kategorie(name: str) -> str | None:
     words = set(re.findall(r"[a-z0-9]+", Path(name).stem.casefold()))
     if "chatgpt" not in words:
         return None
-    if "coding" in words and not ({"thema", "provoware", "provovare"} & words):
-        return "CODING"
-    if "thema" in words and "coding" not in words:
-        return "THEMA"
-    if ({"provoware", "provovare"} & words) and "coding" not in words:
-        return "PROVOWARE"
-    return None
+    moeglich = set()
+    if "coding" in words:
+        moeglich.add("CODING")
+    if "thema" in words:
+        moeglich.add("THEMA")
+    if {"provoware", "provovare"} & words:
+        moeglich.add("PROVOWARE")
+    # Herkunft ChatGPT ist keine Kategorie. Bei zwei Zweckmarkern darf
+    # eine fremde Datei nicht stillschweigend falsch einsortiert werden.
+    return next(iter(moeglich)) if len(moeglich) == 1 else None
 
 
 def regulaer(pfad: Path) -> bool:
@@ -520,13 +523,42 @@ class Workflow:
         if not regulaer(output) or pruefsumme(output) != job["video_hash"]:
             raise RuntimeError("Video beschädigt oder nicht vorhanden.")
         receipt = self.ordner / "PROTOKOLLE" / "archiv.jsonl"
+        # Vor der ersten Bewegung alle Eintraege aus dem gespeicherten
+        # Auftrag auf erlaubte Quellbereiche beschraenken.
+        for entry in job["dateien"]:
+            src = Path(entry["pfad"])
+            audio = (src.parent == self.downloads and src.suffix.lower() == ".wav"
+                     and src.resolve().parent == self.downloads.resolve())
+            bilderbasis = self.ordner / "EINGANG"
+            bild = (src.suffix.lower() in BILDTYPEN and src.parent.name == "BILDER"
+                    and src.parent.parent.parent == bilderbasis
+                    and src.resolve().is_relative_to(bilderbasis.resolve()))
+            if not (audio or bild):
+                raise RuntimeError("Datenfehler: Quellpfad ausserhalb erlaubter Songordner.")
+        quittiert = set()
+        if receipt.exists():
+            if receipt.is_symlink():
+                raise RuntimeError("Datenfehler: Archivprotokoll ist eine unsichere Verknuepfung.")
+            for zeile in receipt.read_text(encoding="utf-8").splitlines():
+                try:
+                    beleg = json.loads(zeile)
+                    quittiert.add((beleg["auftrag"], beleg["quelle"], beleg["sha256"]))
+                except (ValueError, KeyError, TypeError) as exc:
+                    raise RuntimeError("Datenfehler: Archivprotokoll beschaedigt; "
+                                       "keine stillschweigende Reparatur.") from exc
         for entry in job["dateien"]:
             src = Path(entry["pfad"])
             dest = self.ordner / "VERWENDET" / (src.stem + "_verwendet_" + entry["sha256"][:8] + src.suffix)
             kopieren_und_archivieren(src, dest, entry["sha256"])
-            with receipt.open("a", encoding="utf-8") as log:
-                log.write(json.dumps({"zeit": zeit(), "quelle": str(src), "ziel": str(dest),
-                                      "sha256": entry["sha256"], "auftrag": key}, ensure_ascii=False) + "\n")
+            belegschluessel = (key, str(src), entry["sha256"])
+            if belegschluessel not in quittiert:
+                with receipt.open("a", encoding="utf-8") as log:
+                    log.write(json.dumps({"zeit": zeit(), "quelle": str(src),
+                                          "ziel": str(dest), "sha256": entry["sha256"],
+                                          "auftrag": key}, ensure_ascii=False) + "\n")
+                    log.flush()
+                    os.fsync(log.fileno())
+                quittiert.add(belegschluessel)
             self.fortschreiben("archivieren", 95, titel=job["titel"], datei=src.name)
         job["status"] = "ARCHIVIERT"
         self.speichern()
@@ -552,7 +584,7 @@ class Workflow:
             raise RuntimeError("Eine unvollständige Videodatei liegt bereits vor.")
         if not self.testmodus:
             from .diagnose import scope_verfuegbar
-            if not scope_verfuegbar():
+            if not scope_verfuegbar(self.cfg):
                 raise RuntimeError("CPU-/RAM-Begrenzung derzeit nicht verfügbar.")
         def starten(weich=False):
             command = ffmpeg_befehl(audio, images, teil, job["laenge"], self.cfg, weich)
@@ -615,7 +647,7 @@ class Workflow:
                     job["hinweis"] = str(exc)
                     self.speichern()
         ready = [(key, job) for key, job in jobs.items() if job["status"] == "BEREIT"]
-        if ready and not self.testmodus and not scope_verfuegbar():
+        if ready and not self.testmodus and not scope_verfuegbar(self.cfg):
             self.fortschreiben("pausiert_ressourcen", 0, hinweis="systemd-Benutzersitzung prüfen")
             return 0, len(ready)
         done = 0

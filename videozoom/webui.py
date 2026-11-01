@@ -269,7 +269,7 @@ def starten(cfg, config_path, port=0, browser=True, bereit=None):
                 self.end_headers()
                 self.wfile.write(body)
             elif path=="/status": self.antwort(bedienung.status())
-            elif path=="/diagnose": self.antwort(pruefen())
+            elif path=="/diagnose": self.antwort(pruefen(cfg=bedienung.cfg))
             else: self.antwort({"fehler":"Seite nicht gefunden"},404)
         def do_POST(self):
             if not self.zugriff() or self.headers.get("Origin") not in (

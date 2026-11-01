@@ -15,20 +15,18 @@ def run(args, timeout=20):
         return False, str(exc)
 
 
-def scope_verfuegbar():
-    """Prüfe denselben CPU-/RAM-Scope wie beim echten Rendern."""
+def scope_verfuegbar(cfg: dict | None = None):
+    """Prüft exakt dieselben Grenzwerte wie der konkrete Videoauftrag."""
     if not shutil.which("systemd-run"):
         return False
     from .core import konfiguration, quota_befehl
 
-    # Dieselbe kanonische Quotenberechnung wie im Renderpfad:
-    # 30 % von vier zugänglichen CPUs entsprechen CPUQuota=120%.
-    command = quota_befehl(["/usr/bin/true"], konfiguration())
+    command = quota_befehl(["/usr/bin/true"], cfg if cfg is not None else konfiguration())
     ok, _ = run(command, 10)
     return ok
 
 
-def pruefen(real_scope=True):
+def pruefen(real_scope=True, cfg: dict | None = None):
     checks = []
     def add(name, ok, detail):
         checks.append({"name":name,"ok":bool(ok),"hinweis":detail})
@@ -45,7 +43,7 @@ def pruefen(real_scope=True):
         missing = sorted({"libx264","aac"} - present)
         add("Kodierer",ok and not missing,", ".join(missing) or "Verfügbar.")
     if real_scope:
-        add("Begrenzung",scope_verfuegbar(),"CPU und RAM werden über systemd begrenzt.")
+        add("Begrenzung",scope_verfuegbar(cfg),"CPU und RAM werden über systemd begrenzt.")
     return {"pruefungen":checks,"startbereit":all(c["ok"] for c in checks)}
 
 

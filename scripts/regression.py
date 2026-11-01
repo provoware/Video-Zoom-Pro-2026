@@ -20,10 +20,13 @@ SAFETY_CASES = (
     "tests.test_workflow.Regeln.test_paket_aenderungen_verhindern",
 )
 AUSWIRKUNGEN = {
-    "videozoom/core.py": ("tests.test_workflow", "tests.test_recovery", "tests.test_archive_recovery"),
-    "videozoom/diagnose.py": ("tests.test_workflow",),
+    "videozoom/core.py": (
+        "tests.test_workflow", "tests.test_recovery", "tests.test_archive_recovery",
+        "tests.test_progress", "tests.test_category_quota", "tests.test_archive_evidence",
+    ),
+    "videozoom/diagnose.py": ("tests.test_workflow", "tests.test_category_quota"),
     "videozoom/sensoren.py": ("tests.test_workflow",),
-    "videozoom/webui.py": ("tests.test_webui", "tests.test_workflow"),
+    "videozoom/webui.py": ("tests.test_webui", "tests.test_workflow", "tests.test_progress"),
     "videozoom/__main__.py": ("tests.test_workflow", "tests.test_webui"),
     "videozoom/__init__.py": ("tests.test_workflow", "tests.test_webui"),
     "tests/fixtures/generieren.py": ("tests.test_workflow",),

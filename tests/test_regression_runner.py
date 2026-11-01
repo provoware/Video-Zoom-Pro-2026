@@ -17,6 +17,9 @@ class RegressionAuswahl(unittest.TestCase):
         self.assertFalse(alles)
         self.assertIn("tests.test_workflow", module)
         self.assertIn("tests.test_recovery", module)
+        self.assertIn("tests.test_archive_evidence", module)
+        self.assertIn("tests.test_progress", module)
+        self.assertIn("tests.test_category_quota", module)
 
     def test_webui_loest_browser_und_workflow_aus(self):
         alles, module, _ = regression.betroffene(["videozoom/webui.py"])
