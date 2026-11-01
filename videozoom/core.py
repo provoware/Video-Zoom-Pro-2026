@@ -22,6 +22,7 @@ FORMATE = {
 }
 BILDTYPEN = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
 KATEGORIEN = {"PROVOWARE", "CODING", "THEMA"}
+OBERFLAECHEN_THEMEN = {"cyan", "violett", "gruen", "orange"}
 UEBERGAENGE = ("fade", "smoothleft", "smoothright", "wipeleft", "circleopen")
 MAX_AUTO_VERSUCHE = 3  # Danach sichtbare manuelle Pruefung, niemals Endlosschleife.
 MAX_ARCHIV_VERSUCHE = 3
@@ -124,7 +125,7 @@ def konfiguration() -> dict:
     return {
         "downloads": str(Path.home() / "Downloads"),
         "arbeitsordner": str(Path.home() / "Video-Zoom-Pro"),
-        "format": "BREI", "kategorie": "PROVOWARE",
+        "format": "BREI", "kategorie": "PROVOWARE", "theme": "cyan",
         "fps": 25, "cpu_prozent": 30, "ram_mb": 2048,
         "intervall": 15, "uebergang": 0.45, "stapelgroesse": 3,
     }
@@ -135,6 +136,8 @@ def konfigurieren(cfg: dict) -> dict:
     data.update({k: v for k, v in cfg.items() if k in data})
     if data["format"] not in FORMATE or data["kategorie"] not in KATEGORIEN:
         raise ValueError("Ungültiger Formatcode oder Kategorie.")
+    if data["theme"] not in OBERFLAECHEN_THEMEN:
+        raise ValueError("Unbekanntes Oberflächen-Farbschema.")
     for key, low, high in (("cpu_prozent", 1, 30), ("ram_mb", 256, 32768),
                            ("intervall", 5, 3600), ("stapelgroesse", 1, 20)):
         value = int(data[key])
