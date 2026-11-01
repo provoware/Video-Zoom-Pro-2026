@@ -66,7 +66,13 @@ class RealeAbbruchpruefungen(unittest.TestCase):
         self.assertEqual(workflow.stapel(), (1, 0))
         self.assertEqual(workflow.stapel(), (0, 0))
         self.assertEqual(len(list((self.work / "FERTIG").glob("*.mp4"))), 3)
-        self.assertEqual(len(list((self.work / "VERWENDET").iterdir())), 9)
+        # Gleiche Bilddateien (Name + Inhalt) koennen ein einziges Archivziel
+        # teilen; ALLE neun Ursprungsdateien muessen dennoch quittiert sein.
+        archivierte = [p for p in (self.work / "VERWENDET").iterdir()
+                       if p.suffix.lower() in {".png", ".wav"}]
+        self.assertEqual(len(archivierte), 5)
+        quittungen = (self.work / "PROTOKOLLE" / "archiv.jsonl").read_text().splitlines()
+        self.assertEqual(len(quittungen), 9)
         self.assertEqual(
             [x["status"] for x in workflow.zustand["auftraege"].values()],
             ["ARCHIVIERT"] * 3,
@@ -122,7 +128,11 @@ w.stapel()
         self.assertEqual(len(list((self.work / "FERTIG").glob("*.mp4"))), 1)
         after = Workflow(self.cfg, testmodus=True)
         self.assertEqual(after.stapel(), (0, 0))
-        self.assertEqual(len(list((self.work / "VERWENDET").iterdir())), 3)
+        # Die abgebrochene Teilkopie bleibt als Beleg zurueck, zaehlt aber
+        # nicht als verwendete Quelldatei.
+        archive = list((self.work / "VERWENDET").iterdir())
+        self.assertEqual(len([p for p in archive if p.suffix in {".wav", ".png"}]), 3)
+        self.assertTrue(any(".abbruch-" in p.name for p in archive))
         self.assertEqual(next(iter(after.zustand["auftraege"].values()))["status"], "ARCHIVIERT")
         self.assertFalse(any(path.exists() for path in sources))
 
