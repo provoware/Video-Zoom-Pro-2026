@@ -4,16 +4,19 @@
 
 ## Bestätigter Hauptzweig
 - Repository: `provoware/Video-Zoom-Pro-2026`.
-- Letzter vor dieser Iteration geprüfter main-HEAD: `641b695a0c06cddb35e3a51a880d46ec2494341f`.
-- Tatsächlich bestandener Main-CI: https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41349153630 mit **58 Tests erfolgreich**.
+- Letzter überprüfter main-HEAD: `c1f67a460e17eaa11ab88999582a05a3d9399e44`.
+- Tatsächlich bestandener Main-CI: https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41354636904 (**82/82 Tests**).
 - Die Inhalte der Entwurfs-PRs #2–#6 wurden über #8 integriert; #9 (Kubuntu-Prüfhelfer) ebenfalls.
 - **Kein Stable-Release** und **keine echte Kubuntu-Abnahme**.
 
 ## Laufende Aufgaben / Konfliktgrenze
-- Offener Entwicklungszweig zum Fortschrittsvertrag: `fix/progress-truthful-20261101` / PR #10, noch **nicht** main.
+- Fortschrittsvertrag PR #10 ist in main integriert und nachgeprüft.
+- Technische Integrationen #14 (Kategorien, Quoten, 20 Songs, Archivbelege), #15 (prüfbares Offline-ZIP) und #16 (Diagnosewerte/Timeouts) sind in main und nachgeprüft.
+- Ältere Einzel-PRs #12 und #13 sind durch #14 inhaltlich ersetzt und dürfen erst nach entsprechendem Nachweis geschlossen werden.
+- Dokumentations-PR #11 enthält die hier angezeigten neuen Regeln und Befunde; Dokumentations-CI noch auf seinem endgültigen HEAD prüfen.
 - Frühere Wiederanlauf-/Archiv-/Medien-Simulationen sind erfolgreich; echte Stromausfälle, längerer Zielsystembetrieb und Bildschirmprüfung sind ausdrücklich OFFEN.
 - Vor neuer Mutation main-HEAD und offene PRs neu abrufen; jeweils nur ein schreibender Prozess je Bereich.
-- Die nächste kleinste erlaubte Entwicklung: PR #10 auf exaktem HEAD prüfen und Integrationsstatus dokumentieren, anschließend gezielte kleine Korrekturen für Ressourcenvertrag und Bildkategoriekonflikte.
+- Nächste erlaubte Entwicklung: Dokumentations-Gates #11 prüfen, isolierten ZIP-Entpack-/Start-Smoke einplanen, Fehlerklassifikation und Lizenzentscheidung vervollständigen; danach Releasekandidat einfrieren, zuletzt Kubuntu.
 
 ## Anforderung → Beleg → Gate
 - Datei-/Medien- und Archivregeln: `videozoom/core.py`, `tests/test_workflow.py`, `tests/test_archive_recovery.py`, `tests/test_hardening.py`.

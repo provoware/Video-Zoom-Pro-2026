@@ -34,3 +34,15 @@ Der bestehende GitHub-CI-Workflow führt den **vollständigen** Lauf aus. Prüfb
 5. Ein beschaedigtes WAV-Medium wird isoliert, ein gesunder Auftrag wird trotzdem vollstaendig verarbeitet.
 
 Die Medien-Haertetests nutzen ausdruecklich den internen **Testmodus** ohne systemd-Quote. Dies ist kein Nachweis der CPU-/RAM-Grenze unter Kubuntu und ersetzt keine reale Endabnahme. CI-Erfolg gilt nur fuer den exakt ausgewiesenen Commit.
+
+## Qualitätsergebnisse vor der letzten Kubuntu-Abnahme (01.11.2026)
+
+- Fortschritt: `tests/test_progress.py` deckt Pausieren, Archivfehler, Teilstapel und die korrekte 100%-Grenze ab.
+- Bild/Quota: `tests/test_category_quota.py` prueft Konfliktmarker, unveränderte Quellen sowie die tatsächliche Benutzerkonfiguration.
+- Archivbelege: `tests/test_archive_evidence.py` prueft idempotente Logzeilen, verbotene externe Quellen, ungültige Logdaten und Symlink-Konflikte.
+- Langzeit-Simulation: `tests/test_batch_20.py` erzeugt 20 synthetische WAV-Videos mit echtem FFmpeg, 5 Stapelinstanzen und 60 Archivbelegen; keine Zielsystem-Lastgarantie.
+- Entwicklungspaket: `tests/test_build_bundle.py` prüft reproduzierbare ZIPs, SHA-256-Manifest, ausführbare STARTEN.sh-Rechte und Nichtüberschreiben.
+- CLI: `tests/test_cli_settings.py` sichert ab, dass --doctor die gespeicherten Quotenwerte nutzt.
+- **82/82 Tests** auf main `c1f67a460e17eaa11ab88999582a05a3d9399e44`, GitHub-Lauf https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41354636904 erfolgreich.
+
+Weiterhin offen: echte Kubuntu-/KDE-Sichtprüfung, reales cgroup-Verhalten unter Songlast, Langzeitbetrieb auf Zielrechner und der Rechts-/Stable-Gate. Der kontrollierte Testmodus ist kein Ersatz für diese Nachweise.
