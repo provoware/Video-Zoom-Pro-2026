@@ -36,6 +36,6 @@ jobs:
       - name: Testdaten erzeugen
         run: python3 tests/fixtures/generieren.py
       - name: Alle Funktions- und Medienprüfungen
-        run: python3 -m unittest discover -s tests -v
+        run: python3 scripts/regression.py --all --bericht "$RUNNER_TEMP/provoware_regression.json"
       - name: Startdiagnose
         run: bash STARTEN.sh --doctor
