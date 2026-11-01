@@ -14,6 +14,7 @@ import threading
 import time
 import unicodedata
 from datetime import datetime, timezone
+from .sensoren import Sensoren
 
 FORMATE = {
     "HOCH": (1080, 1920), "BREI": (1920, 1080), "QUAD": (1080, 1080),
@@ -287,6 +288,7 @@ class Workflow:
         if self.zustand.get("schema") != 1 or not isinstance(self.zustand.get("auftraege"), dict):
             raise RuntimeError("Unbekanntes Auftragsjournal – keine automatische Ersetzung.")
         self.ereignis = {"phase": "bereit", "prozent": 0}
+        self.sensoren = Sensoren()
 
     def sperren(self):
         pfad = self.ordner / "PROTOKOLLE" / "dienst.lock"
@@ -309,20 +311,8 @@ class Workflow:
         for job in self.zustand["auftraege"].values():
             key = job["status"]
             stats[key] = stats.get(key, 0) + 1
-        disk = shutil.disk_usage(self.ordner)
-        try:
-            mem = {}
-            for line in Path("/proc/meminfo").read_text().splitlines():
-                if line.startswith(("MemTotal:", "MemAvailable:")):
-                    key, value = line.split(":", 1)
-                    mem[key] = int(value.strip().split()[0]) // 1024
-        except (OSError, ValueError, IndexError):
-            mem = {}
         return {"zeit_utc": zeit(), "auftraege": stats, "aktueller_vorgang": self.ereignis,
-                "sensoren": {"freier_speicher_gb": round(disk.free / 1024**3, 2),
-                            "cpu_kerne": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count(),
-                            "ram_gesamt_mb": mem.get("MemTotal"),
-                            "ram_verfuegbar_mb": mem.get("MemAvailable")},
+                "sensoren": self.sensoren.lesen(self.ordner),
                 "cpu_ziel_prozent": self.cfg["cpu_prozent"]}
 
     def fortschreiben(self, phase, prozent, **details):
