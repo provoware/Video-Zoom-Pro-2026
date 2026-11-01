@@ -30,7 +30,7 @@ Fünf kompakte Statuskacheln zeigen die **tatsächlichen** Aufträge: bereit, au
 
 Die Gestaltungsentscheidung beruht auf einer [Recherche zu Shutter Encoder, HandBrake, Adobe Media Encoder, LosslessCut und CapCut](docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md). Nur die Bedienprinzipien wurden eigenständig umgesetzt; keine fremde Oberfläche oder Software übernommen.
 
-**Status:** Umsetzung und Testnachweise sind in der [TODO](docs/TODO.md) dokumentiert. Die abschließende Kubuntu-Sicht- und CPU-Abnahme bleibt gesperrt, bis der eingefrorene Releasekandidat bereitsteht.
+**Status:** Die Erweiterungen sind über [PR #28](https://github.com/provoware/Video-Zoom-Pro-2026/pull/28) implementiert und in `main` integriert. Auf dem geprüften Entwicklungsstand bestanden 108 Python-/Medien-/Sicherheitstests und 20 Chromium-Layoutergebnisse. Der automatisierte Browser-Test misst Fenster und CSS-Vergrößerung, nicht den echten KDE-Browser-Zoom. Die abschließende Kubuntu-Sicht- und CPU-Abnahme bleibt gesperrt, bis der eingefrorene Releasekandidat bereitsteht.
 
 ## Einfacher Start
 

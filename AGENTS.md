@@ -152,3 +152,9 @@ Für jede Änderung an `videozoom/webui.py` gelten zusätzlich zu den Python-/FF
 **Invarianten für kosmetische Änderung:** `GET /status` bleibt alleinige Datenquelle der Auftragszahlen; die Kacheln müssen exakt vorhandene Statusschlüssel auswerten. Keine neuen FFmpeg-, Archiv-, Netzwerk- oder Sensoraufrufe. Progressanzeigen übernehmen nur bereits im Kern bestätigte Prozentwerte; nie eigenständig 100 % „berechnen“. Aufklappbare Diagnosen müssen per Tastatur bedienbar sein und weiterhin ihre vollständigen Texte bereitstellen. Neues Benutzerfeedback immer mit Tests und bei Browsergrößen 800×600/100–200 % prüfen.
 
 **Abnahme:** Vor jedem Patch Nutzer-Input-Datei kontrollieren, TODO und README nachweisbasiert aktualisieren. Quell- und Medienregression plus Browsermatrix auf demselben SHA; keine neue externe Laufzeit. Alle echten Kubuntu-/Nutzer-Endprüfungen bleiben **zuletzt**.
+
+## NI-20261102-01 – Prüfbelege und Status der Übernahme
+
+- Abschluss der kleinen UI-Änderungen: PR #28, geprüfter HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d`, **108 Python-/Medientests und 20 Chromium-Layoutprüfungen**. Integration `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`, Main-CI #41364010012 getrennt.
+- Bei künftigem UI-Patch bleiben Browser-Screenshots und die echten `pfadfeldBreiten` verbindliche Layoutbelege. Werte unter 180 px in der Testmatrix = FAIL. Nicht mit realem KDE-/Native-Zoom gleichsetzen.
+- Oberflächenkacheln dürfen WARTET/PRUEFEN/ARCHIV_WARTET nicht zu einem scheinbaren „FERTIG“ zusammenfassen. Medien-/Archivstatus bleiben allein unter Kontrolle des Workflows.

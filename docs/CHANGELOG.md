@@ -30,3 +30,7 @@
 ## 02.11.2026 – Moderne Medienoberflächen als eigenständiges UI-Muster
 
 Recherchiert: Shutter Encoder, HandBrake, Adobe Media Encoder, LosslessCut und CapCut; Designmatrix in `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`. Visuelle Statuskacheln, Format-Hinweise, native Details und Fortschrittswerte ohne Backendänderung geplant/umgesetzt. Vollständige CI-Belege nach erfolgreicher PR-Integration ergänzen; Stable weiterhin nicht freigegeben.
+
+## 02.11.2026 – Visuelle Komfortdetails übernommen (#28)
+
+Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protokolle und tatsächliche Prozentangaben an drei Balken. Auftrags-, Render-, Archiv- und CPU-Verträge unverändert. Zusätzlich 800px-Pfadfelder verbreitert und 180px-Breiten-Gate ergänzt. PR-HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d`: 108 Tests plus 20 Chromium-Fälle bestanden; integrierter `main` `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`. Kubuntu-Endabnahme zuletzt.
