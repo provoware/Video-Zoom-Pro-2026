@@ -109,6 +109,21 @@ class Regeln(unittest.TestCase):
             self.assertEqual((meta["breite"],meta["hoehe"]),(64,48))
             self.assertEqual(meta["kategorie"],"PROVOWARE")
 
+    def test_technischer_fehler_pausiert_statt_abbruch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); down=root/"Downloads";down.mkdir()
+            service=Workflow({"downloads":str(down),"arbeitsordner":str(root/"Work")},testmodus=True)
+            service.zustand["auftraege"]["eins"]={
+                "titel":"Testlauf","status":"BEREIT","versuche":0,"dateien":[],"laenge":4}
+            from unittest.mock import patch
+            with patch.object(service,"_render",side_effect=OSError("temporäre Dateisperre")):
+                result=service.stapel()
+            item=service.zustand["auftraege"]["eins"]
+            self.assertEqual(result,(0,1))
+            self.assertEqual(item["status"],"PAUSIERT")
+            self.assertGreater(item["retry_after"],time.time())
+            self.assertEqual(service.stapel(),(0,0))
+
     def test_zweite_instanz_gesperrt(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp); (root/"Downloads").mkdir()
