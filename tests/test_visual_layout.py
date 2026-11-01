@@ -22,6 +22,10 @@ class BrowserFixture(unittest.TestCase):
                     self.assertIn("option.textContent = name", content)
                     self.assertIn("select.appendChild(option)", content)
 
+    def test_kompakte_kopfzeile_auch_bei_800_css_pixeln(self):
+        self.assertIn("@media(max-width:900px)", layout_check.HTML)
+        self.assertIn(".app-brand small{display:none}", layout_check.HTML)
+
     def test_ungueltiger_stil_wird_abgewiesen(self):
         with self.assertRaises(ValueError):
             layout_check.html_fixture("<script>", 100)

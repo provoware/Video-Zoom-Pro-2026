@@ -93,6 +93,14 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 #status{display:inline-block;padding:6px 12px;border:1px solid var(--success);border-radius:10px;background:#173b32;margin:0;color:#e9fff5}
 #hinweis:not(:empty){padding:9px 12px;border-left:4px solid var(--accent);background:var(--panel);border-radius:8px}
 #hinweis:empty{display:none}
+@media(max-width:900px){
+ .app-header{padding:8px}
+ .app-brand small{display:none}
+ .app-header h1{font-size:1.35rem;line-height:1.16}
+ .header-tools{gap:6px}
+ .phase-nav{margin:8px 0}
+ .phase-nav a{font-size:.84rem;padding:6px}
+}
 @media(max-width:570px){.ordner{grid-template-columns:1fr}.ordner button{width:100%}.phase-nav a{flex-basis:calc(50% - 8px)}}
 @media(max-width:520px){
  article{padding:12px}
