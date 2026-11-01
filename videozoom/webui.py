@@ -160,7 +160,7 @@ class Bedienung:
             return "Gestartet: " + mode
 
 
-def starten(cfg, config_path, port=0, browser=True):
+def starten(cfg, config_path, port=0, browser=True, bereit=None):
     bedienung = Bedienung(cfg, config_path)
     token = secrets.token_urlsafe(32)
 
@@ -226,6 +226,8 @@ def starten(cfg, config_path, port=0, browser=True):
     server.daemon_threads=True
     url=f"http://127.0.0.1:{server.server_port}/?token={token}"
     print("Lokale Bedienoberfläche: "+url,flush=True)
+    if bereit is not None:
+        bereit(server, url)
     if browser: webbrowser.open(url)
     try: server.serve_forever(poll_interval=.3)
     finally:
