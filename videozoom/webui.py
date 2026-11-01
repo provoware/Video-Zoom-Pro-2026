@@ -1,7 +1,10 @@
 """Sichere lokale Browser-Oberfläche: kein Tk, kein Netzwerkdienst nach außen."""
 from __future__ import annotations
 import json
+import os
 import secrets
+import shutil
+import subprocess
 import threading
 import webbrowser
 from collections import deque
@@ -11,6 +14,41 @@ from urllib.parse import parse_qs, urlsplit
 
 from .core import Workflow, konfigurieren, json_sicher
 from .diagnose import pruefen
+
+
+def ordner_waehlen(feld: str, startwert: str) -> str | None:
+    """Native Ordnerauswahl: kein Tk, keine freie Befehlsausführung."""
+    if feld not in {"downloads", "arbeitsordner"}:
+        raise ValueError("Nur Downloads- und Arbeitsordner dürfen ausgewählt werden.")
+    if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+        raise RuntimeError("Kein grafischer Desktop aktiv. Ordner im Textfeld eingeben.")
+    anfang = Path(startwert).expanduser()
+    if not anfang.is_dir() or anfang.is_symlink():
+        anfang = Path.home()
+    if shutil.which("kdialog"):
+        befehl = ["kdialog", "--getexistingdirectory", str(anfang),
+                   "--title", "PROVOWARE – Ordner auswählen"]
+    elif shutil.which("zenity"):
+        befehl = ["zenity", "--file-selection", "--directory",
+                   "--filename=" + str(anfang) + "/",
+                   "--title=PROVOWARE – Ordner auswählen"]
+    else:
+        raise RuntimeError("KDE-Ordnerdialog nicht verfügbar. Ordner im Textfeld eingeben.")
+    try:
+        ergebnis = subprocess.run(befehl, capture_output=True, text=True,
+                                 check=False, timeout=120)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError("Ordnerauswahl fehlgeschlagen: " + str(exc)) from exc
+    if ergebnis.returncode:
+        return None  # Abbrechen ist kein Datenfehler.
+    wert = ergebnis.stdout.strip()
+    if not wert:
+        return None
+    ziel = Path(wert).expanduser()
+    if not ziel.is_absolute() or ziel.is_symlink() or not ziel.is_dir():
+        raise ValueError("Ungültiger oder unsicherer Ordner. Keine Einstellung geändert.")
+    return str(ziel)
+
 
 HTML = r'''<!doctype html><html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -26,6 +64,9 @@ input,select,button{display:block;width:100%;padding:10px;margin:8px 0;border-ra
 label{display:block;margin-top:12px;font-weight:650}
 button{background:#245f96;border-color:#80baff;font-weight:700;cursor:pointer}
 button:hover{background:#3576ac}button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid #ffdb7a;outline-offset:2px}
+.ordner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.ordner input{min-width:0}.ordner button{width:auto;min-width:150px}
+@media(max-width:570px){.ordner{grid-template-columns:1fr}.ordner button{width:100%}}
 button.warn{background:#873c40}progress{width:100%;height:24px;accent-color:#6ee3b2}
 pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:break-word;
  max-height:200px;padding:12px;background:#0a1524;border-radius:9px}
@@ -33,11 +74,16 @@ pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:bre
 @media(max-width:520px){article{padding:12px}}
 </style></head><body>
 <h1>🎬 PROVOWARE · Video Zoom Pro</h1><small>Lokal · offline · ohne Tk · zwei getrennte Workflows</small>
-<p id="status">Bereit</p><div class="grid">
+<p id="status" role="status" aria-live="polite">Bereit</p>
+<p id="hinweis" role="alert" aria-live="assertive"></p><div class="grid">
 <article><h2>1 · Songs vorbereiten</h2>
 <p>WAV erkennen, Titel bereinigen, Bilder zuordnen.</p>
-<label for="downloads">Downloads-Ordner</label><input id="downloads">
-<label for="arbeitsordner">Arbeitsordner</label><input id="arbeitsordner">
+<label for="downloads">Downloads-Ordner</label>
+<div class="ordner"><input id="downloads" aria-label="Downloads-Ordnerpfad">
+<button type="button" onclick="ordnerwahl('downloads')">📁 Ordner wählen</button></div>
+<label for="arbeitsordner">Arbeitsordner</label>
+<div class="ordner"><input id="arbeitsordner" aria-label="Arbeitsordnerpfad">
+<button type="button" onclick="ordnerwahl('arbeitsordner')">📁 Ordner wählen</button></div>
 <label for="format">Videoformat</label><select id="format"></select>
 <label for="kategorie">Dateikategorie</label><select id="kategorie"></select>
 <button onclick="speichern()">Einstellungen speichern</button>
@@ -49,7 +95,10 @@ pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:bre
 <button onclick="aktion('once')">Einmal alles ausführen</button>
 <button onclick="aktion('watch')">Automatik einschalten</button>
 <button class="warn" onclick="aktion('stop')">Sicher stoppen</button>
-<label for="bar">Fortschritt des aktuellen Vorgangs</label><progress id="bar" value="0" max="100"></progress>
+<label for="vorbereitungsbar">Songs vorbereiten</label>
+<progress id="vorbereitungsbar" value="0" max="100"></progress>
+<label for="stapelbar">Stapel und aktuelles Video</label>
+<progress id="stapelbar" value="0" max="100"></progress>
 <p id="phase">Kein Vorgang aktiv</p>
 </article><article><h2>3 · Diagnose</h2>
 <p>CPU-Ziel: maximal 30 % der zugänglichen Prozessorkapazität. Ohne nachgewiesene Grenze kein Rendern.</p>
@@ -65,16 +114,24 @@ async function api(path,data){
  headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,cache:'no-store'});
  const v=await r.json();if(!r.ok)throw Error(v.fehler||'Aktion fehlgeschlagen');return v;
 }
-async function aktion(mode){try{let r=await api('/aktion',{mode});el('status').textContent=r.meldung;}
-catch(e){el('status').textContent=e.message;}}
+async function aktion(mode){try{let r=await api('/aktion',{mode});el('hinweis').textContent=r.meldung;}
+catch(e){el('hinweis').textContent=e.message;}}
+async function ordnerwahl(feld){try{
+ el('hinweis').textContent='Grafische Ordnerauswahl wird geöffnet …';
+ const r=await api('/ordnerwahl',{feld});
+ if(r.pfad)el(feld).value=r.pfad;
+ el('hinweis').textContent=r.meldung;
+}catch(e){el('hinweis').textContent=e.message;}}
 async function speichern(){try{
  const cfg={};for(let id of ['downloads','arbeitsordner','format','kategorie'])cfg[id]=el(id).value;
- el('status').textContent=(await api('/einstellungen',{cfg})).meldung;
-}catch(e){el('status').textContent=e.message;}}
+ el('hinweis').textContent=(await api('/einstellungen',{cfg})).meldung;
+}catch(e){el('hinweis').textContent=e.message;}}
 async function diagnose(){try{el('diagnose').textContent=JSON.stringify(await api('/diagnose'),null,2);}
 catch(e){el('diagnose').textContent=e.message;}}
 async function status(){try{let r=await api('/status');
- el('bar').value=r.event.prozent||0;el('phase').textContent=(r.event.phase||'Bereit')+' · '+(r.event.titel||'');
+ el('vorbereitungsbar').value=(r.vorbereitung&&r.vorbereitung.prozent)||0;
+ el('stapelbar').value=(r.stapel&&r.stapel.prozent)||0;
+ el('phase').textContent=(r.event.phase||'Bereit')+' · '+(r.event.titel||'');
  el('jobs').textContent=JSON.stringify(r.jobs,null,2);el('log').textContent=(r.messages||[]).join('\n');
  el('sensoren').textContent=JSON.stringify(r.sensoren||{},null,2);
  el('ready').textContent=r.jobs.BEREIT||0;el('wait').textContent=r.jobs.WARTET||0;
@@ -100,6 +157,8 @@ class Bedienung:
         self.thread = None
         self.messages = deque(maxlen=20)
         self.event = {"phase": "bereit", "prozent": 0}
+        self.vorbereitung = {"prozent": 0}
+        self.stapel = {"prozent": 0}
         self.lock = threading.RLock()
 
     def _meldung(self, msg):
@@ -109,11 +168,16 @@ class Bedienung:
     def _fortschritt(self, value):
         with self.lock:
             self.event = value
+            if value.get("phase") == "vorbereiten":
+                self.vorbereitung = value
+            elif value.get("phase") in {"stapel", "rendern", "archivieren", "pausiert_ressourcen"}:
+                self.stapel = value
 
     def status(self):
         with self.lock:
             info = self.service.status() if self.service else {"auftraege": {}}
             return {"cfg": self.cfg, "jobs": info["auftraege"], "event": self.event,
+                    "vorbereitung": self.vorbereitung, "stapel": self.stapel,
                     "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
                     "active": bool(self.thread and self.thread.is_alive())}
 
@@ -212,6 +276,14 @@ def starten(cfg, config_path, port=0, browser=True, bereit=None):
                 if not isinstance(data,dict): raise ValueError("Ungültige Daten.")
                 path=urlsplit(self.path).path
                 if path=="/aktion": value={"meldung":bedienung.aktion(data.get("mode"))}
+                elif path=="/ordnerwahl":
+                    feld = data.get("feld")
+                    if feld not in {"downloads", "arbeitsordner"}:
+                        raise ValueError("Unbekannter Ordnerbereich.")
+                    ziel = ordner_waehlen(feld, bedienung.cfg[feld])
+                    value = {"pfad": ziel, "meldung": (
+                        "Ordner übernommen; Einstellungen bitte speichern." if ziel
+                        else "Auswahl abgebrochen, Einstellungen unverändert.")}
                 elif path=="/einstellungen":
                     if not isinstance(data.get("cfg"),dict): raise ValueError("Einstellungen fehlen.")
                     bedienung.einstellungen(data["cfg"])
