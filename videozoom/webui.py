@@ -70,7 +70,7 @@ body{max-width:1190px;min-width:0;margin:auto;padding:clamp(12px,2vw,24px);overf
 h1{margin:0;font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.2}
 h2{font-size:1.22rem;margin:0 0 12px}
 small{color:var(--muted)}
-.app-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;padding:10px 14px;border:1px solid rgba(var(--accent-rgb),.48);border-radius:14px;background:linear-gradient(125deg,rgba(var(--accent-rgb),.11),transparent 68%),var(--panel)}
+.app-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;padding:10px 14px;border:1px solid rgba(var(--accent-rgb),.48);border-radius:14px;background:linear-gradient(125deg,rgba(var(--accent-rgb),.11),transparent 68%),var(--panel);box-shadow:0 8px 22px rgba(0,0,0,.16)}
 .header-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
 .header-tools label{margin:0;font-size:.93rem}
 .header-tools select{width:auto;min-width:155px;margin:0}
@@ -79,6 +79,22 @@ small{color:var(--muted)}
 .phase-nav a:hover{background:rgba(var(--accent-rgb),.18)}
 .phase-nav a{overflow-wrap:anywhere;word-break:normal}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:12px;margin:12px 0}
+.overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:9px;margin:12px 0}
+.metric{min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(125deg,rgba(var(--accent-rgb),.09),transparent 85%),var(--panel)}
+.metric small{display:block;font-size:.83rem}
+.metric strong{display:block;font-size:1.4rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.metric[data-kind="ok"]{border-color:var(--success)}
+.metric[data-kind="achtung"]{border-color:var(--focus)}
+.format-hint{margin:0 0 6px;padding:8px 11px;border-left:3px solid var(--accent);border-radius:6px;background:rgba(var(--accent-rgb),.07);color:var(--muted);font-size:.9rem}
+.technical-details{margin:8px 0;padding:8px 12px;border:1px solid rgba(var(--accent-rgb),.43);border-radius:10px;background:rgba(var(--accent-rgb),.04)}
+.technical-details summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center;gap:7px}
+.technical-details summary::marker{color:var(--accent)}
+.technical-details[open] summary{margin-bottom:8px}
+.technical-details pre{margin:6px 0}
+.card-subtitle{color:var(--muted);margin:0 0 8px}
+.progress-label{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.progress-label output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
+
 article{min-width:0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(var(--accent-rgb),.045),transparent 40%),var(--panel);padding:18px;box-shadow:inset 0 0 18px rgba(var(--accent-rgb),.04)}
 article:target{outline:3px solid var(--accent);outline-offset:3px}
 input,select,button{display:block;width:100%;min-width:0;padding:10px;margin:8px 0;border-radius:9px;border:2px solid var(--line);background:var(--field);color:var(--text);font:inherit;min-height:46px}
@@ -87,8 +103,8 @@ button{background:var(--accent);border-color:var(--accent);color:var(--accent-in
 button:hover{filter:brightness(1.08)}
 button.warn{background:var(--danger);border-color:#f8adb6;color:#fff}
 :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-.ordner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
-.ordner input{min-width:0}.ordner button{width:auto;min-width:150px}
+.ordner{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;align-items:center}
+.ordner input{min-width:0}.ordner button{width:100%;min-width:150px}
 progress{width:100%;height:24px;accent-color:var(--success)}
 pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:break-word;max-height:200px;padding:12px;background:#081821;border-radius:9px}
 #status{display:inline-block;padding:6px 12px;border:1px solid var(--success);border-radius:10px;background:#173b32;margin:0;color:#e9fff5}
@@ -126,6 +142,13 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <a href="#vorbereitung" aria-label="Zu Songs vorbereiten">1 · Vorbereiten</a><a href="#stapel-karte" aria-label="Zur Stapelverarbeitung">2 · Stapel</a>
 <a href="#diagnose-karte">3 · Diagnose</a><a href="#protokoll-karte">4 · Protokoll</a>
 </nav>
+<section class="overview" aria-label="Auftragsübersicht">
+<div class="metric"><small>Bereit</small><strong id="kpi-bereit">0</strong></div>
+<div class="metric"><small>Warten auf Bilder</small><strong id="kpi-wartet">0</strong></div>
+<div class="metric"><small>Video läuft</small><strong id="kpi-laeuft">0</strong></div>
+<div class="metric" data-kind="ok"><small>Archiviert</small><strong id="kpi-fertig">0</strong></div>
+<div class="metric" data-kind="achtung"><small>Prüfen / Archiv offen</small><strong id="kpi-pruefen">0</strong></div>
+</section>
 <p id="hinweis" role="alert" aria-live="assertive"></p><div class="grid">
 <article id="vorbereitung"><h2>1 · Songs vorbereiten</h2>
 <p>WAV erkennen, Titel bereinigen, Bilder zuordnen.</p>
@@ -135,7 +158,7 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <label for="arbeitsordner">Arbeitsordner</label>
 <div class="ordner"><input id="arbeitsordner" aria-label="Arbeitsordnerpfad">
 <button type="button" onclick="ordnerwahl('arbeitsordner')">📁 Ordner wählen</button></div>
-<label for="format">Videoformat</label><select id="format"></select>
+<label for="format">Videoformat</label><select id="format" onchange="formatHinweis()"></select><p class="format-hint" id="formatinfo">Format auswählen</p>
 <label for="kategorie">Dateikategorie</label><select id="kategorie"></select>
 <button onclick="speichern()">Einstellungen speichern</button>
 <button onclick="aktion('prepare')">Songs vorbereiten</button>
@@ -146,23 +169,57 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <button onclick="aktion('once')">Einmal alles ausführen</button>
 <button onclick="aktion('watch')">Automatik einschalten</button>
 <button class="warn" onclick="aktion('stop')">Sicher stoppen</button>
-<label for="vorbereitungsbar">Songs vorbereiten</label>
+<div class="progress-label"><label for="vorbereitungsbar">Songs vorbereiten</label><output id="vorbereitung-wert" for="vorbereitungsbar">0 %</output></div>
 <progress id="vorbereitungsbar" value="0" max="100"></progress>
-<label for="stapelbar">Stapelverarbeitung</label>
+<div class="progress-label"><label for="stapelbar">Stapelverarbeitung</label><output id="stapel-wert" for="stapelbar">0 %</output></div>
 <progress id="stapelbar" value="0" max="100"></progress>
-<label for="videobar">Aktuelles Video (einschließlich Archivierung)</label>
+<div class="progress-label"><label for="videobar">Aktuelles Video (einschließlich Archivierung)</label><output id="video-wert" for="videobar">0 %</output></div>
 <progress id="videobar" value="0" max="100"></progress>
 <p id="phase">Kein Vorgang aktiv</p>
 </article><article id="diagnose-karte"><h2>3 · Diagnose</h2>
 <p>CPU-Ziel: maximal 30 % der zugänglichen Prozessorkapazität. Ohne nachgewiesene Grenze kein Rendern.</p>
-<button onclick="diagnose()">Systemprüfung ausführen</button><pre id="diagnose">Noch nicht geprüft</pre><h2>Aktuelle Sensordaten</h2><pre id="sensoren">Wird gemessen</pre>
+<button onclick="diagnose()">Systemprüfung ausführen</button>
+<details class="technical-details"><summary>Systemprüfung anzeigen</summary><pre id="diagnose">Noch nicht geprüft</pre></details>
+<details class="technical-details"><summary>CPU, RAM und Speicher ansehen</summary><pre id="sensoren">Wird gemessen</pre></details>
 <p><small>Die Vorbereitung kann unabhängig von der CPU-Grenze weiterlaufen.</small></p>
-</article><article id="protokoll-karte"><h2>4 · Protokoll</h2><pre id="jobs">Noch keine Aufträge.</pre><pre id="log">Bereit.</pre>
+</article><article id="protokoll-karte"><h2>4 · Protokoll</h2>
+<p class="card-subtitle">Fehler und Aufträge bleiben erhalten. Einzelheiten bei Bedarf öffnen.</p>
+<details class="technical-details"><summary>Auftragszahlen ansehen</summary><pre id="jobs">Noch keine Aufträge.</pre></details>
+<details class="technical-details"><summary>Meldungen ansehen</summary><pre id="log">Bereit.</pre></details>
 </article></div>
 <script>
 const token=new URL(location.href).searchParams.get('token');
 const el=id=>document.getElementById(id);
 const THEMEN=['cyan','violett','gruen','orange'];
+const FORMATHILFE={
+ BREI:'1920 × 1080 · Breitbild (YouTube)',
+ HOCH:'1080 × 1920 · Hochformat (Shorts, Reels)',
+ QUAD:'1080 × 1080 · Quadrat',
+ KLAS:'800 × 600 · Klassisches 4:3',
+ '4K':'3840 × 2160 · 4K-Breitbild'
+};
+function formatHinweis(){
+ const code=el('format').value;
+ el('formatinfo').textContent=FORMATHILFE[code]||'Bitte ein gültiges Format auswählen.';
+}
+function prozentWert(value){
+ const n=Number(value);
+ return Number.isFinite(n)?Math.min(100,Math.max(0,Math.floor(n))):0;
+}
+function fortschrittAnzeigen(id,feld,info){
+ const wert=prozentWert(info&&info.prozent);
+ el(id).value=wert;
+ el(feld).textContent=wert+' %';
+}
+function auftragszahlen(jobs){
+ const daten=jobs||{};
+ const wert=status=>Math.max(0,Number(daten[status])||0);
+ el('kpi-bereit').textContent=wert('BEREIT');
+ el('kpi-wartet').textContent=wert('WARTET');
+ el('kpi-laeuft').textContent=wert('LAEUFT');
+ el('kpi-fertig').textContent=wert('ARCHIVIERT');
+ el('kpi-pruefen').textContent=wert('PRUEFEN')+wert('ARCHIV_WARTET');
+}
 function themaWaehlen(){
  const theme=el('theme').value;
  if(THEMEN.includes(theme))document.body.dataset.theme=theme;
@@ -187,16 +244,17 @@ async function speichern(){try{
 async function diagnose(){try{el('diagnose').textContent=JSON.stringify(await api('/diagnose'),null,2);}
 catch(e){el('diagnose').textContent=e.message;}}
 async function status(){try{let r=await api('/status');
- el('vorbereitungsbar').value=(r.vorbereitung&&r.vorbereitung.prozent)||0;
- el('stapelbar').value=(r.stapel&&r.stapel.prozent)||0;
- el('videobar').value=(r.video&&r.video.prozent)||0;
+ fortschrittAnzeigen('vorbereitungsbar','vorbereitung-wert',r.vorbereitung);
+ fortschrittAnzeigen('stapelbar','stapel-wert',r.stapel);
+ fortschrittAnzeigen('videobar','video-wert',r.video);
+ auftragszahlen(r.jobs);
  el('phase').textContent=(r.event.phase||'Bereit')+' · '+(r.event.titel||'');
  el('jobs').textContent=JSON.stringify(r.jobs,null,2);el('log').textContent=(r.messages||[]).join('\n');
  el('sensoren').textContent=JSON.stringify(r.sensoren||{},null,2);
  el('ready').textContent=r.jobs.BEREIT||0;el('wait').textContent=r.jobs.WARTET||0;
  if(!el('downloads').dataset.ready){
   for(let id of ['downloads','arbeitsordner','format','kategorie','theme'])el(id).value=r.cfg[id];
-  themaWaehlen();
+  themaWaehlen();formatHinweis();
   el('downloads').dataset.ready='1';
  }
  el('status').textContent=r.active?'In Arbeit':'Bereit / pausiert';
@@ -206,7 +264,7 @@ for(let [id,list] of [['format',['BREI','HOCH','QUAD','KLAS','4K']],
 ['theme',['cyan','violett','gruen','orange']]]){
  el(id).innerHTML=list.map(x=>'<option>'+x+'</option>').join('');
 }
-status();diagnose();setInterval(status,1500);
+formatHinweis();status();diagnose();setInterval(status,1500);
 </script></body></html>'''
 
 

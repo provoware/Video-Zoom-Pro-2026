@@ -35,7 +35,8 @@ class BrowserFixture(unittest.TestCase):
     def test_messung_erkennt_fehlende_ueberlaufprobleme(self):
         document = ('<output id="layout-check" hidden="">'
                     '{"horizontalScroll":false,"horizontalOverflows":[],'
-                    '"controls":10,"viewport":{"width":800,"height":600}}'
+                    '"controls":10,"pfadfeldBreiten":[300,300],'
+                    '"viewport":{"width":800,"height":600}}'
                     '</output>')
         result = layout_check.auswertung(document)
         self.assertEqual(result["viewport"]["width"], 800)
@@ -49,6 +50,22 @@ class BrowserFixture(unittest.TestCase):
         ):
             with self.subTest(body=body), self.assertRaises(RuntimeError):
                 layout_check.auswertung('<output id="layout-check">' + body + '</output>')
+
+    def test_pfadfeld_darf_nicht_zu_schmal_werden(self):
+        content = ('<output id="layout-check">'
+                   '{"horizontalScroll":false,"horizontalOverflows":[],'
+                   '"controls":10,"pfadfeldBreiten":[120,320]}'
+                   '</output>')
+        with self.assertRaisesRegex(RuntimeError,"Pfadfelder zu schmal"):
+            layout_check.auswertung(content)
+
+    def test_pfadfeldmessung_muss_vorhanden_sein(self):
+        content = ('<output id="layout-check">'
+                   '{"horizontalScroll":false,"horizontalOverflows":[],'
+                   '"controls":10}'
+                   '</output>')
+        with self.assertRaisesRegex(RuntimeError,"Pfadfeldmessung fehlt"):
+            layout_check.auswertung(content)
 
     def test_browser_nicht_verfuegbar_ist_keine_erfolgsmeldung(self):
         from unittest.mock import patch

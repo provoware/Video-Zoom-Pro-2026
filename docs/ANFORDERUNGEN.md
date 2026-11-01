@@ -24,3 +24,7 @@
 - Reduzierte Animationen; keine Ablenkung bei laufenden Renderaufträgen.
 - Bildprüfung mit reproduzierbaren Browserreferenzen und kontrollierten Änderungen; letzte Kubuntu-Sichtabnahme nicht vorziehen.
 - Übertragene Designregeln nur aus eigenem CSS/HTML, keine DateiFinder-Runtime, kein Qt/Tk/Tauri-/Rust-Import.
+
+## UI-Komfort nach moderner Medienoberflächen-Recherche (02.11.2026)
+
+Fünf Statusfelder für die echten Auftragszustände, verständliche Kurzinfos zu BREI/HOCH/QUAD/KLAS/4K, aufklappbare Diagnose und Protokolle und Prozentzahlen direkt an drei bereits bestehenden Fortschrittsbalken. Kein zusätzlicher Server, keine Videopipelineänderung, keine Fremdsoftware. Barrierefreie Tastaturbedienung und 800×600/200%-Layout sind Testanforderungen; Kubuntu-Endabnahme erfolgt zuletzt.

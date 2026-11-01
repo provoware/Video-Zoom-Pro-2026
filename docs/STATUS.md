@@ -31,3 +31,9 @@
 - #25: 800px-/200%-Kopf kompakter, kurze Bedienbezeichnungen, Testdaten in Dropdowns und Prüfung auf abgeschnittenen Navigationstext. Auf PR-HEAD `013f3f54f0023320ba4538227c016424917ca61d` **100/100 Python-Tests + 20 Browserproben** erfolgreich; Main-Nachkontrolle nach Merge separat prüfen.
 - **Noch offen vor letzter Kubuntu-Abnahme:** vollständige Kontrast-/Tastaturprüfung, optional einklappbare Details und Pixel-Referenzvergleich; Lizenz/Rechte und finale Release-SHA.
 - **Weiterhin kein Stable.** Browser-Vortests verwenden CSS-Zoomsimulation, echte Kubuntu- und Nutzer-Sichtabnahme bleibt zuletzt.
+
+## 02.11.2026 – Recherchegestützte UI-Komfortverbesserung (NI-20261102-01)
+
+Recherche: Shutter Encoder (Renderliste/Status), HandBrake (Warteschlange/Format), Adobe Media Encoder (Auftrags-/Encodingtrennung), LosslessCut (kompakte Details), CapCut (Einstellungsstruktur). Quellen, Aufwands-/Konfliktmatrix und ausdrücklich ausgeschlossene Elemente in `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`.
+
+Vorgesehene kleine UI-Anpassungen: fünf Auftragskacheln aus existierendem `GET /status`, lesbare Formatabmessungen, native aufklappbare Diagnose/Logs, Textwerte an drei Fortschrittsbalken und dezente Flächen. Keine Änderungen am Renderer oder der Archivierung. **Prüfstatus pro Patch anhand GitHub-Run und SHA aktualisieren; nicht mit Stable oder der persönlichen Kubuntu-Endabnahme verwechseln.**

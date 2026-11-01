@@ -26,3 +26,7 @@
 - PR #20: Echtes Starten von STARTEN.sh --help/--doctor aus frisch entpacktem ZIP mit isolierten Benutzereinstellungen und Paket-Pfadschutz; 88/88 PR-Tests.
 - Gemeinsamer Hauptzweig danach: `d486f30d2098777b59bc99330ddc3e5e1e2a884e`, [Main-CI](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41356578575) erfolgreich.
 - Offen: Lizenz/Rechte, Release-SHA einfrieren, **zuletzt** echte Kubuntu-Abnahme. Kein Stable.
+
+## 02.11.2026 – Moderne Medienoberflächen als eigenständiges UI-Muster
+
+Recherchiert: Shutter Encoder, HandBrake, Adobe Media Encoder, LosslessCut und CapCut; Designmatrix in `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`. Visuelle Statuskacheln, Format-Hinweise, native Details und Fortschrittswerte ohne Backendänderung geplant/umgesetzt. Vollständige CI-Belege nach erfolgreicher PR-Integration ergänzen; Stable weiterhin nicht freigegeben.

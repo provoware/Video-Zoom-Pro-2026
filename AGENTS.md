@@ -144,3 +144,11 @@ Für jede Änderung an `videozoom/webui.py` gelten zusätzlich zu den Python-/FF
 2. `layout_bericht.json` muss **Null horizontalen Überlauf und Null abgeschnittene Navigationstexte** melden. Screenshot-Dateien mit demselben CI-SHA als GitHub-Artefakt erhalten; Fehler lösen eine Ursachenänderung statt automatisches Screenshot-Überschreiben aus.
 3. Die CSS-Zoomsimulation ist **nicht** der echte KDE-Browser-Zoom. Weitere Pixel-Diff-/Tab-/Kontrasttests bleiben Entwicklungspflichten; die reale Kubuntu-Nutzer-Endabnahme ist **der letzte Schritt**, niemals durch CI ersetzt.
 4. Alle neuen UX-Befunde mit stabiler Kennung (z. B. `NI-20261101-01`) in `docs/TODO.md` führen. `Nutzer-Input-Agents.md` vor jedem Patch und vor Abschluss lesen; parallele Änderungen an `AGENTS.md` oder Originaldateien nicht überschreiben.
+
+## UI-Designrecherche: Medienwerkzeuge (NI-20261102-01)
+
+**Verbindliche Herkunft:** `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`. Offizielle Quellen sind Shutter Encoder, HandBrake, Adobe Media Encoder, LosslessCut und CapCut. Übernommen werden **eigene** HTML/CSS/JS-Interaktionsmuster, niemals Lizenz-/Rechte-pflichtige Fremddateien, fremder Programmcode oder neue Runtimes.
+
+**Invarianten für kosmetische Änderung:** `GET /status` bleibt alleinige Datenquelle der Auftragszahlen; die Kacheln müssen exakt vorhandene Statusschlüssel auswerten. Keine neuen FFmpeg-, Archiv-, Netzwerk- oder Sensoraufrufe. Progressanzeigen übernehmen nur bereits im Kern bestätigte Prozentwerte; nie eigenständig 100 % „berechnen“. Aufklappbare Diagnosen müssen per Tastatur bedienbar sein und weiterhin ihre vollständigen Texte bereitstellen. Neues Benutzerfeedback immer mit Tests und bei Browsergrößen 800×600/100–200 % prüfen.
+
+**Abnahme:** Vor jedem Patch Nutzer-Input-Datei kontrollieren, TODO und README nachweisbasiert aktualisieren. Quell- und Medienregression plus Browsermatrix auf demselben SHA; keine neue externe Laufzeit. Alle echten Kubuntu-/Nutzer-Endprüfungen bleiben **zuletzt**.
