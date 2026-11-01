@@ -1,0 +1,41 @@
+name: Prüfung – Linux, Python und echte Medien
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  testen:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Repository laden
+        uses: actions/checkout@v4
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testsystem mit FFmpeg versorgen
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: FFmpeg und FFprobe prüfen
+        run: |
+          ffmpeg -version
+          ffprobe -version
+      - name: Python-Code prüfen
+        run: python3 -m compileall -q videozoom tests
+      - name: Tk-Freiheit sicherstellen
+        run: |
+          if grep -R -n -E '(^|[[:space:]])(import tkinter|from tkinter)' videozoom; then
+            echo 'Tk ist nicht erlaubt.'
+            exit 1
+          fi
+      - name: Testdaten erzeugen
+        run: python3 tests/fixtures/generieren.py
+      - name: Alle Funktions- und Medienprüfungen
+        run: python3 -m unittest discover -s tests -v
+      - name: Startdiagnose
+        run: bash STARTEN.sh --doctor
