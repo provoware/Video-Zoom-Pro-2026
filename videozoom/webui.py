@@ -54,29 +54,60 @@ HTML = r'''<!doctype html><html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PROVOWARE · Video Zoom Pro</title>
 <style>
-:root{font:18px/1.5 system-ui,sans-serif;color-scheme:dark;background:#111825;color:#f5f8fc}
-*{box-sizing:border-box}body{max-width:1190px;margin:auto;padding:clamp(12px,3vw,30px)}
-h1{margin:0;font-size:clamp(1.6rem,4vw,2.5rem)}h2{font-size:1.22rem;margin:0 0 12px}
-small{color:#cad6e5}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:14px;margin:16px 0}
-article{border:1px solid #5c718f;border-radius:14px;background:#1b293c;padding:18px}
-input,select,button{display:block;width:100%;padding:10px;margin:8px 0;border-radius:9px;
- border:2px solid #8da7c1;background:#0d192a;color:#fff;font:inherit;min-height:45px}
+:root{
+ font:18px/1.5 system-ui,sans-serif;color-scheme:dark;
+ --bg:#0b151d;--panel:#132b35;--text:#f4fbff;--muted:#d0e0e9;
+ --field:#0a202a;--line:#547780;--accent:#33d9e3;--accent-rgb:51,217,227;
+ --accent-ink:#07242c;--focus:#ffe78c;--success:#74e5b0;--danger:#913c49;
+ background:var(--bg);color:var(--text)
+}
+body[data-theme="violett"]{--accent:#baa6ff;--accent-rgb:186,166,255;--accent-ink:#251a42;--line:#8177ac}
+body[data-theme="gruen"]{--accent:#7deaaf;--accent-rgb:125,234,175;--accent-ink:#0a3723;--line:#568b74}
+body[data-theme="orange"]{--accent:#ffd082;--accent-rgb:255,208,130;--accent-ink:#382308;--line:#a18c63}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{max-width:1190px;min-width:0;margin:auto;padding:clamp(12px,2vw,24px);overflow-x:hidden;background:var(--bg);color:var(--text)}
+h1{margin:0;font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.2}
+h2{font-size:1.22rem;margin:0 0 12px}
+small{color:var(--muted)}
+.app-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;padding:10px 14px;border:1px solid rgba(var(--accent-rgb),.48);border-radius:14px;background:linear-gradient(125deg,rgba(var(--accent-rgb),.11),transparent 68%),var(--panel)}
+.header-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.header-tools label{margin:0;font-size:.93rem}
+.header-tools select{width:auto;min-width:155px;margin:0}
+.phase-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px}
+.phase-nav a{flex:1 1 170px;padding:10px 12px;min-height:44px;border:1px solid rgba(var(--accent-rgb),.53);border-radius:10px;background:rgba(var(--accent-rgb),.08);color:var(--text);text-align:center;font-weight:700;text-decoration:none}
+.phase-nav a:hover{background:rgba(var(--accent-rgb),.18)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:12px;margin:12px 0}
+article{min-width:0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(var(--accent-rgb),.045),transparent 40%),var(--panel);padding:18px;box-shadow:inset 0 0 18px rgba(var(--accent-rgb),.04)}
+article:target{outline:3px solid var(--accent);outline-offset:3px}
+input,select,button{display:block;width:100%;min-width:0;padding:10px;margin:8px 0;border-radius:9px;border:2px solid var(--line);background:var(--field);color:var(--text);font:inherit;min-height:46px}
 label{display:block;margin-top:12px;font-weight:650}
-button{background:#245f96;border-color:#80baff;font-weight:700;cursor:pointer}
-button:hover{background:#3576ac}button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid #ffdb7a;outline-offset:2px}
+button{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:800;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button.warn{background:var(--danger);border-color:#f8adb6;color:#fff}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .ordner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .ordner input{min-width:0}.ordner button{width:auto;min-width:150px}
-@media(max-width:570px){.ordner{grid-template-columns:1fr}.ordner button{width:100%}}
-button.warn{background:#873c40}progress{width:100%;height:24px;accent-color:#6ee3b2}
-pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:break-word;
- max-height:200px;padding:12px;background:#0a1524;border-radius:9px}
-#status{display:inline-block;padding:5px 12px;border-radius:10px;background:#29573c;margin:10px 0}
-@media(max-width:520px){article{padding:12px}}
+progress{width:100%;height:24px;accent-color:var(--success)}
+pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:break-word;max-height:200px;padding:12px;background:#081821;border-radius:9px}
+#status{display:inline-block;padding:6px 12px;border:1px solid var(--success);border-radius:10px;background:#173b32;margin:0;color:#e9fff5}
+#hinweis:not(:empty){padding:9px 12px;border-left:4px solid var(--accent);background:var(--panel);border-radius:8px}
+#hinweis:empty{display:none}
+@media(max-width:570px){.ordner{grid-template-columns:1fr}.ordner button{width:100%}.phase-nav a{flex-basis:calc(50% - 8px)}}
+@media(max-width:520px){article{padding:12px}.app-header{padding:12px}.header-tools{width:100%}.header-tools select{flex:1}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 </style></head><body>
-<h1>🎬 PROVOWARE · Video Zoom Pro</h1><small>Lokal · offline · ohne Tk · zwei getrennte Workflows</small>
-<p id="status" role="status" aria-live="polite">Bereit</p>
+<header class="app-header">
+<div class="app-brand"><h1>🎬 PROVOWARE · Video Zoom Pro</h1><small>Lokal · offline · ohne Tk · zwei getrennte Workflows</small></div>
+<div class="header-tools"><label for="theme">Farbschema</label><select id="theme" onchange="themaWaehlen()"></select>
+<p id="status" role="status" aria-live="polite">Bereit</p></div>
+</header>
+<nav class="phase-nav" aria-label="Arbeitsbereiche">
+<a href="#vorbereitung">1 · Songs vorbereiten</a><a href="#stapel-karte">2 · Stapelverarbeitung</a>
+<a href="#diagnose-karte">3 · Diagnose</a><a href="#protokoll-karte">4 · Protokoll</a>
+</nav>
 <p id="hinweis" role="alert" aria-live="assertive"></p><div class="grid">
-<article><h2>1 · Songs vorbereiten</h2>
+<article id="vorbereitung"><h2>1 · Songs vorbereiten</h2>
 <p>WAV erkennen, Titel bereinigen, Bilder zuordnen.</p>
 <label for="downloads">Downloads-Ordner</label>
 <div class="ordner"><input id="downloads" aria-label="Downloads-Ordnerpfad">
@@ -89,7 +120,7 @@ pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:bre
 <button onclick="speichern()">Einstellungen speichern</button>
 <button onclick="aktion('prepare')">Songs vorbereiten</button>
 <p><strong id="ready">0</strong> bereit · <strong id="wait">0</strong> warten</p>
-</article><article><h2>2 · Stapelverarbeitung</h2>
+</article><article id="stapel-karte"><h2>2 · Stapelverarbeitung</h2>
 <p>Erst Bilder rückwärts und schnell, dann vorwärts mit sanften Kamerabewegungen.</p>
 <button onclick="aktion('batch')">Stapel starten</button>
 <button onclick="aktion('once')">Einmal alles ausführen</button>
@@ -102,15 +133,20 @@ pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:bre
 <label for="videobar">Aktuelles Video (einschließlich Archivierung)</label>
 <progress id="videobar" value="0" max="100"></progress>
 <p id="phase">Kein Vorgang aktiv</p>
-</article><article><h2>3 · Diagnose</h2>
+</article><article id="diagnose-karte"><h2>3 · Diagnose</h2>
 <p>CPU-Ziel: maximal 30 % der zugänglichen Prozessorkapazität. Ohne nachgewiesene Grenze kein Rendern.</p>
 <button onclick="diagnose()">Systemprüfung ausführen</button><pre id="diagnose">Noch nicht geprüft</pre><h2>Aktuelle Sensordaten</h2><pre id="sensoren">Wird gemessen</pre>
 <p><small>Die Vorbereitung kann unabhängig von der CPU-Grenze weiterlaufen.</small></p>
-</article><article><h2>4 · Protokoll</h2><pre id="jobs">Noch keine Aufträge.</pre><pre id="log">Bereit.</pre>
+</article><article id="protokoll-karte"><h2>4 · Protokoll</h2><pre id="jobs">Noch keine Aufträge.</pre><pre id="log">Bereit.</pre>
 </article></div>
 <script>
 const token=new URL(location.href).searchParams.get('token');
 const el=id=>document.getElementById(id);
+const THEMEN=['cyan','violett','gruen','orange'];
+function themaWaehlen(){
+ const theme=el('theme').value;
+ if(THEMEN.includes(theme))document.body.dataset.theme=theme;
+}
 async function api(path,data){
  const r=await fetch(path+'?token='+encodeURIComponent(token),{method:data?'POST':'GET',
  headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,cache:'no-store'});
@@ -125,7 +161,7 @@ async function ordnerwahl(feld){try{
  el('hinweis').textContent=r.meldung;
 }catch(e){el('hinweis').textContent=e.message;}}
 async function speichern(){try{
- const cfg={};for(let id of ['downloads','arbeitsordner','format','kategorie'])cfg[id]=el(id).value;
+ const cfg={};for(let id of ['downloads','arbeitsordner','format','kategorie','theme'])cfg[id]=el(id).value;
  el('hinweis').textContent=(await api('/einstellungen',{cfg})).meldung;
 }catch(e){el('hinweis').textContent=e.message;}}
 async function diagnose(){try{el('diagnose').textContent=JSON.stringify(await api('/diagnose'),null,2);}
@@ -139,13 +175,15 @@ async function status(){try{let r=await api('/status');
  el('sensoren').textContent=JSON.stringify(r.sensoren||{},null,2);
  el('ready').textContent=r.jobs.BEREIT||0;el('wait').textContent=r.jobs.WARTET||0;
  if(!el('downloads').dataset.ready){
-  for(let id of ['downloads','arbeitsordner','format','kategorie'])el(id).value=r.cfg[id];
+  for(let id of ['downloads','arbeitsordner','format','kategorie','theme'])el(id).value=r.cfg[id];
+  themaWaehlen();
   el('downloads').dataset.ready='1';
  }
  el('status').textContent=r.active?'In Arbeit':'Bereit / pausiert';
 }catch(e){el('status').textContent=e.message;}}
 for(let [id,list] of [['format',['BREI','HOCH','QUAD','KLAS','4K']],
-['kategorie',['PROVOWARE','CODING','THEMA']]]){
+['kategorie',['PROVOWARE','CODING','THEMA']],
+['theme',['cyan','violett','gruen','orange']]]){
  el(id).innerHTML=list.map(x=>'<option>'+x+'</option>').join('');
 }
 status();diagnose();setInterval(status,1500);
