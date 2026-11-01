@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from videozoom.core import (
     Workflow, kategorie, titel, slug, FORMATE, zeitplan, ffmpeg_befehl,
-    konfiguration, json_sicher, lesen, kopieren_und_archivieren, quota_befehl,
+    konfiguration, konfigurieren, json_sicher, lesen, kopieren_und_archivieren, quota_befehl,
 )
 from videozoom.diagnose import installation_simulieren, pruefen
 from tests.fixtures.generieren import wav, png
