@@ -35,7 +35,7 @@ Zum Nachsehen: bash STARTEN.sh --doctor. Nur vorbereiten: bash STARTEN.sh --vorb
 
 FFmpeg/FFprobe und funktionsfähiger systemd-Benutzerscope sind für Videoberechnung erforderlich. 30 % bezieht sich auf die zugängliche CPU-Kapazität; RAM wird getrennt begrenzt. Fehlt der Scope, werden Jobs vorbereitet, aber nicht unkontrolliert berechnet. Systempakete nur nach sicherer Simulation und ausdrücklicher Zustimmung installieren.
 
-**Noch keine Stable-Freigabe:** Desktopprüfung unter Kubuntu, echte Quotenmessung und vollständige Absturztests stehen aus. Vor Produktivnutzung Dateien sichern und nur mit Testkopien probieren.
+**Noch keine Stable-Freigabe:** Die automatisierten Crash-/Wiederanlauf-/Stapeltests sind nachweisbar vorhanden. Die echte Desktopprüfung unter Kubuntu, reale Quotenmessung und Stromausfall-/Langzeittests auf dem Zielsystem bleiben zuletzt offen. Vor Produktivnutzung Dateien sichern und nur mit Testkopien probieren.
 
 ## Dokumentation und Tests
 
@@ -52,10 +52,24 @@ Tests starten: python3 -m unittest discover -s tests -v.
 
 Für das öffentliche Repository wurde bewusst noch keine zusätzliche Veröffentlichungslizenz festgelegt; diese Entscheidung steht aus.
 
-## Bedienung ohne Texteingabe – grafische Ordnerauswahl (Entwicklungszweig)
+## Bedienung ohne Texteingabe – grafische Ordnerauswahl
 
 Neben den Feldern für Downloads und Arbeitsordner gibt es eine Schaltfläche **„📁 Ordner wählen“**. Unter KDE wird ein vorhandenes `kdialog` verwendet, andernfalls `zenity`. Beide werden ausschließlich lokal und ohne Shell-Auswertung gestartet. Es wird **kein Tk** installiert oder geladen. Falls kein Desktop-Dialog vorhanden ist, bleibt die bisherige Eingabemöglichkeit erhalten; ein abgebrochener Dialog verändert nichts. Die Auswahl muss anschließend mit **Einstellungen speichern** bestätigt werden.
 
 Vorbereitung und Stapel besitzen getrennte Fortschrittsbalken. Die Darstellung berücksichtigt Tastaturfokus und kleine Fenster; die echte visuelle Prüfung auf Kubuntu bei 800×600 und hoher Schriftgröße bleibt offen.
 
 **Hinweis:** Die Ordnerauswahl ist keine Bestätigung zum Löschen oder Archivieren. Die vorhandenen Datenintegritätsregeln bleiben unverändert.
+
+## Zuverlässige Fortschrittsanzeigen
+
+Vorbereitung, Stapel und das aktuelle Video werden getrennt angezeigt. Das Video zeigt erst nach erfolgreicher Quellarchivierung 100 %, der Stapel nur bei vollständig archivierten vorbereiteten Aufträgen. Fehlgeschlagene oder pausierte Vorgänge bekommen keinen künstlichen Abschluss. Die technische Qualität der Anzeige ist automatisiert geprüft; die visuelle Gesamt-Kubuntu-Abnahme folgt erst am fertigen Kandidaten.
+
+## Prüffähiges Linux-Entwicklungspaket (noch kein Stable-Release)
+
+Ein ZIP mit Startskript, Anleitung und den benötigten Programmdateien erstellen:
+
+```bash
+python3 scripts/build_bundle.py
+```
+
+Das ZIP wird unter `dist/` abgelegt und besitzt ein internes `MANIFEST.json` mit SHA-256-Prüfsummen. Bestehende ZIPs werden nie überschrieben. **Die Stable-Freigabe ist ausdrücklich gesperrt**, bis die Lizenzentscheidung und die abschließende Kubuntu-Abnahme vorliegen. ZIP-Erzeugung und Dateiverifikation sind automatisiert geprüft; ein endgültiger Zielsystem-Installationstest folgt zuletzt.

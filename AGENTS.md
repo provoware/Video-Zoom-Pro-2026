@@ -82,3 +82,24 @@ Eingang -> Vorbereitung -> Wartet/Bereit -> Stapel -> Rendervideo -> MP4-Prüfun
 - To-do-Format: [ ] Datum | Bereich | Aufgabe | prüfen: Nachweis | fertig wenn: Kriterium.
 - Recovery-Key muss Branch, HEAD, Ziel, letzten Befund und nächsten erlaubten Schritt enthalten.
 - Kein Merge oder Stable-Release ohne erfolgreiche Pflichtkontrollen.
+
+## Entwicklungsqualitaet und Aufgaben-Gates – Konsolidierung 2026-11-01
+Dieser Zusatz übernimmt nur fachlich nachweislich passende Regeln aus TOOL_2026_Multi, PROVOWARE_VIDEO_AUTOMATION_2026 und PROVOWARE_DATEIFINDER. Keine fremden Laufzeitabhaengigkeiten oder Architekturzwang.
+
+- **Kubuntu zuletzt:** Entwicklungs-PRs benoetigen passende automatisierte Tests, Medien-/GUI-/Datenvertragssimulationen und echten Main-CI-Nachweis. Erst nach abgeschlossenem Produktumfang, aktualisierten Dokumenten und einem eingefrorenen Releasekandidaten wird **einmal** die reale Gesamt-Kubuntu-Abnahme durchgefuehrt. Fehlende echte Belege bleiben OFFEN.
+- **Befundstatus getrennt halten:** VERMUTET → REPRODUZIERT → BEHOBEN → GETESTET → IN MAIN; „Kubuntu bestaetigt“ ist eine eigenstaendige, spaetere Freigabe. Gruene CI ersetzt keine Zielsystemevidenz.
+- **Beweis- und Herkunftskette:** Anforderungen-ID/Quelle → konkrete Fundstelle → Risiko/Nutzen-Prognose → kleinster Patch → reproduzierbarer Negativtest → exakter Commit/Prueflauf → Ergebnis → offener Rest. Bei fehlender Quelle keine erfundenen Erfolge.
+- **Regression verantwortungsvoll:** neue Fehler erzeugen moeglichst einen dauerhaften Test; Unbekanntes verlangt Gesamtpruefung; kritische Schreiber-, Wiederanlauf- und Archivvertraege werden nie durch Optimierungen ausgeklammert.
+- **Ein Schreiber, eingefrorener Arbeitsumfang:** vor jeder Mutation main/Branch/Head, laufende PRs und erlaubte Dateigrenzen kontrollieren. Ein Arbeitspaket hat ein Hauptziel; Nebenideen in die naechste Aufgabenliste statt still in den Patch.
+- **Keine Fehlerverdeckung:** Keine endlosen Versuche, keine unbeschraenkten externen Befehle, keine unbelegten 100-Prozent-Anzeigen. Jeder relevante Endzustand meldet erfolgreich, pausiert, korrekturbedingt wartend oder Datenpruefung notwendig. Technische Hintergrunddetails duerfen im Log stehen; die Bedienoberflaeche erklaert in einfachem Deutsch „Was? Warum? Geschuetzt? Naechste Handlung?“.
+- **Sichere Testumgebung:** belastende Tests, Datei-Manipulation und kuenstliche Abbrueche ausschliesslich mit synthetischen Daten in isolierten Testordnern. Keine echten Downloads oder persoenliche Dateien fuer CI verwenden.
+- **Bedienung fuer Laien:** Standardaktionen mit grossen Schaltflaechen, deutlichem Fokus, sichtbarer aktueller Handlung, getrennten echten Fortschritten und einem naechsten sicheren Schritt. Nativer Ordnerdialog bevorzugt, Texteingabe als Fallback. Keine Erweiterung des Pakete-Stacks nur fuer Oberflaechenkosmetik.
+- **Wiederaufnahme-Schluessel:** docs/STATUS.md enthaelt aktuellen main-HEAD, offenen Arbeitszweig/PR, letzten unveraenderten Testnachweis, zentrale Blocker, naechsten kleinen Arbeitsschritt und eindeutig den Status der finalen Kubuntu-Abnahme.
+- **Freigaben:** Entwicklungs-CI/Integration, externe Rechte-/Lizenzentscheidung und finale Kubuntu-Endabnahme sind drei getrennte Schranken. Bei Konflikten verhindern Datenintegritaet und Quellschutz die Freigabe.
+
+## Gepruefte Standards-Herkunft
+- TOOL_2026_Multi AGENTS.md: letzte gemeinsame Kubuntu-Pruefung, kleine iterative Patches, strukturierte Fehlerberichte, kein PASS ohne Nachweis.
+- PROVOWARE_VIDEO_AUTOMATION_2026 AGENTS.md: Quellschutz, produktive Fehlergrenzen, terminale Ereignisse und strenge Trennung von Entwicklung/Release.
+- PROVOWARE_DATEIFINDER AGENTS.md: eine schreibende Instanz, SHA/Scope, automatisierte Negativtests und definierter Recovery-Key.
+
+Nur die Prinzipien wurden uebernommen; **kein Codeimport**, keine Tk-Abhaengigkeit, keine VideoBatch-Kopplung.
