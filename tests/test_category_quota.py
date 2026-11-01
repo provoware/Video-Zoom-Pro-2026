@@ -41,7 +41,7 @@ class KategorieUndBegrenzung(unittest.TestCase):
                               "arbeitsordner":str(root/"Arbeit")},testmodus=True)
             self.assertEqual(dienst.bilder_einsortieren(),(0,1))
             self.assertTrue(source.exists())
-            self.assertFalse(list((root/"Arbeit"/"BILDER"/"PROVOWARE").iterdir()))
+            self.assertFalse((root/"Arbeit"/"BILDER"/"PROVOWARE").exists())
 
     def test_quota_test_nutzt_abweichende_einstellungen(self):
         cfg={"cpu_prozent":20, "ram_mb":512}
