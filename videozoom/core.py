@@ -396,6 +396,9 @@ class Workflow:
             old = self.zustand["auftraege"].get(key, {})
             if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG"):
                 continue
+            if old.get("status") == "PAUSIERT" and time.time() < float(old.get("retry_after", 0)):
+                wartet += 1
+                continue
             if not bilder:
                 self.zustand["auftraege"][key] = {"titel": name, "status": "WARTET",
                                                   "hinweis": f"Bilder nach {bilder_ordner} kopieren."}
@@ -540,12 +543,17 @@ class Workflow:
                     self.speichern()
                 done += 1
             except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
-                job["status"] = "PRUEFEN" if "Datenfehler" in str(exc) else "BEREIT"
-                job["hinweis"] = str(exc)[-500:]
-                if job["versuche"] >= 2:
-                    job["status"] = "PRUEFEN"
+                detail = str(exc)[-500:]
+                datenfehler = ("Datenfehler" in detail or "Quelle seit" in detail
+                               or "fehlt oder wurde verändert" in detail)
+                job["status"] = "PRUEFEN" if datenfehler else "PAUSIERT"
+                job["hinweis"] = detail
+                if not datenfehler:
+                    job["retry_after"] = time.time() + min(3600, 30 * 2 ** min(job["versuche"], 6))
                 self.speichern()
-                self.melden(job["titel"] + ": " + job["hinweis"])
+                self.melden(job["titel"] + ": " + job["hinweis"] +
+                            (" – Quelldatei prüfen." if datenfehler else
+                             " – Technischer Fehler, später automatisch erneut prüfen."))
             self.fortschreiben("stapel", index / max(1,len(ready)) * 100,
                                titel=job["titel"], status=job["status"])
         self.melden(f"Stapel: {done} Videos berechnet; {len(ready)-done} noch offen.")
