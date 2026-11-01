@@ -4,8 +4,8 @@
 
 ## Bestätigter Hauptzweig
 - Repository: `provoware/Video-Zoom-Pro-2026`.
-- Letzter überprüfter main-HEAD: `c1f67a460e17eaa11ab88999582a05a3d9399e44`.
-- Tatsächlich bestandener Main-CI: https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41354636904 (**82/82 Tests**).
+- Letzter überprüfter main-HEAD: `e9e4c4fa79eb25e17e623a645bf32b99a78d3bb4`.
+- Tatsächlich bestandener Main-CI: https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41355104172 (**82/82 Tests**).
 - Die Inhalte der Entwurfs-PRs #2–#6 wurden über #8 integriert; #9 (Kubuntu-Prüfhelfer) ebenfalls.
 - **Kein Stable-Release** und **keine echte Kubuntu-Abnahme**.
 
@@ -26,3 +26,9 @@
 - Offen gebliebenes wird in `docs/TODO.md` fortlaufend geführt.
 
 **Abnahmeordnung:** Entwicklungsfehler und Dokumentationsarbeit → gemeinsamer grüner Main-Stand → eingefrorener Kandidat → **zuletzt** echte Kubuntu-Abnahme → erst dann Stable-Entscheidung.
+
+## Dokumentations-Abschluss (2026-11-01)
+- AGENTS, TODO, STATUS, README, TESTPLAN und CHANGELOG durch PR #17 in main übernommen und GitHub-CI nachgeprüft.
+- Historische Entwurfs-PRs #11/#12/#13 sind mit Verweis auf #17/#14 geschlossen; funktional kein Duplikat.
+- Letzte offenen Aufgaben vor Kubuntu: technische Fehlerregel-/Wiederanlauf-Eskalation, Rechts-/Lizenzentscheidung und entpackter Entwicklungskandidaten-Starttest.
+- Finale echte Kubuntu-Abnahme bleibt als **letzter** Schritt; bisher nicht durchgeführt.
