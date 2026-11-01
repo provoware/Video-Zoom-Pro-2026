@@ -46,14 +46,16 @@
 
 ## P1 – Visueller Komfort durch moderne Medienwerkzeuge (NI-20261102-01)
 
+**Implementiert:** [PR #28](https://github.com/provoware/Video-Zoom-Pro-2026/pull/28), auf `db5f600963df2a57dd2a983bb541adbcd9ba3e8d` **108 Python-/Medien-/Sicherheitstests + 20 Browser-Layoutprüfungen** erfolgreich. In `main` übernommen: `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`. Main-Nachprüfung: [GitHub #41364010012](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41364010012). Keine neue Laufzeitabhängigkeit.
+
 **Quelle:** Nutzerauftrag 02.11.2026: moderne Medienoberflächen im Internet vergleichen; nur attraktive und hilfreiche Elemente mit geringem Implementierungsaufwand integrieren. **Analyse:** `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`. Die Entscheidungsmatrix schützt vor Funktionsausweitung und Fremdcodeimport.
 
 - [x] 2026-11-02 | Recherche | Fünf ähnliche Oberflächen auf Struktur, Lesbarkeit, Auftragsfeedback und Aufwand vergleichen | prüfen: offizielle Produkt- und Dokumentationsquellen, Nutzen-/Konfliktmatrix | fertig wenn: übertragbare und ausgeschlossene Muster nachvollziehbar sind.
-- [ ] 2026-11-02 | Auftragsübersicht | Fünf kleine Statuskacheln aus bestehenden Auftragszahlen, ohne neue API | prüfen: echte Backend-Statusnamen, kein falscher Erfolg, 800×600 und vier Themes | fertig wenn: Bereit/Warten/Läuft/Archiviert/Prüfen ohne Datenerfindung sichtbar sind.
-- [ ] 2026-11-02 | Formate | Fünf bestehende Videoformate mit ihrer Bildgröße und typischem Verwendungszweck erklären | prüfen: Änderungen der Auswahl und gespeicherte Werte, keine Renderkonfigurationsänderung | fertig wenn: vor dem Start ein verständlicher Format-Hinweis erscheint.
-- [ ] 2026-11-02 | Details | Diagnose und Protokolle als native aufklappbare Bereiche, ohne Datenverlust | prüfen: Tastatur, Fokus, sichere Textausgabe, Systemprüfung unabhängig vom Aufklappen | fertig wenn: bei 800×600 die Hauptabläufe sichtbarer und alle Details erreichbar sind.
-- [ ] 2026-11-02 | Fortschrittsübersicht | Vorhandene drei Balken mit lesbaren Zahlen verknüpfen und zuverlässig synchron halten | prüfen: fehlende Werte, Ober-/Untergrenzen, keine fingierten 100% | fertig wenn: Balken und Prozentzahlen immer übereinstimmen.
-- [ ] 2026-11-02 | Validierung | Gesamttests, Chromium-Matrix und aktualisierte README/AGENTS/TODO/STATUS auf identischem Commit prüfen | prüfen: Sicherheitsregression, keine neue Laufzeit, keine neuen CSS-Überläufe | fertig wenn: gesamter Entwicklungsstand CI-grün, aber Kubuntu-Freigabe weiterhin OFFEN.
+- [x] 2026-11-02 | Auftragsübersicht | Fünf kleine Statuskacheln aus bestehenden Auftragszahlen, ohne neue API | prüfen: echte Backend-Statusnamen, kein falscher Erfolg, 800×600 und vier Themes | fertig wenn: Bereit/Warten/Läuft/Archiviert/Prüfen ohne Datenerfindung sichtbar sind.
+- [x] 2026-11-02 | Formate | Fünf bestehende Videoformate mit ihrer Bildgröße und typischem Verwendungszweck erklären | prüfen: Änderungen der Auswahl und gespeicherte Werte, keine Renderkonfigurationsänderung | fertig wenn: vor dem Start ein verständlicher Format-Hinweis erscheint.
+- [x] 2026-11-02 | Details | Diagnose und Protokolle als native aufklappbare Bereiche, ohne Datenverlust | prüfen: Tastatur, Fokus, sichere Textausgabe, Systemprüfung unabhängig vom Aufklappen | fertig wenn: bei 800×600 die Hauptabläufe sichtbarer und alle Details erreichbar sind.
+- [x] 2026-11-02 | Fortschrittsübersicht | Vorhandene drei Balken mit lesbaren Zahlen verknüpfen und zuverlässig synchron halten | prüfen: fehlende Werte, Ober-/Untergrenzen, keine fingierten 100% | fertig wenn: Balken und Prozentzahlen immer übereinstimmen.
+- [x] 2026-11-02 | Validierung | Gesamttests, Chromium-Matrix und aktualisierte README/AGENTS/TODO/STATUS auf identischem Commit prüfen | prüfen: Sicherheitsregression, keine neue Laufzeit, keine neuen CSS-Überläufe | fertig wenn: gesamter Entwicklungsstand CI-grün, aber Kubuntu-Freigabe weiterhin OFFEN.
 
 ## FINAL – Kubuntu-Abnahme erst nach allen vorherigen Gates
 - [ ] 2026-11-01 | Kubuntu-Endabnahme | 800×600, 100/125/150/200 %, Tastatur, echte Dateidialoge, 30%-CPU-/RAM-cgroup-Messung und Langzeitbetrieb | prüfen: Zielrechner, Screenshots, JSON-Messbericht, Originalschutz, Release-SHA | fertig wenn: alle realen Belege auf eingefrorenem Kandidaten positiv und Stable-Entscheidung dokumentiert.

@@ -37,3 +37,10 @@
 Recherche: Shutter Encoder (Renderliste/Status), HandBrake (Warteschlange/Format), Adobe Media Encoder (Auftrags-/Encodingtrennung), LosslessCut (kompakte Details), CapCut (Einstellungsstruktur). Quellen, Aufwands-/Konfliktmatrix und ausdrücklich ausgeschlossene Elemente in `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`.
 
 Vorgesehene kleine UI-Anpassungen: fünf Auftragskacheln aus existierendem `GET /status`, lesbare Formatabmessungen, native aufklappbare Diagnose/Logs, Textwerte an drei Fortschrittsbalken und dezente Flächen. Keine Änderungen am Renderer oder der Archivierung. **Prüfstatus pro Patch anhand GitHub-Run und SHA aktualisieren; nicht mit Stable oder der persönlichen Kubuntu-Endabnahme verwechseln.**
+
+## 02.11.2026 – Recherchebasierte UI-Ergänzung integriert (#28)
+
+- Neue kompakte Statuskacheln für `BEREIT`, `WARTET`, `LAEUFT`, `ARCHIVIERT`, `PRUEFEN/ARCHIV_WARTET` ausschließlich aus bestehenden lokalen Statusdaten.
+- Format-Hilfetext für fünf Formate, vier native `details`-Bereiche und drei lesbare Prozentwerte; Ordnerfelder auf kleinen Karten breiter.
+- 108 Python-/Medien-/Negativtests und 20 Chromium-Layoutfälle auf PR-HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d` erfolgreich; alle Eingabefelder im Browser-Layout mindestens 333 Pixel breit.
+- Integration nach `main` `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`; [Main-CI #41364010012](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41364010012). Keine neue Runtime; Lizenzentscheidung und echte Kubuntu-Endabnahme **offen**.
