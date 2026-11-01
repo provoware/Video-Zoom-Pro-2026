@@ -51,3 +51,11 @@ Testdateien erzeugen: python3 tests/fixtures/generieren.py.
 Tests starten: python3 -m unittest discover -s tests -v.
 
 Für das öffentliche Repository wurde bewusst noch keine zusätzliche Veröffentlichungslizenz festgelegt; diese Entscheidung steht aus.
+
+## Bedienung ohne Texteingabe – grafische Ordnerauswahl (Entwicklungszweig)
+
+Neben den Feldern für Downloads und Arbeitsordner gibt es eine Schaltfläche **„📁 Ordner wählen“**. Unter KDE wird ein vorhandenes `kdialog` verwendet, andernfalls `zenity`. Beide werden ausschließlich lokal und ohne Shell-Auswertung gestartet. Es wird **kein Tk** installiert oder geladen. Falls kein Desktop-Dialog vorhanden ist, bleibt die bisherige Eingabemöglichkeit erhalten; ein abgebrochener Dialog verändert nichts. Die Auswahl muss anschließend mit **Einstellungen speichern** bestätigt werden.
+
+Vorbereitung und Stapel besitzen getrennte Fortschrittsbalken. Die Darstellung berücksichtigt Tastaturfokus und kleine Fenster; die echte visuelle Prüfung auf Kubuntu bei 800×600 und hoher Schriftgröße bleibt offen.
+
+**Hinweis:** Die Ordnerauswahl ist keine Bestätigung zum Löschen oder Archivieren. Die vorhandenen Datenintegritätsregeln bleiben unverändert.

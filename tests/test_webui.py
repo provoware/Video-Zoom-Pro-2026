@@ -1,17 +1,20 @@
 """Echte localhost-HTTP-Prüfungen für den Tk-freien Browserzugriff."""
 from __future__ import annotations
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
 import threading
 import unittest
+from subprocess import CompletedProcess
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from videozoom.core import konfiguration
-from videozoom.webui import starten
+from videozoom.webui import starten, ordner_waehlen
 
 
 class BrowserSicherheit(unittest.TestCase):
@@ -54,6 +57,13 @@ class BrowserSicherheit(unittest.TestCase):
                     with self.assertRaises(HTTPError) as context:
                         urlopen(req,timeout=4)
                     self.assertEqual(context.exception.code,403)
+                with patch("videozoom.webui.ordner_waehlen", return_value=str(base)) as dialog:
+                    req=Request(root+"/ordnerwahl?"+token,data=b'{"feld":"downloads"}',
+                                headers={"Content-Type":"application/json"},method="POST")
+                    with urlopen(req,timeout=4) as response:
+                        selected=json.loads(response.read())
+                        self.assertEqual(selected["pfad"],str(base))
+                    dialog.assert_called_once()
                 req=Request(root+"/aktion?"+token,data=b'{"mode":"stop"}',
                             headers={"Content-Type":"application/json"},method="POST")
                 with urlopen(req,timeout=4) as response:
@@ -62,6 +72,43 @@ class BrowserSicherheit(unittest.TestCase):
                 refs["server"].shutdown()
                 thread.join(timeout=6)
                 self.assertFalse(thread.is_alive())
+
+
+class DialogOhneTk(unittest.TestCase):
+    def test_kde_ordnerauswahl_liefert_validierten_pfad(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch.dict(os.environ, {"DISPLAY": ":0"}), \
+             patch("videozoom.webui.shutil.which", side_effect=lambda n: "/usr/bin/kdialog" if n=="kdialog" else None), \
+             patch("videozoom.webui.subprocess.run", return_value=CompletedProcess([], 0, tmp+"\n")) as run:
+            self.assertEqual(ordner_waehlen("downloads",tmp),tmp)
+            self.assertEqual(run.call_args.args[0][0],"kdialog")
+            self.assertFalse(run.call_args.kwargs.get("shell", False))
+
+    def test_abbruch_bewahrt_auswahl(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+             patch.dict(os.environ, {"DISPLAY": ":0"}), \
+             patch("videozoom.webui.shutil.which", return_value="/usr/bin/kdialog"), \
+             patch("videozoom.webui.subprocess.run", return_value=CompletedProcess([], 1, "")):
+            self.assertIsNone(ordner_waehlen("arbeitsordner",tmp))
+
+    def test_unsicherer_symlink_wird_nicht_uebernommen(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ziel=Path(tmp)/"ordner"
+            ziel.mkdir()
+            link=Path(tmp)/"verknuepft"
+            link.symlink_to(ziel)
+            with patch.dict(os.environ, {"DISPLAY": ":0"}), \
+                 patch("videozoom.webui.shutil.which", return_value="/usr/bin/kdialog"), \
+                 patch("videozoom.webui.subprocess.run", return_value=CompletedProcess([], 0, str(link)+"\n")):
+                with self.assertRaisesRegex(ValueError,"unsicher"):
+                    ordner_waehlen("downloads",tmp)
+
+    def test_ungueltiger_dialogbereich_und_fehler_ohne_desktop(self):
+        with self.assertRaises(ValueError):
+            ordner_waehlen("systembefehl","/")
+        with patch.dict(os.environ,{},clear=True):
+            with self.assertRaisesRegex(RuntimeError,"Kein grafischer Desktop"):
+                ordner_waehlen("downloads","/")
 
 
 if __name__=="__main__":

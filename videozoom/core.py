@@ -245,24 +245,69 @@ def kopieren_und_archivieren(quelle: Path, ziel: Path, hashwert: str) -> None:
     if pruefsumme(quelle) != hashwert:
         raise RuntimeError("Quelle seit Vorbereitung verändert.")
     ziel.parent.mkdir(parents=True, exist_ok=True)
+    tmp = ziel.with_name("." + ziel.name + "." + hashwert[:12] + ".teil")
+    if tmp.is_symlink():
+        raise RuntimeError("Unsichere Archiv-Zwischenkopie – Quelle bleibt erhalten.")
     if ziel.exists() or ziel.is_symlink():
         if not regulaer(ziel) or pruefsumme(ziel) != hashwert:
             raise RuntimeError("Archiv-Zielkonflikt – keine Datei überschrieben.")
+        # Nach Crash zwischen Veröffentlichung und Aufräumen: nur identische
+        # Zwischenkopien entfernen, die bestätigte Archivdatei nie ändern.
+        if tmp.exists() and regulaer(tmp) and pruefsumme(tmp) == hashwert:
+            tmp.unlink()
     else:
-        tmp = ziel.with_name("." + ziel.name + "." + hashwert[:12] + ".teil")
-        with quelle.open("rb") as src, tmp.open("xb") as dest:
-            shutil.copyfileobj(src, dest, 1024 * 1024)
-            dest.flush()
-            os.fsync(dest.fileno())
-        try:
-            if pruefsumme(tmp) != hashwert:
-                raise RuntimeError("Archivkopie fehlerhaft.")
-            os.link(tmp, ziel, follow_symlinks=False)
-        finally:
-            tmp.unlink(missing_ok=True)
+        if tmp.exists() and not regulaer(tmp):
+            raise RuntimeError("Unsichere Archiv-Zwischenkopie – Quelle bleibt erhalten.")
+        if tmp.exists() and pruefsumme(tmp) != hashwert:
+            # Eine unterbrochene Teilkopie niemals still überschreiben.
+            for nummer in range(1, 1001):
+                sicherung = tmp.with_name(tmp.name + f".abbruch-{nummer}")
+                try:
+                    os.link(tmp, sicherung, follow_symlinks=False)
+                    break
+                except FileExistsError:
+                    continue
+            else:
+                raise RuntimeError("Kein sicherer Ablageplatz für die Teilkopie.")
+            tmp.unlink()
+        if not tmp.exists():
+            with quelle.open("rb") as src, tmp.open("xb") as dest:
+                shutil.copyfileobj(src, dest, 1024 * 1024)
+                dest.flush()
+                os.fsync(dest.fileno())
+        if pruefsumme(tmp) != hashwert:
+            raise RuntimeError("Archiv-Zwischenkopie fehlerhaft; Original bleibt erhalten.")
+        os.link(tmp, ziel, follow_symlinks=False)
+        tmp.unlink()
     if pruefsumme(quelle) != hashwert:
         raise RuntimeError("Quelle hat sich während der Archivierung verändert.")
     quelle.unlink()
+
+
+def teil_sichern(pfad: Path) -> Path | None:
+    """Abgebrochene eigene Renderdatei ohne Überschreiben sichern."""
+    if not pfad.exists() and not pfad.is_symlink():
+        return None
+    if not regulaer(pfad):
+        raise RuntimeError("Unsichere temporäre Videodatei; keine automatische Änderung.")
+    for nummer in range(1, 1001):
+        ziel = pfad.with_name(pfad.name + f".abbruch-{nummer}")
+        try:
+            os.link(pfad, ziel, follow_symlinks=False)
+        except FileExistsError:
+            continue
+        pfad.unlink()
+        return ziel
+    raise RuntimeError("Kein freier Name für die unterbrochene Videodatei.")
+
+
+def video_gueltig(pfad: Path, laenge: float) -> bool:
+    if not regulaer(pfad):
+        return False
+    info = medieninfo(pfad)
+    spuren = {s.get("codec_type") for s in info.get("streams", [])}
+    videodauer = float(info.get("format", {}).get("duration", 0))
+    return {"video", "audio"}.issubset(spuren) and abs(videodauer - laenge) <= max(1.2, laenge * .015)
 
 
 class Workflow:
@@ -384,8 +429,10 @@ class Workflow:
                             if p.suffix.lower() in BILDTYPEN and stabil(p))
             key = hashlib.sha256(str(pfad).encode()).hexdigest()[:24]
             old = self.zustand["auftraege"].get(key, {})
-            if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG"):
+            if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG", "LAEUFT"):
                 continue
+            if old.get("status") == "PAUSIERT" and old.get("render_hash"):
+                continue  # Das verifizierte Video erst im Stapel sicher wiederaufnehmen.
             if old.get("status") == "PAUSIERT" and time.time() < float(old.get("retry_after", 0)):
                 wartet += 1
                 continue
@@ -412,6 +459,59 @@ class Workflow:
             self.speichern()
         self.melden(f"Vorbereitung: {bereit} bereit, {wartet} warten.")
         return bereit, wartet
+
+    def _recover_inflight(self):
+        """Nicht fertig protokollierte Videos anhand gesicherter Daten fortsetzen."""
+        for key, job in self.zustand["auftraege"].items():
+            if job.get("status") not in ("LAEUFT", "PAUSIERT") or (
+                job.get("status") == "PAUSIERT" and not job.get("render_hash")
+            ):
+                continue
+            name = job.get("video_ziel")
+            if not name:
+                job["status"] = "PRUEFEN"
+                job["hinweis"] = "Alter Auftrag ohne Ausgabeverweis: vorhandene Videos prüfen."
+                self.speichern()
+                continue
+            ziel = Path(name)
+            if ziel.parent != self.ordner / "FERTIG" or ziel.suffix != ".mp4":
+                job["status"] = "PRUEFEN"
+                job["hinweis"] = "Unsicherer Video-Zielpfad im Auftragsjournal."
+                self.speichern()
+                continue
+            teil = ziel.with_name(ziel.stem + ".teil.mp4")
+            erwartet = job.get("render_hash")
+            try:
+                if ziel.exists() or ziel.is_symlink():
+                    if not erwartet or not regulaer(ziel) or pruefsumme(ziel) != erwartet:
+                        raise RuntimeError("Datenfehler: Video nicht eindeutig zuordenbar.")
+                    if not video_gueltig(ziel, job["laenge"]):
+                        raise RuntimeError("Datenfehler: Wiedergefundenes Video ungültig.")
+                elif erwartet:
+                    if not regulaer(teil) or pruefsumme(teil) != erwartet:
+                        raise RuntimeError("Datenfehler: Bestätigte Videodatei fehlt oder wurde verändert.")
+                    if not video_gueltig(teil, job["laenge"]):
+                        raise RuntimeError("Datenfehler: Fertiger Videoteil beschädigt.")
+                    os.link(teil, ziel, follow_symlinks=False)
+                    teil.unlink()
+                else:
+                    teil_sichern(teil)
+                    job.pop("render_hash", None)
+                    job["status"] = "BEREIT"
+                    self.melden(job["titel"] + ": unterbrochene Berechnung wird neu gestartet.")
+                    self.speichern()
+                    continue
+                job["video"] = str(ziel)
+                job["video_hash"] = erwartet
+                job["status"] = "FERTIG"
+                self.speichern()
+                self.melden(job["titel"] + ": bereits fertig berechnetes Video wiedergefunden.")
+            except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
+                job["status"] = "PRUEFEN" if "Datenfehler" in str(exc) else "PAUSIERT"
+                job["hinweis"] = str(exc)[-400:]
+                job["retry_after"] = time.time() + 120
+                self.speichern()
+                self.melden(job["titel"] + ": Wiederaufnahme pausiert: " + job["hinweis"])
 
     def _archive(self, key: str, job: dict):
         if not job.get("video"):
@@ -443,6 +543,8 @@ class Workflow:
                      for i in range(10000) if not (zielordner / (zielbasis + ("" if i == 0 else "_" + str(i)) + ".mp4")).exists()), None)
         if ziel is None:
             raise RuntimeError("Kein sicherer Ausgabename mehr verfügbar.")
+        job["video_ziel"] = str(ziel)
+        self.speichern()  # Vor dem Rendern: Wiederaufnahme kennt den vorgesehenen Zielpfad.
         teil = ziel.with_name(ziel.stem + ".teil.mp4")
         if teil.exists() or teil.is_symlink():
             raise RuntimeError("Eine unvollständige Videodatei liegt bereits vor.")
@@ -481,24 +583,25 @@ class Workflow:
                 teil.unlink(missing_ok=True)
                 self.melden("Übergang inkompatibel, sichere Standardblende gewählt.")
                 starten(weich=True)
-            info = medieninfo(teil)
-            streams = info.get("streams", [])
-            duration = float(info.get("format", {}).get("duration", 0))
-            if not {"video", "audio"}.issubset({s.get("codec_type") for s in streams}):
-                raise RuntimeError("Ergebnis enthält nicht Bild und Ton.")
-            if abs(duration - job["laenge"]) > max(1.2, job["laenge"] * .015):
-                raise RuntimeError("Videolänge und Songlänge passen nicht.")
+            if not video_gueltig(teil, job["laenge"]):
+                raise RuntimeError("Ergebnis enthält nicht Bild und Ton in passender Länge.")
+            job["render_hash"] = pruefsumme(teil)
+            self.speichern()  # Verifizierte Datei vor ihrer Veröffentlichung beweissicher markieren.
             # Atomisch und kollisionssicher; bestehende Datei niemals überschreiben.
             os.link(teil, ziel, follow_symlinks=False)
             teil.unlink()
             return ziel
         except Exception:
-            if teil.exists():
-                teil.rename(teil.with_name(teil.name + ".fehler"))
+            if teil.exists() or teil.is_symlink():
+                # Verifizierte MP4 ist wiederaufnehmbar; keine voreilige Quarantaene.
+                if not (job.get("render_hash") and regulaer(teil)
+                        and pruefsumme(teil) == job["render_hash"]):
+                    teil_sichern(teil)
             raise
 
     def stapel(self):
         from .diagnose import scope_verfuegbar
+        self._recover_inflight()
         jobs = self.zustand["auftraege"]
         for key, job in list(jobs.items()):
             if job.get("status") in ("FERTIG", "ARCHIV_WARTET"):
