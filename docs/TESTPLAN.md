@@ -46,3 +46,6 @@ Die Medien-Haertetests nutzen ausdruecklich den internen **Testmodus** ohne syst
 - **82/82 Tests** auf main `c1f67a460e17eaa11ab88999582a05a3d9399e44`, GitHub-Lauf https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41354636904 erfolgreich.
 
 Weiterhin offen: echte Kubuntu-/KDE-Sichtprüfung, reales cgroup-Verhalten unter Songlast, Langzeitbetrieb auf Zielrechner und der Rechts-/Stable-Gate. Der kontrollierte Testmodus ist kein Ersatz für diese Nachweise.
+
+## Fehler-Eskalation und automatische Grenzen (01.11.2026)
+Wiederholbare Renderfehler werden maximal dreimal automatisch versucht. Fehlgeschlagene Archivschritte werden maximal dreimal versucht; zwischen Wiederholungen liegt eine ansteigende Wartezeit. Die erste Archivierung zählt als erster Versuch. Danach bleibt der Auftrag mit verständlichem Status **PRUEFEN** erhalten, ohne Originaldaten zu verändern. Der restliche Stapel kann weiterlaufen. Diese Regeln werden durch `tests/test_retry_limits.py` mit Negativfällen überprüft. Der Status ist keine automatische Reparaturgarantie; manuelle Wiederfreigabe darf nur nach Ursacheprüfung erfolgen.
