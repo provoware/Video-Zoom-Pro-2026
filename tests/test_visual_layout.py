@@ -19,6 +19,8 @@ class BrowserFixture(unittest.TestCase):
                     self.assertIn(f'document.body.dataset.theme = "{theme}"', content)
                     self.assertIn("document.documentElement.style.zoom = " + str(zoom/100), content)
                     self.assertNotIn("setInterval(status", content)
+                    self.assertIn("option.textContent = name", content)
+                    self.assertIn("select.appendChild(option)", content)
 
     def test_ungueltiger_stil_wird_abgewiesen(self):
         with self.assertRaises(ValueError):

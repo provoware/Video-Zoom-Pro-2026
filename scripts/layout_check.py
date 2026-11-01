@@ -36,6 +36,23 @@ def html_fixture(theme: str, zoom: int) -> str:
     # Der Screenshot enthält nur statisches HTML. Es werden KEINE lokalen
     # Web-API-Aufrufe oder Daten aus einem echten Songprojekt ausgeführt.
     fixture = r"""<script>
+const beispiele = {
+  theme: ['cyan', 'violett', 'gruen', 'orange'],
+  format: ['BREI', 'HOCH', 'QUAD', 'KLAS', '4K'],
+  kategorie: ['PROVOWARE', 'CODING', 'THEMA']
+};
+for (const [id, choices] of Object.entries(beispiele)) {
+  const select = document.getElementById(id);
+  for (const name of choices) {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    select.appendChild(option);
+  }
+}
+document.getElementById('theme').value = __THEME__;
+document.getElementById('format').value = 'BREI';
+document.getElementById('kategorie').value = 'PROVOWARE';
 document.body.dataset.theme = __THEME__;
 document.documentElement.style.zoom = __ZOOM__;
 window.addEventListener('load', () => {

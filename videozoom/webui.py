@@ -75,7 +75,7 @@ small{color:var(--muted)}
 .header-tools label{margin:0;font-size:.93rem}
 .header-tools select{width:auto;min-width:155px;margin:0}
 .phase-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px}
-.phase-nav a{flex:1 1 170px;padding:10px 12px;min-height:44px;border:1px solid rgba(var(--accent-rgb),.53);border-radius:10px;background:rgba(var(--accent-rgb),.08);color:var(--text);text-align:center;font-weight:700;text-decoration:none}
+.phase-nav a{flex:1 1 150px;padding:9px 8px;min-height:44px;border:1px solid rgba(var(--accent-rgb),.53);border-radius:10px;background:rgba(var(--accent-rgb),.08);color:var(--text);text-align:center;font-size:.87rem;font-weight:700;text-decoration:none}
 .phase-nav a:hover{background:rgba(var(--accent-rgb),.18)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:12px;margin:12px 0}
 article{min-width:0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(var(--accent-rgb),.045),transparent 40%),var(--panel);padding:18px;box-shadow:inset 0 0 18px rgba(var(--accent-rgb),.04)}
@@ -94,7 +94,18 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 #hinweis:not(:empty){padding:9px 12px;border-left:4px solid var(--accent);background:var(--panel);border-radius:8px}
 #hinweis:empty{display:none}
 @media(max-width:570px){.ordner{grid-template-columns:1fr}.ordner button{width:100%}.phase-nav a{flex-basis:calc(50% - 8px)}}
-@media(max-width:520px){article{padding:12px}.app-header{padding:12px}.header-tools{width:100%}.header-tools select{flex:1}}
+@media(max-width:520px){
+ article{padding:12px}
+ .app-header{padding:8px}
+ .app-brand small{display:none}
+ .app-header h1{font-size:1.25rem;line-height:1.13}
+ .header-tools{width:100%;gap:6px}
+ .header-tools label{font-size:.85rem}
+ .header-tools select{flex:1;min-width:0;min-height:40px;padding:4px;font-size:.91rem}
+ #status{padding:4px 8px;font-size:.91rem}
+ .phase-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0}
+ .phase-nav a{min-width:0;min-height:42px;padding:5px;font-size:.84rem}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 </style></head><body>
 <header class="app-header">
