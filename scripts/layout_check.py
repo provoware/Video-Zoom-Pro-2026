@@ -122,7 +122,9 @@ def pruefen(ziel: Path) -> dict:
     messungen = []
     with tempfile.TemporaryDirectory(prefix="videozoom-visual-") as temp:
         root = Path(temp)
-        for width, height, zoom in ((800, 600, 100), (800, 600, 200), (1280, 720, 100)):
+        for width, height, zoom in ((800, 600, 100), (800, 600, 125),
+                                    (800, 600, 150), (800, 600, 200),
+                                    (1280, 720, 100)):
             for theme in ("cyan", "violett", "gruen", "orange"):
                 htmlfile = root / f"fixture_{width}_{height}_{zoom}_{theme}.html"
                 htmlfile.write_text(html_fixture(theme, zoom), encoding="utf-8")
