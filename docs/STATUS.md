@@ -21,3 +21,13 @@
 - Quellprojekt VideoBatch bleibt unberührt; keine Tk- oder Cloud-Abhängigkeit.
 - `docs/TODO.md` = einziger verbindlicher offener Aufgabenplan; `docs/TESTPLAN.md` = Prüfanweisung.
 - Geprüftes Ergebnis ≠ Stable. Bis zur Kubuntu-Endabnahme kein Release als fertig kennzeichnen.
+
+## 01.11.2026 – DateiFinder-Designtransfer (Stand der Entwicklung, nicht Stable)
+
+- Referenz: DateiFinder main `9cc035240ece8a32ffd0b53774754e77ade6d422`. Nur Layout-/Qualitätsprinzipien übertragen, kein CSS-Import, kein Tauri/Rust oder Tk.
+- #22: zwei Mermaid-Diagramme und Design-Konfliktmatrix versioniert; `AGENTS.md`, TODO, README und Anforderungen ergänzt.
+- #23: vier Farbschemata mit Whitelist/Persistenz, Kopfzeile und phasenbezogener Navigation; CI erfolgreich.
+- #24: reproduzierbare Chrome/Chromium-Layoutkontrollen und Screenshot-Artefakte; CI erfolgreich.
+- #25: 800px-/200%-Kopf kompakter, kurze Bedienbezeichnungen, Testdaten in Dropdowns und Prüfung auf abgeschnittenen Navigationstext. Auf PR-HEAD `013f3f54f0023320ba4538227c016424917ca61d` **100/100 Python-Tests + 20 Browserproben** erfolgreich; Main-Nachkontrolle nach Merge separat prüfen.
+- **Noch offen vor letzter Kubuntu-Abnahme:** vollständige Kontrast-/Tastaturprüfung, optional einklappbare Details und Pixel-Referenzvergleich; Lizenz/Rechte und finale Release-SHA.
+- **Weiterhin kein Stable.** Browser-Vortests verwenden CSS-Zoomsimulation, echte Kubuntu- und Nutzer-Sichtabnahme bleibt zuletzt.

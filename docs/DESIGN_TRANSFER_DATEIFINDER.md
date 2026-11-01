@@ -65,3 +65,13 @@ Die versionierte Referenz liegt dort unter `tests/visual/dateifinder.spec.ts-sna
 ### Gesonderte Beobachtung (kein unbestätigter Pass)
 
 Die bisherige Oberflächendarstellung aus dem Quellcode zeigt bei 800 px Breite zwei hohe Karten plus Diagnose/Protokoll unterhalb. Bedienbar per vertikalem Scrollen, aber wenig Übersicht beim Wechseln zwischen Phasen; deswegen sind kompakte Kopfzeile, Sprunganker und Log-Detailansichten zuerst nutzbringend. Genau dies muss nach der Änderung im Browser geprüft werden.
+
+## Realisierter Transfer und Restarbeiten (01.11.2026)
+
+**Umgesetzt und auf Entwicklungszweigen geprüft:**
+- #22: beide fachlichen Diagramme, Referenzanalyse, Konfliktmatrix.
+- #23: eigenständige Farbtokens in vier Themes, Speicherung, lesbarer Kopf und Sprungnavigation.
+- #24: echter Chromium-Prüflauf ohne Nutzerdaten, Screenshots/Messbericht als SHA-bezogenes CI-Artefakt.
+- #25: kurzer Navigationswortlaut und kompakte Kopfzeile; zusätzlicher Test gegen textliche Überläufe. Prüf-HEAD `013f3f54f0023320ba4538227c016424917ca61d`, **100 Python-Tests + 20 Browser-Layoutfälle** erfolgreich.
+
+**Nicht als abgeschlossen behaupten:** endgültiger UI-Feinschliff, automatischer Pixelvergleich, Vollprüfung des tatsächlichen nativen Browser-Zooms, 800×600-Kubuntu/Tastatur-Endabnahme. Die Browser-Fixture nutzt CSS-Zoom und GitHub-Runner. Weder VideoBatch noch produktive Originale werden verändert. Das endgültige Release-Gate bleibt gesperrt.

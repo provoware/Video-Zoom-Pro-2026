@@ -26,14 +26,19 @@
 - [x] 2026-11-01 | Ordnerauswahl | Tk-freie lokale KDE-/Zenity-Ordnerdialoge implementieren | prüfen: tests/test_webui.py | fertig wenn: API- und Logiktests gruen; reale Desktop-Sichtprüfung folgt zuletzt.
 
 
-## P1 – DateiFinder-Designtransfer (vor der letzten Kubuntu-Abnahme)
+## P1 – DateiFinder-Designtransfer (NI-20261101-01, vor der letzten Kubuntu-Abnahme)
+
+**Quelle:** Nutzerauftrag im Chat vom 01.11.2026: beiden Funktionsdiagramme versionieren, Layout/Design des DateiFinders prüfen und konfliktfreie Muster übernehmen. **Abhängigkeiten:** CODE-Vergleich und Datenintegrität vor Gestaltung, Browser-/Regressionstest vor Integration, Lizenz/Release vor Kubuntu. Kein Re-Import von Tauri/Rust.
 
 - [x] 2026-11-01 | Dokumentation | Zwei Funktionsgrafiken als versionierte, in GitHub direkt sichtbare Mermaid-Diagramme übernehmen | prüfen: `docs/diagramme/01_einfacher_prozess.md`, `02_funktionsfluss_technik.md` mit Python-Funktionen abgleichen | fertig wenn: Diagramme fachlich konsistent mit main sind.
 - [x] 2026-11-01 | Designanalyse | DateiFinder-Referenzlayout, Farben, Bedienmuster und Qualitätssicherung gegen Video-Zoom-Pro-Architektur abgleichen | prüfen: `docs/DESIGN_TRANSFER_DATEIFINDER.md` inklusive Konfliktmatrix | fertig wenn: Übertragbares von Tauri-/Rust-/Mini-Layout-Abhängigkeiten getrennt ist.
-- [ ] 2026-11-01 | Farbsystem | Eigenständige CSS-Tokens und vier Dateifinder-inspirierte Akzentthemen in Video Zoom Pro implementieren | prüfen: gespeicherte Themes, Kontrast, Keyboard, keine Codekopie | fertig wenn: alle vier Varianten ohne Farb-/Lesbarkeitsfehler nutzbar sind.
-- [ ] 2026-11-01 | Layout | Header, Phasenführung, Hauptaktionen und scrollbare Detailbereiche verbessern, ohne Medienlogik zu ändern | prüfen: 800×600/100–200%, 1280×720, keine horizontale Scrollleiste | fertig wenn: wesentliche Schaltflächen erreichbar und Zustände verständlich bleiben.
+- [x] 2026-11-01 | Farbsystem | Vier eigene Themen Cyan, Violett, Grün, Orange mit sicherer dauerhafter Auswahl | prüfen: PR #23, Whitelist-/Persistenztests, CI + Browserproben | fertig wenn: Farben/Backend-Einstellungen ohne Tauri/Tk-Code und ohne neue Laufzeitabhängigkeit funktionieren.
+- [ ] 2026-11-01 | Kontraste | Alle Interaktionszustände (inkl. Fehler/disabled/Fokus) nach WCAG AA und Farbblindheit untersuchen | prüfen: kontrastbasierte Regression + dokumentierte Sichtprobe | fertig wenn: kontrastkritische Zustände auch ohne Farbe lesbar bleiben.
+- [x] 2026-11-01 | Kopf und Navigation | Vier direkte Sprunganker und kompakterer Kopf mit verständlichen Kurzbezeichnungen auch bei 200%-Vergrößerung | prüfen: PRs #23/#25, 100 Python-Tests, 20 Chromium-Matrixfälle, Screenshot-/Textüberlaufprüfung | fertig wenn: Hauptbereiche lesbar, Anker erreichbar und Schrift nicht über Kartenränder ragt.
+- [ ] 2026-11-01 | Bedienkomfort | Diagnose/Protokolle einklappbar und scrollend, Aufgabenkarte/Fehlerhilfe laienverständlich gestalten | prüfen: 800×600/200%, fokussierte Tastatur- und Browserprüfungen | fertig wenn: Start/Stop und Fehlerlösung ohne Verwirrung erreichbar bleiben.
 - [ ] 2026-11-01 | Barrierefreiheit | Fokus, ARIA-Status, reduzierte Animationen, farbunabhängige Warnungen und verständliche Leerzustände | prüfen: Tastatur- und automatisierte UI-Sicherheitsprüfungen | fertig wenn: kein kritischer Bedienweg nur durch Farbe, Maus oder Animation verständlich ist.
-- [ ] 2026-11-01 | Visual-Regression | Reproduzierbare Chromium-Vergleichsaufnahmen mit 800×600, 200% und vier Themes; Belege zum genauen SHA | prüfen: deterministische Testdaten, Genehmigung bei Referenzänderung | fertig wenn: absichtliche CSS-Änderungen sichtbar prüfbar, unabsichtliche Layoutbrüche rot werden.
+- [x] 2026-11-01 | Browser-Vorprüfung | Echte Chromium-Aufnahmen ohne Nutzerdaten, 800×600 bei 100/125/150/200% sowie 1280×720, alle vier Farbschemata, Überlauf/Textgrenzen | prüfen: PRs #24/#25, je 20 Browserproben und 5 Bildnachweise pro Lauf | fertig wenn: Messwerte und Screenshots im Actions-Artefakt dem SHA zugeordnet sind.
+- [ ] 2026-11-01 | Pixel-/Interaktionsregression | Versioniertes freigegebenes Referenzbild, bewusste Bildänderungsfreigabe, echter Browser-Zoom und Tab-/Fokusfolge | prüfen: reproduzierbarer Pixelvergleich + Tastaturtest bei 200% | fertig wenn: nicht nur Layoutbreite, sondern unbeabsichtigte Bildänderungen und Fokusfehler automatisch auffallen.
 - [ ] 2026-11-01 | Konsolidierung | Dokumentation, Diagramme und automatisierte Funktions-/Layouttests nach Designänderungen synchronisieren | prüfen: vollständige CI, keine Medienregression, Update des Referenzstands | fertig wenn: gemeinsamer geprüfter Entwicklungsstand vorliegt.
 
 **Schutz gegen Planaufweichung:** DateiFinder liefert Muster, keine Lizenz- oder Architekturfreigabe für 1:1-Kopie. Keine Änderung der Render-/Archivverträge in einem reinen UI-Patch; Kubuntu bleibt letzter Abnahmeschritt.
@@ -41,4 +46,4 @@
 ## FINAL – Kubuntu-Abnahme erst nach allen vorherigen Gates
 - [ ] 2026-11-01 | Kubuntu-Endabnahme | 800×600, 100/125/150/200 %, Tastatur, echte Dateidialoge, 30%-CPU-/RAM-cgroup-Messung und Langzeitbetrieb | prüfen: Zielrechner, Screenshots, JSON-Messbericht, Originalschutz, Release-SHA | fertig wenn: alle realen Belege auf eingefrorenem Kandidaten positiv und Stable-Entscheidung dokumentiert.
 
-**Nächster Schritt:** Veröffentlichungsrechte und Lizenz verbindlich entscheiden; danach unveränderlichen Releasekandidaten mit dokumentiertem Hash einfrieren. **Die echte Kubuntu-Abnahme bleibt der letzte Schritt.**
+**Nächster erlaubter Schritt:** DateiFinder-Designtransfer bei Textkontrasten, verständlicher Detailansicht und Pixel-/Tastaturregression fertigstellen und danach die geprüfte gemeinsame Dokumentation einfrieren. Danach Lizenz/Rechte verbindlich entscheiden, einen unveränderlichen Releasekandidaten bilden; **Kubuntu-Endabnahme bleibt strikt der letzte Schritt.**

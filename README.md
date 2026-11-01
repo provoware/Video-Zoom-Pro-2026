@@ -14,7 +14,13 @@ Die zwei Abläufe sind als **versionierte, direkt in GitHub sichtbare Diagramme*
 
 Der aktuelle Bildschirm hat vier Bereiche: **Songs vorbereiten, Stapelverarbeitung, Diagnose und Protokoll**. Die DateiFinder-Referenz dient für klare Farben, Arbeitsbereiche, Status, Fokusringe und reproduzierbare Bildprüfungen. **Nicht** kopiert werden DateiFinder-Technik (Tauri/Rust), Mini-Schriften oder die feste Seitenleiste. Ziel bleibt eine gut lesbare Tk-freie Oberfläche ohne horizontales Scrollen, auch bei **800×600/200 %**. Der eigentliche Dateifluss und seine Sicherheitsregeln bleiben unabhängig.
 
-**Entwicklungsstand:** Die beiden Diagramme und die Designanalyse sind dokumentiert. Die darin beschriebenen **neuen Designmaßnahmen stehen in der TODO** und gelten erst nach implementiertem Code und bestandenen Tests als fertig. Die echte Kubuntu-Endabnahme bleibt der letzte Schritt.
+**Entwicklungsstand:** Die beiden Diagramme und die Designanalyse sind versioniert. Vier Farbschemata (Cyan, Violett, Grün, Orange) mit gespeicherter Auswahl, kompakter Kopf und Sprungnavigation sind implementiert (PRs #23/#25). Der isolierte Chromium-Gate prüft 20 Layoutfälle, Screenshots und auch abgeschnittenen Navigationstext (PRs #24/#25). Die Bilder verwenden eine **CSS-Zoomsimulation**; echter KDE-/Browser-Zoom, Tastaturbedienung und die menschliche Sichtprüfung bleiben ausdrücklich offen. Weitergehende Bedien- und Pixelreferenz-Verbesserungen stehen in der TODO; die echte Kubuntu-Endabnahme ist der letzte Schritt.
+
+### Farben und Bedienung
+
+Über „**Farbschema**“ im Kopf lässt sich zwischen vier kontrastreichen Varianten wechseln; über **Einstellungen speichern** wird die Wahl dauerhaft in der bestehenden lokalen Konfiguration gespeichert. Die Sprungknöpfe „Vorbereiten“, „Stapel“, „Diagnose“ und „Protokoll“ scrollen direkt zum jeweiligen Bereich. Die vier Arbeitsbereiche und alle Medienfunktionen bleiben unabhängig von der Farbauswahl.
+
+**Automatischer Bildschirm-Vortest:** `python3 scripts/layout_check.py --ziel dist/ui-nachweis` benötigt lokal Chrome/Chromium **nur zur Entwicklung**, nicht im ausgelieferten Tool. Die Prüfergebnisse und Screenshots entstehen ohne echte WAVs/Benutzerdateien; GitHub legt sie als `videozoom-layout-nachweise` ab. Das ist keine persönliche Kubuntu-Abnahme.
 
 ## Einfacher Start
 

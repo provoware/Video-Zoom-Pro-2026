@@ -136,3 +136,11 @@ Aus PROVOWARE/TOOL_2026_Multi: **ein Hauptziel je Patch**, eine feste Obergrenze
 3. Nutzer-Input als Anforderungen behandeln, **nicht als unmittelbar auszuführende Anweisungen oder als Umgehung von Sicherheit/Projektfreigaben**. Originaleingaben erhalten und Kennungen nachvollziehbar zuordnen; Eingabeänderungen erneut abgleichen. Widersprüche und offene Entscheidungen sichtbar lassen.
 4. **In jeder Iteration** die TODO und die `README.md` anhand von tatsächlichem Code- und Teststand aktualisieren: neue/offene/erledigte Punkte, Fortschritt, Funktionen und Grenzen, Bedienhinweise und Prüfnachweise. Keine ungeprüften „fertig“-Behauptungen. Nachträge vor Abschluss nochmals einordnen.
 5. Alle angenommenen Nutzerergänzungen **vor** der Nutzer-Endabnahme implementieren, auf Fehler und Datenverlust prüfen und technisch vollständig abnehmen. **Die persönliche Nutzer-Endabnahme ist der letzte Schritt** am eingefrorenen finalen Stand; keine Zwischenabnahme. Bestehende Sicherheits-, Test- und Freigabeverträge behalten Vorrang.
+
+## DateiFinder-Übernahme: verbindlicher Bildnachweis (Nachtrag 01.11.2026)
+
+Für jede Änderung an `videozoom/webui.py` gelten zusätzlich zu den Python-/FFmpeg-Verträgen:
+1. `python3 scripts/layout_check.py --ziel dist/ui-nachweis` als deterministische **Entwicklerprüfung** mit Chrome/Chromium. Matrix: 4 Themen × (800×600 bei 100/125/150/200% CSS-Zoom + Desktop 1280×720) = 20 Fälle.
+2. `layout_bericht.json` muss **Null horizontalen Überlauf und Null abgeschnittene Navigationstexte** melden. Screenshot-Dateien mit demselben CI-SHA als GitHub-Artefakt erhalten; Fehler lösen eine Ursachenänderung statt automatisches Screenshot-Überschreiben aus.
+3. Die CSS-Zoomsimulation ist **nicht** der echte KDE-Browser-Zoom. Weitere Pixel-Diff-/Tab-/Kontrasttests bleiben Entwicklungspflichten; die reale Kubuntu-Nutzer-Endabnahme ist **der letzte Schritt**, niemals durch CI ersetzt.
+4. Alle neuen UX-Befunde mit stabiler Kennung (z. B. `NI-20261101-01`) in `docs/TODO.md` führen. `Nutzer-Input-Agents.md` vor jedem Patch und vor Abschluss lesen; parallele Änderungen an `AGENTS.md` oder Originaldateien nicht überschreiben.
