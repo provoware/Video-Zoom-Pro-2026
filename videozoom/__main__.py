@@ -23,26 +23,34 @@ def main(argv=None):
     p.add_argument("--arbeitsordner",type=Path)
     p.add_argument("--format",choices=["BREI","HOCH","QUAD","KLAS","4K"])
     args = p.parse_args(argv)
+    # Dieselbe Konfiguration fuer Diagnose, grafischen Start und Stapel.
+    cfg = konfigurieren(lesen(SETTINGS, konfiguration()))
+    for key in ("downloads", "arbeitsordner", "format"):
+        val = getattr(args, key)
+        if val is not None:
+            cfg[key] = str(val)
+    cfg = konfigurieren(cfg)
     if args.doctor:
-        print(json.dumps(pruefen(),ensure_ascii=False,indent=2))
+        print(json.dumps(pruefen(cfg=cfg), ensure_ascii=False, indent=2))
         return 0
     def fragen(prompt):
         if sys.stdin.isatty():
             return input(prompt+" [j/N] ").lower().strip() in ("j","ja")
         if os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"):
-            if shutil.which("kdialog"):
-                return subprocess.run(["kdialog","--yesno",prompt],check=False).returncode == 0
-            if shutil.which("zenity"):
-                return subprocess.run(["zenity","--question","--text",prompt],check=False).returncode == 0
+            for name, command in (
+                ("kdialog", ["kdialog", "--yesno", prompt]),
+                ("zenity", ["zenity", "--question", "--text", prompt]),
+            ):
+                if shutil.which(name):
+                    try:
+                        return subprocess.run(command, check=False, timeout=120).returncode == 0
+                    except (OSError, subprocess.TimeoutExpired):
+                        return False  # Ohne eindeutige Zustimmung nie installieren.
         return False
 
     # Fehlende Komponenten beim Start erkennen; niemals ohne Zustimmung installieren.
     if args.reparatur or not (shutil.which("ffmpeg") and shutil.which("ffprobe")):
         print(reparatur(fragen))
-    cfg = konfigurieren(lesen(SETTINGS,konfiguration()))
-    for key in ("downloads","arbeitsordner","format"):
-        val = getattr(args,key)
-        if val is not None: cfg[key] = str(val)
     if not any((args.vorbereiten,args.stapel,args.einmal,args.beobachten)):
         from .webui import starten
         starten(cfg,SETTINGS)
