@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "formate": {
+    "HOCH": {
+      "pixel": [
+        1080,
+        1920
+      ],
+      "bereich": "Shorts, TikTok, Reels"
+    },
+    "BREI": {
+      "pixel": [
+        1920,
+        1080
+      ],
+      "bereich": "YouTube, Breitbild"
+    },
+    "QUAD": {
+      "pixel": [
+        1080,
+        1080
+      ],
+      "bereich": "Quadratischer Beitrag"
+    },
+    "KLAS": {
+      "pixel": [
+        800,
+        600
+      ],
+      "bereich": "Klassisch 4:3"
+    },
+    "4K": {
+      "pixel": [
+        3840,
+        2160
+      ],
+      "bereich": "Sehr hohes Breitbild"
+    }
+  }
+}

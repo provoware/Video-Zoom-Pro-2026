@@ -1,0 +1,70 @@
+"""Startprüfung ohne Tk. Systempakete nur nach Simulation und Zustimmung."""
+from __future__ import annotations
+import os
+import re
+import shutil
+import subprocess
+import sys
+
+
+def run(args, timeout=20):
+    try:
+        p = subprocess.run(args, capture_output=True, text=True, timeout=timeout, check=False)
+        return p.returncode == 0, p.stdout + "\n" + p.stderr
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return False, str(exc)
+
+
+def scope_verfuegbar():
+    if not shutil.which("systemd-run"):
+        return False
+    ok, _ = run(["systemd-run","--user","--scope","--quiet","--collect",
+                 "-p","CPUQuota=30%","-p","MemoryMax=256M","--","/usr/bin/true"],10)
+    return ok
+
+
+def pruefen(real_scope=True):
+    checks = []
+    def add(name, ok, detail):
+        checks.append({"name":name,"ok":bool(ok),"hinweis":detail})
+    add("Python",sys.version_info >= (3,11),"Mindestens Python 3.11.")
+    for name in ("ffmpeg","ffprobe"):
+        add(name,bool(shutil.which(name)),"Wird zur lokalen Medienprüfung benötigt.")
+    if shutil.which("ffmpeg"):
+        ok, raw = run(["ffmpeg","-hide_banner","-filters"])
+        present = set(re.findall(r"(?m)^\s*[TSC\.]{3}\s+(\w+)\s",raw))
+        missing = sorted({"zoompan","xfade","concat","scale","pad"} - present)
+        add("Filter",ok and not missing,", ".join(missing) or "Verfügbar.")
+        ok, raw = run(["ffmpeg","-hide_banner","-encoders"])
+        present = set(re.findall(r"(?m)^\s*[VAS\.FSXBD]{6}\s+(\w+)\s",raw))
+        missing = sorted({"libx264","aac"} - present)
+        add("Kodierer",ok and not missing,", ".join(missing) or "Verfügbar.")
+    if real_scope:
+        add("Begrenzung",scope_verfuegbar(),"CPU und RAM werden über systemd begrenzt.")
+    return {"pruefungen":checks,"startbereit":all(c["ok"] for c in checks)}
+
+
+def installation_simulieren(pakete):
+    if set(pakete) != {"ffmpeg"} or not shutil.which("apt-get"):
+        return {"sicher":False,"grund":"Nur FFmpeg darf automatisch zur Installation vorgeschlagen werden."}
+    ok, raw = run(["apt-get","-s","install","--no-install-recommends","ffmpeg"],25)
+    entfernt = re.findall(r"(?m)^Remv\s+(\S+)",raw)
+    aktualisiert = re.findall(r"(?m)^Inst\s+\S+\s+\[[^]]+\]",raw)
+    return {"sicher":bool(ok and not entfernt and not aktualisiert),
+            "entfernt":entfernt,"aktualisiert":aktualisiert}
+
+
+def reparatur(frage):
+    if shutil.which("ffmpeg") and shutil.which("ffprobe"):
+        return "FFmpeg und FFprobe sind vorhanden."
+    plan = installation_simulieren(["ffmpeg"])
+    if not plan["sicher"]:
+        return "Systemänderung verhindert: " + str(plan)
+    if not frage("FFmpeg fehlt. Sicher geprüfte Pakete installieren?"):
+        return "Keine Installation ohne Zustimmung."
+    cmd = ["/usr/bin/apt-get","install","-y","--no-install-recommends","ffmpeg"]
+    if os.geteuid() != 0:
+        if not shutil.which("pkexec"): return "pkexec fehlt. Installation manuell starten."
+        cmd.insert(0,shutil.which("pkexec"))
+    ok, _ = run(cmd,180)
+    return "Installation erfolgreich." if ok else "Installation fehlgeschlagen."
