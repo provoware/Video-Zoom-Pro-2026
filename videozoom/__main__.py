@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
+import subprocess
 from pathlib import Path
 import sys
 from .core import Workflow, konfiguration, konfigurieren, lesen
@@ -24,9 +26,18 @@ def main(argv=None):
     if args.doctor:
         print(json.dumps(pruefen(),ensure_ascii=False,indent=2))
         return 0
-    if args.reparatur:
-        def fragen(prompt):
-            return sys.stdin.isatty() and input(prompt+" [j/N] ").lower().strip() in ("j","ja")
+    def fragen(prompt):
+        if sys.stdin.isatty():
+            return input(prompt+" [j/N] ").lower().strip() in ("j","ja")
+        if os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"):
+            if shutil.which("kdialog"):
+                return subprocess.run(["kdialog","--yesno",prompt],check=False).returncode == 0
+            if shutil.which("zenity"):
+                return subprocess.run(["zenity","--question","--text",prompt],check=False).returncode == 0
+        return False
+
+    # Fehlende Komponenten beim Start erkennen; niemals ohne Zustimmung installieren.
+    if args.reparatur or not (shutil.which("ffmpeg") and shutil.which("ffprobe")):
         print(reparatur(fragen))
     cfg = konfigurieren(lesen(SETTINGS,konfiguration()))
     for key in ("downloads","arbeitsordner","format"):
