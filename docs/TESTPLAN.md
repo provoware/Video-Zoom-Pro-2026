@@ -24,3 +24,13 @@ Beispiele:
 - Bericht: zusätzlich `--bericht /gewünschter/ordner/regression.json`.
 
 Der bestehende GitHub-CI-Workflow führt den **vollständigen** Lauf aus. Prüfberichte enthalten Commitkennung, Prüfstrategie, Anzahl, Ausfälle und übersprungene Tests. Ein fehlgeschlagener Test wird protokolliert, niemals automatisch als bestanden dargestellt. Das System ist eine Auswirkungs-/Regressionsauswahl, **keine** autonome Codekorrektur.
+
+## Reale Abbruch- und Stapel-Haertetests (2026-11-01)
+`tests/test_hardening.py` erzeugt ausschliesslich synthetische WAV-/PNG-Testmedien in temporaeren Verzeichnissen und nutzt echtes FFmpeg/FFprobe. Die Pruefungen simulieren reale Programmabbrueche:
+1. `os._exit` nach fertiger Videodatei, bevor der normale Journaleintrag erfolgt: Wiederanlauf ohne doppeltes MP4 und mit abgeschlossener Archivierung.
+2. `os._exit` mitten im Kopieren einer Archivdatei: Originale bleiben erhalten, der naechste Lauf archiviert sicher.
+3. Ein echter `SIGKILL` eines vorbereitenden Python-Prozesses: Der gespeicherte Auftrag ist nach Neustart weiter nutzbar.
+4. Drei Songs in zwei aufeinanderfolgenden Stapeln und nochmaliger Leerlaufpruefung.
+5. Ein beschaedigtes WAV-Medium wird isoliert, ein gesunder Auftrag wird trotzdem vollstaendig verarbeitet.
+
+Die Medien-Haertetests nutzen ausdruecklich den internen **Testmodus** ohne systemd-Quote. Dies ist kein Nachweis der CPU-/RAM-Grenze unter Kubuntu und ersetzt keine reale Endabnahme. CI-Erfolg gilt nur fuer den exakt ausgewiesenen Commit.
