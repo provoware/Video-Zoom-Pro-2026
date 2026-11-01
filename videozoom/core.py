@@ -530,6 +530,8 @@ class Workflow:
             self.fortschreiben("archivieren", 95, titel=job["titel"], datei=src.name)
         job["status"] = "ARCHIVIERT"
         self.speichern()
+        self.fortschreiben("video_fertig", 100, titel=job["titel"],
+                          hinweis="Video geprüft und Quellen archiviert.")
 
     def _render(self, job: dict):
         audio, *images = [Path(item["pfad"]) for item in job["dateien"]]
@@ -583,6 +585,7 @@ class Workflow:
                 teil.unlink(missing_ok=True)
                 self.melden("Übergang inkompatibel, sichere Standardblende gewählt.")
                 starten(weich=True)
+            self.fortschreiben("video_pruefen", 92, titel=job["titel"])
             if not video_gueltig(teil, job["laenge"]):
                 raise RuntimeError("Ergebnis enthält nicht Bild und Ton in passender Länge.")
             job["render_hash"] = pruefsumme(teil)
@@ -621,6 +624,7 @@ class Workflow:
                 break
             job["status"] = "LAEUFT"
             job["versuche"] = job.get("versuche", 0) + 1
+            self.fortschreiben("video_start", 0, titel=job["titel"])
             self.speichern()
             try:
                 ziel = self._render(job)
@@ -644,11 +648,19 @@ class Workflow:
                 if not datenfehler:
                     job["retry_after"] = time.time() + min(3600, 30 * 2 ** min(job["versuche"], 6))
                 self.speichern()
+                self.fortschreiben("video_pausiert", min(99, self.ereignis["prozent"]),
+                                  titel=job["titel"], hinweis=detail)
                 self.melden(job["titel"] + ": " + job["hinweis"] +
                             (" – Quelldatei prüfen." if datenfehler else
                              " – Technischer Fehler, später automatisch erneut prüfen."))
-            self.fortschreiben("stapel", index / max(1,len(ready)) * 100,
-                               titel=job["titel"], status=job["status"])
+            erledigt = all(
+                eintrag["status"] == "ARCHIVIERT"
+                for _, eintrag in ready
+            )
+            # Eine bearbeitete Fehlersituation ist kein erfolgreich
+            # abgeschlossener Stapel. 100% nur mit Archivnachweis.
+            pct = 100 if erledigt else min(99, int(index / max(1, len(ready)) * 100))
+            self.fortschreiben("stapel", pct, titel=job["titel"], status=job["status"])
         self.melden(f"Stapel: {done} Videos berechnet; {len(ready)-done} noch offen.")
         return done, max(0,len(ready)-done)
 
