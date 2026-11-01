@@ -89,6 +89,26 @@ class Regeln(unittest.TestCase):
             kopieren_und_archivieren(src,dst,digest)
             self.assertEqual(pruefsumme(dst),digest)
 
+    def test_chatgpt_bilder_sortieren_und_metadaten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); down=root/"Downloads"; down.mkdir()
+            source=png(down/"ChatGPT_Provovare_Cover.png")
+            fremd=png(down/"NichtZuordnen.png",(20,40,90))
+            past=time.time()-20
+            for file in (source,fremd):
+                os.utime(file,(past,past))
+            work=root/"Projekt"
+            dienst=Workflow({"downloads":str(down),"arbeitsordner":str(work)})
+            self.assertEqual(dienst.bilder_einsortieren(),(1,1))
+            dest=work/"BILDER"/"PROVOWARE"/source.name
+            self.assertTrue(dest.exists())
+            self.assertFalse(source.exists())
+            self.assertTrue(fremd.exists())
+            import json
+            meta=json.loads((dest.parent/(dest.name+".json")).read_text())
+            self.assertEqual((meta["breite"],meta["hoehe"]),(64,48))
+            self.assertEqual(meta["kategorie"],"PROVOWARE")
+
     def test_zweite_instanz_gesperrt(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp); (root/"Downloads").mkdir()
