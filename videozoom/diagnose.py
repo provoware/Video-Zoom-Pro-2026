@@ -16,10 +16,15 @@ def run(args, timeout=20):
 
 
 def scope_verfuegbar():
+    """Prüfe denselben CPU-/RAM-Scope wie beim echten Rendern."""
     if not shutil.which("systemd-run"):
         return False
-    ok, _ = run(["systemd-run","--user","--scope","--quiet","--collect",
-                 "-p","CPUQuota=30%","-p","MemoryMax=256M","--","/usr/bin/true"],10)
+    from .core import konfiguration, quota_befehl
+
+    # Dieselbe kanonische Quotenberechnung wie im Renderpfad:
+    # 30 % von vier zugänglichen CPUs entsprechen CPUQuota=120%.
+    command = quota_befehl(["/usr/bin/true"], konfiguration())
+    ok, _ = run(command, 10)
     return ok
 
 

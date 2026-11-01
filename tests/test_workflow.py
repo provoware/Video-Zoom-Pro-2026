@@ -69,6 +69,24 @@ class Regeln(unittest.TestCase):
         self.assertIn("ffmpeg",[x["name"] for x in checks["pruefungen"]])
         self.assertNotIn("tkinter",str(checks))
 
+    def test_startdiagnose_verwendet_reale_renderquote(self):
+        from videozoom.diagnose import scope_verfuegbar
+        with patch("videozoom.diagnose.shutil.which",return_value="/usr/bin/systemd-run"), \
+             patch("videozoom.core.os.sched_getaffinity",return_value={0, 1, 2, 3},create=True), \
+             patch("videozoom.diagnose.run",return_value=(True,"")) as gestarteter_test:
+            self.assertTrue(scope_verfuegbar())
+            args=gestarteter_test.call_args.args[0]
+            self.assertIn("CPUQuota=120%",args)
+            self.assertIn("MemoryMax=2048M",args)
+            self.assertEqual(args[-1],"/usr/bin/true")
+
+    def test_startdiagnose_ohne_systemd_faellt_sicher_aus(self):
+        from videozoom.diagnose import scope_verfuegbar
+        with patch("videozoom.diagnose.shutil.which",return_value=None), \
+             patch("videozoom.diagnose.run") as gestarteter_test:
+            self.assertFalse(scope_verfuegbar())
+            gestarteter_test.assert_not_called()
+
     def test_journal_sicher(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder=Path(tmp); target=folder/"journal.json"
