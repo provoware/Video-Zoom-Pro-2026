@@ -97,8 +97,10 @@ pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:bre
 <button class="warn" onclick="aktion('stop')">Sicher stoppen</button>
 <label for="vorbereitungsbar">Songs vorbereiten</label>
 <progress id="vorbereitungsbar" value="0" max="100"></progress>
-<label for="stapelbar">Stapel und aktuelles Video</label>
+<label for="stapelbar">Stapelverarbeitung</label>
 <progress id="stapelbar" value="0" max="100"></progress>
+<label for="videobar">Aktuelles Video (einschließlich Archivierung)</label>
+<progress id="videobar" value="0" max="100"></progress>
 <p id="phase">Kein Vorgang aktiv</p>
 </article><article><h2>3 · Diagnose</h2>
 <p>CPU-Ziel: maximal 30 % der zugänglichen Prozessorkapazität. Ohne nachgewiesene Grenze kein Rendern.</p>
@@ -131,6 +133,7 @@ catch(e){el('diagnose').textContent=e.message;}}
 async function status(){try{let r=await api('/status');
  el('vorbereitungsbar').value=(r.vorbereitung&&r.vorbereitung.prozent)||0;
  el('stapelbar').value=(r.stapel&&r.stapel.prozent)||0;
+ el('videobar').value=(r.video&&r.video.prozent)||0;
  el('phase').textContent=(r.event.phase||'Bereit')+' · '+(r.event.titel||'');
  el('jobs').textContent=JSON.stringify(r.jobs,null,2);el('log').textContent=(r.messages||[]).join('\n');
  el('sensoren').textContent=JSON.stringify(r.sensoren||{},null,2);
@@ -159,6 +162,7 @@ class Bedienung:
         self.event = {"phase": "bereit", "prozent": 0}
         self.vorbereitung = {"prozent": 0}
         self.stapel = {"prozent": 0}
+        self.video = {"prozent": 0}
         self.lock = threading.RLock()
 
     def _meldung(self, msg):
@@ -168,17 +172,21 @@ class Bedienung:
     def _fortschritt(self, value):
         with self.lock:
             self.event = value
-            if value.get("phase") == "vorbereiten":
+            phase = value.get("phase")
+            if phase == "vorbereiten":
                 self.vorbereitung = value
-            elif value.get("phase") in {"stapel", "rendern", "archivieren", "pausiert_ressourcen"}:
+            elif phase in {"stapel", "pausiert_ressourcen"}:
                 self.stapel = value
+            elif phase in {"video_start", "rendern", "video_pruefen", "archivieren",
+                           "video_fertig", "video_pausiert"}:
+                self.video = value
 
     def status(self):
         with self.lock:
             info = self.service.status() if self.service else {"auftraege": {}}
             return {"cfg": self.cfg, "jobs": info["auftraege"], "event": self.event,
                     "vorbereitung": self.vorbereitung, "stapel": self.stapel,
-                    "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
+                    "video": self.video, "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
                     "active": bool(self.thread and self.thread.is_alive())}
 
     def einstellungen(self, data):
