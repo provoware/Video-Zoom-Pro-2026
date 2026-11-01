@@ -25,6 +25,19 @@
 - [x] 2026-11-01 | Dateieingang | Originale schützen, drei Kategorien und Bilddimensionen als JSON speichern | prüfen: tests/test_workflow.py | fertig wenn: Basispfad ohne Quellueberschreiben vorhanden; Konfliktverbesserung P0 offen.
 - [x] 2026-11-01 | Ordnerauswahl | Tk-freie lokale KDE-/Zenity-Ordnerdialoge implementieren | prüfen: tests/test_webui.py | fertig wenn: API- und Logiktests gruen; reale Desktop-Sichtprüfung folgt zuletzt.
 
+
+## P1 – DateiFinder-Designtransfer (vor der letzten Kubuntu-Abnahme)
+
+- [x] 2026-11-01 | Dokumentation | Zwei Funktionsgrafiken als versionierte, in GitHub direkt sichtbare Mermaid-Diagramme übernehmen | prüfen: `docs/diagramme/01_einfacher_prozess.md`, `02_funktionsfluss_technik.md` mit Python-Funktionen abgleichen | fertig wenn: Diagramme fachlich konsistent mit main sind.
+- [x] 2026-11-01 | Designanalyse | DateiFinder-Referenzlayout, Farben, Bedienmuster und Qualitätssicherung gegen Video-Zoom-Pro-Architektur abgleichen | prüfen: `docs/DESIGN_TRANSFER_DATEIFINDER.md` inklusive Konfliktmatrix | fertig wenn: Übertragbares von Tauri-/Rust-/Mini-Layout-Abhängigkeiten getrennt ist.
+- [ ] 2026-11-01 | Farbsystem | Eigenständige CSS-Tokens und vier Dateifinder-inspirierte Akzentthemen in Video Zoom Pro implementieren | prüfen: gespeicherte Themes, Kontrast, Keyboard, keine Codekopie | fertig wenn: alle vier Varianten ohne Farb-/Lesbarkeitsfehler nutzbar sind.
+- [ ] 2026-11-01 | Layout | Header, Phasenführung, Hauptaktionen und scrollbare Detailbereiche verbessern, ohne Medienlogik zu ändern | prüfen: 800×600/100–200%, 1280×720, keine horizontale Scrollleiste | fertig wenn: wesentliche Schaltflächen erreichbar und Zustände verständlich bleiben.
+- [ ] 2026-11-01 | Barrierefreiheit | Fokus, ARIA-Status, reduzierte Animationen, farbunabhängige Warnungen und verständliche Leerzustände | prüfen: Tastatur- und automatisierte UI-Sicherheitsprüfungen | fertig wenn: kein kritischer Bedienweg nur durch Farbe, Maus oder Animation verständlich ist.
+- [ ] 2026-11-01 | Visual-Regression | Reproduzierbare Chromium-Vergleichsaufnahmen mit 800×600, 200% und vier Themes; Belege zum genauen SHA | prüfen: deterministische Testdaten, Genehmigung bei Referenzänderung | fertig wenn: absichtliche CSS-Änderungen sichtbar prüfbar, unabsichtliche Layoutbrüche rot werden.
+- [ ] 2026-11-01 | Konsolidierung | Dokumentation, Diagramme und automatisierte Funktions-/Layouttests nach Designänderungen synchronisieren | prüfen: vollständige CI, keine Medienregression, Update des Referenzstands | fertig wenn: gemeinsamer geprüfter Entwicklungsstand vorliegt.
+
+**Schutz gegen Planaufweichung:** DateiFinder liefert Muster, keine Lizenz- oder Architekturfreigabe für 1:1-Kopie. Keine Änderung der Render-/Archivverträge in einem reinen UI-Patch; Kubuntu bleibt letzter Abnahmeschritt.
+
 ## FINAL – Kubuntu-Abnahme erst nach allen vorherigen Gates
 - [ ] 2026-11-01 | Kubuntu-Endabnahme | 800×600, 100/125/150/200 %, Tastatur, echte Dateidialoge, 30%-CPU-/RAM-cgroup-Messung und Langzeitbetrieb | prüfen: Zielrechner, Screenshots, JSON-Messbericht, Originalschutz, Release-SHA | fertig wenn: alle realen Belege auf eingefrorenem Kandidaten positiv und Stable-Entscheidung dokumentiert.
 
