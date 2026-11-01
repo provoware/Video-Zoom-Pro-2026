@@ -23,6 +23,8 @@ FORMATE = {
 BILDTYPEN = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
 KATEGORIEN = {"PROVOWARE", "CODING", "THEMA"}
 UEBERGAENGE = ("fade", "smoothleft", "smoothright", "wipeleft", "circleopen")
+MAX_AUTO_VERSUCHE = 3  # Danach sichtbare manuelle Pruefung, niemals Endlosschleife.
+MAX_ARCHIV_VERSUCHE = 3
 
 
 def zeit() -> str:
@@ -436,6 +438,12 @@ class Workflow:
                 continue
             if old.get("status") == "PAUSIERT" and old.get("render_hash"):
                 continue  # Das verifizierte Video erst im Stapel sicher wiederaufnehmen.
+            if old.get("status") == "PAUSIERT" and int(old.get("versuche", 0)) >= MAX_AUTO_VERSUCHE:
+                old["status"] = "PRUEFEN"
+                old["hinweis"] = "Automatische Wiederholung erschoepft: Fehler und Quellen pruefen."
+                self.speichern()
+                wartet += 1
+                continue
             if old.get("status") == "PAUSIERT" and time.time() < float(old.get("retry_after", 0)):
                 wartet += 1
                 continue
@@ -639,13 +647,25 @@ class Workflow:
         self._recover_inflight()
         jobs = self.zustand["auftraege"]
         for key, job in list(jobs.items()):
-            if job.get("status") in ("FERTIG", "ARCHIV_WARTET"):
-                try:
-                    self._archive(key, job)
-                except (OSError, RuntimeError) as exc:
-                    job["status"] = "ARCHIV_WARTET"
-                    job["hinweis"] = str(exc)
+            if job.get("status") not in ("FERTIG", "ARCHIV_WARTET"):
+                continue
+            if job["status"] == "ARCHIV_WARTET":
+                if int(job.get("archiv_versuche", 0)) >= MAX_ARCHIV_VERSUCHE:
+                    job["status"] = "PRUEFEN"
+                    job["hinweis"] = "Archivierung wiederholt fehlgeschlagen; bitte Datentraeger pruefen."
                     self.speichern()
+                    continue
+                if time.time() < float(job.get("archiv_retry_after", 0)):
+                    continue
+            try:
+                job["archiv_versuche"] = int(job.get("archiv_versuche", 0)) + 1
+                self.speichern()
+                self._archive(key, job)
+            except (OSError, RuntimeError) as exc:
+                job["status"] = "ARCHIV_WARTET"
+                job["hinweis"] = str(exc)[-500:]
+                job["archiv_retry_after"] = time.time() + min(3600, 30 * (2 ** job["archiv_versuche"]))
+                self.speichern()
         ready = [(key, job) for key, job in jobs.items() if job["status"] == "BEREIT"]
         if ready and not self.testmodus and not scope_verfuegbar(self.cfg):
             self.fortschreiben("pausiert_ressourcen", 0, hinweis="systemd-Benutzersitzung prüfen")
@@ -665,19 +685,24 @@ class Workflow:
                 job["status"] = "FERTIG"
                 self.speichern()
                 try:
+                    job["archiv_versuche"] = 1
+                    self.speichern()
                     self._archive(key, job)
                 except (OSError, RuntimeError) as exc:
                     job["status"] = "ARCHIV_WARTET"
-                    job["hinweis"] = str(exc)
+                    job["hinweis"] = str(exc)[-500:]
+                    job["archiv_retry_after"] = time.time() + 60
                     self.speichern()
                 done += 1
             except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
                 detail = str(exc)[-500:]
                 datenfehler = ("Datenfehler" in detail or "Quelle seit" in detail
                                or "fehlt oder wurde verändert" in detail)
-                job["status"] = "PRUEFEN" if datenfehler else "PAUSIERT"
-                job["hinweis"] = detail
-                if not datenfehler:
+                aufgebraucht = int(job.get("versuche", 0)) >= MAX_AUTO_VERSUCHE
+                job["status"] = "PRUEFEN" if datenfehler or aufgebraucht else "PAUSIERT"
+                job["hinweis"] = (("Automatische Versuche erschoepft: " + detail)
+                                  if aufgebraucht and not datenfehler else detail)
+                if not datenfehler and not aufgebraucht:
                     job["retry_after"] = time.time() + min(3600, 30 * 2 ** min(job["versuche"], 6))
                 self.speichern()
                 self.fortschreiben("video_pausiert", min(99, self.ereignis["prozent"]),

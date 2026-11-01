@@ -103,3 +103,6 @@ Dieser Zusatz übernimmt nur fachlich nachweislich passende Regeln aus TOOL_2026
 - PROVOWARE_DATEIFINDER AGENTS.md: eine schreibende Instanz, SHA/Scope, automatisierte Negativtests und definierter Recovery-Key.
 
 Nur die Prinzipien wurden uebernommen; **kein Codeimport**, keine Tk-Abhaengigkeit, keine VideoBatch-Kopplung.
+
+## Qualitätsnachtrag: bewährte Regeln selektiv übernommen (01.11.2026)
+Aus PROVOWARE/TOOL_2026_Multi: **ein Hauptziel je Patch**, eine feste Obergrenze für Wiederholungen, nachvollziehbare Ereignisgründe und nutzerverständliche Fehlerhinweise. Aus PROVOWARE_DATEIFINDER: **Frozen Current Plan**, kein zweiter schreibender Prozess, Prüfung auf exakt aktuellem SHA, sichere isolierte Fehler-Injektion und unveränderliche Originaldateien. Bei gefährdeten Quelldaten gilt immer Stopp nur für den betroffenen Auftrag, kein blindes Überschreiben. Neue Architekturideen nur in die nächste Aufgabenwarteschlange aufnehmen. Herkunft der Regel ist nicht gleich technische Abhängigkeit; es wird kein Code aus den anderen Repositories importiert.
