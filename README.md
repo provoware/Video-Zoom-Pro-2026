@@ -22,6 +22,16 @@ Der aktuelle Bildschirm hat vier Bereiche: **Songs vorbereiten, Stapelverarbeitu
 
 **Automatischer Bildschirm-Vortest:** `python3 scripts/layout_check.py --ziel dist/ui-nachweis` benötigt lokal Chrome/Chromium **nur zur Entwicklung**, nicht im ausgelieferten Tool. Die Prüfergebnisse und Screenshots entstehen ohne echte WAVs/Benutzerdateien; GitHub legt sie als `videozoom-layout-nachweise` ab. Das ist keine persönliche Kubuntu-Abnahme.
 
+## ✨ Moderne, übersichtliche Medienoberfläche
+
+Fünf kompakte Statuskacheln zeigen die **tatsächlichen** Aufträge: bereit, auf Bilder wartend, Video läuft, archiviert und noch zu prüfen. Diese Zahlen stammen aus dem vorhandenen Auftragsjournal. Neben dem gewählten Videoformat stehen Bildgröße und typischer Verwendungszweck.
+
+**Diagnose, Sensordaten und Protokolle** lassen sich über große, per Tastatur erreichbare Aufklappzeilen öffnen. Die drei vorhandenen Fortschrittsbalken zeigen zusätzlich ihre Prozentzahl als Text; der Kern entscheidet weiterhin, wann 100 % tatsächlich erreicht sind. Alle vier vorhandenen Farbschemata bleiben erhalten. Es gibt **keinen neuen Dienst und keine Internetverbindung**.
+
+Die Gestaltungsentscheidung beruht auf einer [Recherche zu Shutter Encoder, HandBrake, Adobe Media Encoder, LosslessCut und CapCut](docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md). Nur die Bedienprinzipien wurden eigenständig umgesetzt; keine fremde Oberfläche oder Software übernommen.
+
+**Status:** Umsetzung und Testnachweise sind in der [TODO](docs/TODO.md) dokumentiert. Die abschließende Kubuntu-Sicht- und CPU-Abnahme bleibt gesperrt, bis der eingefrorene Releasekandidat bereitsteht.
+
 ## Einfacher Start
 
 1. Repository als ZIP herunterladen und vollständig entpacken.
