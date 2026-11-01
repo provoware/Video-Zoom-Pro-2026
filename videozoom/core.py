@@ -245,21 +245,40 @@ def kopieren_und_archivieren(quelle: Path, ziel: Path, hashwert: str) -> None:
     if pruefsumme(quelle) != hashwert:
         raise RuntimeError("Quelle seit Vorbereitung verändert.")
     ziel.parent.mkdir(parents=True, exist_ok=True)
+    tmp = ziel.with_name("." + ziel.name + "." + hashwert[:12] + ".teil")
+    if tmp.is_symlink():
+        raise RuntimeError("Unsichere Archiv-Zwischenkopie – Quelle bleibt erhalten.")
     if ziel.exists() or ziel.is_symlink():
         if not regulaer(ziel) or pruefsumme(ziel) != hashwert:
             raise RuntimeError("Archiv-Zielkonflikt – keine Datei überschrieben.")
+        # Nach Crash zwischen Veröffentlichung und Aufräumen: nur identische
+        # Zwischenkopien entfernen, die bestätigte Archivdatei nie ändern.
+        if tmp.exists() and regulaer(tmp) and pruefsumme(tmp) == hashwert:
+            tmp.unlink()
     else:
-        tmp = ziel.with_name("." + ziel.name + "." + hashwert[:12] + ".teil")
-        with quelle.open("rb") as src, tmp.open("xb") as dest:
-            shutil.copyfileobj(src, dest, 1024 * 1024)
-            dest.flush()
-            os.fsync(dest.fileno())
-        try:
-            if pruefsumme(tmp) != hashwert:
-                raise RuntimeError("Archivkopie fehlerhaft.")
-            os.link(tmp, ziel, follow_symlinks=False)
-        finally:
-            tmp.unlink(missing_ok=True)
+        if tmp.exists() and not regulaer(tmp):
+            raise RuntimeError("Unsichere Archiv-Zwischenkopie – Quelle bleibt erhalten.")
+        if tmp.exists() and pruefsumme(tmp) != hashwert:
+            # Eine unterbrochene Teilkopie niemals still überschreiben.
+            for nummer in range(1, 1001):
+                sicherung = tmp.with_name(tmp.name + f".abbruch-{nummer}")
+                try:
+                    os.link(tmp, sicherung, follow_symlinks=False)
+                    break
+                except FileExistsError:
+                    continue
+            else:
+                raise RuntimeError("Kein sicherer Ablageplatz für die Teilkopie.")
+            tmp.unlink()
+        if not tmp.exists():
+            with quelle.open("rb") as src, tmp.open("xb") as dest:
+                shutil.copyfileobj(src, dest, 1024 * 1024)
+                dest.flush()
+                os.fsync(dest.fileno())
+        if pruefsumme(tmp) != hashwert:
+            raise RuntimeError("Archiv-Zwischenkopie fehlerhaft; Original bleibt erhalten.")
+        os.link(tmp, ziel, follow_symlinks=False)
+        tmp.unlink()
     if pruefsumme(quelle) != hashwert:
         raise RuntimeError("Quelle hat sich während der Archivierung verändert.")
     quelle.unlink()
