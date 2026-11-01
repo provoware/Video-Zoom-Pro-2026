@@ -64,11 +64,11 @@ def kategorie(name: str) -> str | None:
     words = set(re.findall(r"[a-z0-9]+", Path(name).stem.casefold()))
     if "chatgpt" not in words:
         return None
-    if "coding" in words and not ({"thema", "provoware"} & words):
+    if "coding" in words and not ({"thema", "provoware", "provovare"} & words):
         return "CODING"
     if "thema" in words and "coding" not in words:
         return "THEMA"
-    if "provoware" in words and "coding" not in words:
+    if ({"provoware", "provovare"} & words) and "coding" not in words:
         return "PROVOWARE"
     return None
 
@@ -310,9 +310,19 @@ class Workflow:
             key = job["status"]
             stats[key] = stats.get(key, 0) + 1
         disk = shutil.disk_usage(self.ordner)
+        try:
+            mem = {}
+            for line in Path("/proc/meminfo").read_text().splitlines():
+                if line.startswith(("MemTotal:", "MemAvailable:")):
+                    key, value = line.split(":", 1)
+                    mem[key] = int(value.strip().split()[0]) // 1024
+        except (OSError, ValueError, IndexError):
+            mem = {}
         return {"zeit_utc": zeit(), "auftraege": stats, "aktueller_vorgang": self.ereignis,
                 "sensoren": {"freier_speicher_gb": round(disk.free / 1024**3, 2),
-                            "cpu_kerne": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count()},
+                            "cpu_kerne": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count(),
+                            "ram_gesamt_mb": mem.get("MemTotal"),
+                            "ram_verfuegbar_mb": mem.get("MemAvailable")},
                 "cpu_ziel_prozent": self.cfg["cpu_prozent"]}
 
     def fortschreiben(self, phase, prozent, **details):
@@ -330,7 +340,48 @@ class Workflow:
         with pfad.open("a", encoding="utf-8") as file:
             file.write(json.dumps({"zeit": zeit(), "meldung": text}, ensure_ascii=False) + "\n")
 
+    def bilder_einsortieren(self):
+        """Nur ausdrücklich markierte ChatGPT-Bilder mit verifizierter Kopie ablegen."""
+        sortiert, offen = 0, 0
+        for bild in sorted(self.downloads.iterdir()):
+            if bild.suffix.lower() not in BILDTYPEN or not stabil(bild):
+                continue
+            zielkategorie = kategorie(bild.name)
+            if zielkategorie is None:
+                offen += 1
+                continue
+            try:
+                info = medieninfo(bild)
+                stream = next(s for s in info["streams"] if s.get("codec_type") == "video")
+                breite, hoehe = int(stream["width"]), int(stream["height"])
+                if not 1 <= breite <= 16384 or not 1 <= hoehe <= 16384:
+                    raise ValueError("Bildabmessungen außerhalb der Sicherheitsgrenze.")
+                digest = pruefsumme(bild)
+                ordner = self.ordner / "BILDER" / zielkategorie
+                ordner.mkdir(parents=True, exist_ok=True)
+                ziel = ordner / bild.name
+                if ziel.exists() and (not regulaer(ziel) or pruefsumme(ziel) != digest):
+                    ziel = ordner / (bild.stem + "_" + digest[:12] + bild.suffix)
+                if ziel.is_symlink():
+                    raise RuntimeError("Unsichere Zieldatei, Bild bleibt im Download.")
+                kopieren_und_archivieren(bild, ziel, digest)
+                json_sicher(ziel.with_name(ziel.name + ".json"), {
+                    "schema": 1, "kategorie": zielkategorie, "herkunft": "chatgpt",
+                    "bild": ziel.name, "breite": breite, "hoehe": hoehe,
+                    "seitenverhaeltnis": round(breite / hoehe, 4), "sha256": digest,
+                    "zeit_utc": zeit(),
+                })
+                self.melden("Bild einsortiert: " + zielkategorie + "/" + ziel.name)
+                sortiert += 1
+            except (OSError, ValueError, RuntimeError, StopIteration,
+                    subprocess.SubprocessError) as exc:
+                offen += 1
+                self.melden("Bild bleibt unverändert zur Prüfung: " + bild.name +
+                            " – " + str(exc)[-220:])
+        return sortiert, offen
+
     def vorbereiten(self):
+        self.bilder_einsortieren()
         wavs = sorted(p for p in self.downloads.glob("*.wav") if stabil(p))
         bereit = wartet = 0
         for idx, pfad in enumerate(wavs, 1):
