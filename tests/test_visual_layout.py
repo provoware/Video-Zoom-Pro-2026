@@ -19,6 +19,12 @@ class BrowserFixture(unittest.TestCase):
                     self.assertIn(f'document.body.dataset.theme = "{theme}"', content)
                     self.assertIn("document.documentElement.style.zoom = " + str(zoom/100), content)
                     self.assertNotIn("setInterval(status", content)
+                    self.assertIn("option.textContent = name", content)
+                    self.assertIn("select.appendChild(option)", content)
+
+    def test_kompakte_kopfzeile_auch_bei_800_css_pixeln(self):
+        self.assertIn("@media(max-width:900px)", layout_check.HTML)
+        self.assertIn(".app-brand small{display:none}", layout_check.HTML)
 
     def test_ungueltiger_stil_wird_abgewiesen(self):
         with self.assertRaises(ValueError):
@@ -39,6 +45,7 @@ class BrowserFixture(unittest.TestCase):
             '{"horizontalScroll":true,"horizontalOverflows":[],"controls":10}',
             '{"horizontalScroll":false,"horizontalOverflows":["Stop"],"controls":10}',
             '{"horizontalScroll":false,"horizontalOverflows":[],"controls":2}',
+            '{"horizontalScroll":false,"horizontalOverflows":[],"textOverflows":["Stapel"],"controls":10}',
         ):
             with self.subTest(body=body), self.assertRaises(RuntimeError):
                 layout_check.auswertung('<output id="layout-check">' + body + '</output>')

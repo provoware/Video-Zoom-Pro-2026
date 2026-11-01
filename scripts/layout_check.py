@@ -36,6 +36,23 @@ def html_fixture(theme: str, zoom: int) -> str:
     # Der Screenshot enthält nur statisches HTML. Es werden KEINE lokalen
     # Web-API-Aufrufe oder Daten aus einem echten Songprojekt ausgeführt.
     fixture = r"""<script>
+const beispiele = {
+  theme: ['cyan', 'violett', 'gruen', 'orange'],
+  format: ['BREI', 'HOCH', 'QUAD', 'KLAS', '4K'],
+  kategorie: ['PROVOWARE', 'CODING', 'THEMA']
+};
+for (const [id, choices] of Object.entries(beispiele)) {
+  const select = document.getElementById(id);
+  for (const name of choices) {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    select.appendChild(option);
+  }
+}
+document.getElementById('theme').value = __THEME__;
+document.getElementById('format').value = 'BREI';
+document.getElementById('kategorie').value = 'PROVOWARE';
 document.body.dataset.theme = __THEME__;
 document.documentElement.style.zoom = __ZOOM__;
 window.addEventListener('load', () => {
@@ -46,12 +63,20 @@ window.addEventListener('load', () => {
     const r = el.getBoundingClientRect();
     return r.width > 0 && (r.left < -1 || r.right > width + 1);
   }).map(el => (el.id || el.textContent || el.tagName).trim().slice(0, 65));
+  const textOverflow = [...document.querySelectorAll('.phase-nav a')].filter(el => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const box = el.getBoundingClientRect();
+    return [...range.getClientRects()].some(rect =>
+      rect.left < box.left - 1 || rect.right > box.right + 1);
+  }).map(el => el.textContent.trim());
   const report = {
     theme: document.body.dataset.theme,
     zoom: __ZOOM_NUM__,
     viewport: {width: innerWidth, height: innerHeight},
     horizontalScroll: document.documentElement.scrollWidth > innerWidth + 1,
     horizontalOverflows: invalid,
+    textOverflows: textOverflow,
     controls: elems.filter(el => el.tagName === 'BUTTON').length
   };
   const out = document.createElement('output');
@@ -91,8 +116,8 @@ def auswertung(dom: str) -> dict:
     if not found:
         raise RuntimeError("Browser hat keine Layoutmessung geliefert.")
     parsed = json.loads(html_lib.unescape(found.group(1)))
-    if parsed["horizontalScroll"] or parsed["horizontalOverflows"]:
-        raise RuntimeError("Unzulässiger horizontaler Überlauf: " +
+    if parsed["horizontalScroll"] or parsed["horizontalOverflows"] or parsed.get("textOverflows"):
+        raise RuntimeError("Unzulässiger horizontaler/Text-Überlauf: " +
                            json.dumps(parsed, ensure_ascii=False))
     if parsed["controls"] < 6:
         raise RuntimeError("Pflichtschaltflächen nicht sichtbar in der Testoberfläche.")
@@ -105,7 +130,9 @@ def pruefen(ziel: Path) -> dict:
     messungen = []
     with tempfile.TemporaryDirectory(prefix="videozoom-visual-") as temp:
         root = Path(temp)
-        for width, height, zoom in ((800, 600, 100), (800, 600, 200), (1280, 720, 100)):
+        for width, height, zoom in ((800, 600, 100), (800, 600, 125),
+                                    (800, 600, 150), (800, 600, 200),
+                                    (1280, 720, 100)):
             for theme in ("cyan", "violett", "gruen", "orange"):
                 htmlfile = root / f"fixture_{width}_{height}_{zoom}_{theme}.html"
                 htmlfile.write_text(html_fixture(theme, zoom), encoding="utf-8")
