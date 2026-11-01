@@ -77,6 +77,7 @@ small{color:var(--muted)}
 .phase-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px}
 .phase-nav a{flex:1 1 150px;padding:9px 8px;min-height:44px;border:1px solid rgba(var(--accent-rgb),.53);border-radius:10px;background:rgba(var(--accent-rgb),.08);color:var(--text);text-align:center;font-size:.87rem;font-weight:700;text-decoration:none}
 .phase-nav a:hover{background:rgba(var(--accent-rgb),.18)}
+.phase-nav a{overflow-wrap:anywhere;word-break:normal}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:12px;margin:12px 0}
 article{min-width:0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(var(--accent-rgb),.045),transparent 40%),var(--panel);padding:18px;box-shadow:inset 0 0 18px rgba(var(--accent-rgb),.04)}
 article:target{outline:3px solid var(--accent);outline-offset:3px}
@@ -122,7 +123,7 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <p id="status" role="status" aria-live="polite">Bereit</p></div>
 </header>
 <nav class="phase-nav" aria-label="Arbeitsbereiche">
-<a href="#vorbereitung">1 · Songs vorbereiten</a><a href="#stapel-karte">2 · Stapelverarbeitung</a>
+<a href="#vorbereitung" aria-label="Zu Songs vorbereiten">1 · Vorbereiten</a><a href="#stapel-karte" aria-label="Zur Stapelverarbeitung">2 · Stapel</a>
 <a href="#diagnose-karte">3 · Diagnose</a><a href="#protokoll-karte">4 · Protokoll</a>
 </nav>
 <p id="hinweis" role="alert" aria-live="assertive"></p><div class="grid">

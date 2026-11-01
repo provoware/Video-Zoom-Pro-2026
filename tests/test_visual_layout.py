@@ -45,6 +45,7 @@ class BrowserFixture(unittest.TestCase):
             '{"horizontalScroll":true,"horizontalOverflows":[],"controls":10}',
             '{"horizontalScroll":false,"horizontalOverflows":["Stop"],"controls":10}',
             '{"horizontalScroll":false,"horizontalOverflows":[],"controls":2}',
+            '{"horizontalScroll":false,"horizontalOverflows":[],"textOverflows":["Stapel"],"controls":10}',
         ):
             with self.subTest(body=body), self.assertRaises(RuntimeError):
                 layout_check.auswertung('<output id="layout-check">' + body + '</output>')

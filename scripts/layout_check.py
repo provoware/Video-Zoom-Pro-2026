@@ -63,12 +63,20 @@ window.addEventListener('load', () => {
     const r = el.getBoundingClientRect();
     return r.width > 0 && (r.left < -1 || r.right > width + 1);
   }).map(el => (el.id || el.textContent || el.tagName).trim().slice(0, 65));
+  const textOverflow = [...document.querySelectorAll('.phase-nav a')].filter(el => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const box = el.getBoundingClientRect();
+    return [...range.getClientRects()].some(rect =>
+      rect.left < box.left - 1 || rect.right > box.right + 1);
+  }).map(el => el.textContent.trim());
   const report = {
     theme: document.body.dataset.theme,
     zoom: __ZOOM_NUM__,
     viewport: {width: innerWidth, height: innerHeight},
     horizontalScroll: document.documentElement.scrollWidth > innerWidth + 1,
     horizontalOverflows: invalid,
+    textOverflows: textOverflow,
     controls: elems.filter(el => el.tagName === 'BUTTON').length
   };
   const out = document.createElement('output');
@@ -108,8 +116,8 @@ def auswertung(dom: str) -> dict:
     if not found:
         raise RuntimeError("Browser hat keine Layoutmessung geliefert.")
     parsed = json.loads(html_lib.unescape(found.group(1)))
-    if parsed["horizontalScroll"] or parsed["horizontalOverflows"]:
-        raise RuntimeError("Unzulässiger horizontaler Überlauf: " +
+    if parsed["horizontalScroll"] or parsed["horizontalOverflows"] or parsed.get("textOverflows"):
+        raise RuntimeError("Unzulässiger horizontaler/Text-Überlauf: " +
                            json.dumps(parsed, ensure_ascii=False))
     if parsed["controls"] < 6:
         raise RuntimeError("Pflichtschaltflächen nicht sichtbar in der Testoberfläche.")
