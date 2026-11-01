@@ -46,7 +46,7 @@ class BrowserFixture(unittest.TestCase):
     def test_browser_nicht_verfuegbar_ist_keine_erfolgsmeldung(self):
         from unittest.mock import patch
         with patch.object(layout_check.shutil, "which", return_value=None):
-            with self.assertRaisesRegex(RuntimeError, "nicht bestanden"):
+            with self.assertRaisesRegex(RuntimeError, "NICHT bestanden"):
                 layout_check.browser_finden()
 
 
