@@ -43,7 +43,7 @@ class Regeln(unittest.TestCase):
         with self.assertRaises(ValueError): zeitplan(1.0,10)
 
     def test_ffmpeg_reihenfolge_und_zoom(self):
-        cfg=konfiguration({"format":"KLAS"})
+        cfg=konfigurieren({"format":"KLAS"})
         cmd=ffmpeg_befehl(Path("audio.wav"),[Path("1.png"),Path("2.png")],
                           Path("ziel.mp4"),8.0,cfg)
         text=" ".join(cmd)
@@ -53,7 +53,7 @@ class Regeln(unittest.TestCase):
         self.assertIn("800x600",text)
 
     def test_quota_skalierung(self):
-        cfg=konfiguration({})
+        cfg=konfigurieren({})
         command=quota_befehl(["ffmpeg","-version"],cfg)
         self.assertIn("MemoryMax=2048M",command)
         self.assertTrue(any("CPUQuota=" in s for s in command))
