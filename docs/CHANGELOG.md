@@ -20,3 +20,9 @@
 - #16: CLI-Diagnose prueft tatsächliche Einstellungen; grafische Installationsdialoge mit Zeitgrenze.
 - Gemeinsamer Main-Commit `c1f67a460e17eaa11ab88999582a05a3d9399e44` bestand **82/82** Tests (Actions #41354636904).
 - Offen vor Kubuntu: verbleibende Fehlerklassifikations-/Bereitstellungsdetails, Lizenzentscheidung, Synchronisierung der Dokumentation. Kubuntu-Abnahme **zuletzt**.
+
+## 01.11.2026 – letzter technischer Qualitätsschritt vor Lizenz/Kubuntu
+- PR #19: Begrenzte Wiederholungen von Render- und Archivfehlern; automatische Eskalation statt Endlosschleifen. 86/86 GitHub-Tests auf PR erfolgreich.
+- PR #20: Echtes Starten von STARTEN.sh --help/--doctor aus frisch entpacktem ZIP mit isolierten Benutzereinstellungen und Paket-Pfadschutz; 88/88 PR-Tests.
+- Gemeinsamer Hauptzweig danach: `d486f30d2098777b59bc99330ddc3e5e1e2a884e`, [Main-CI](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41356578575) erfolgreich.
+- Offen: Lizenz/Rechte, Release-SHA einfrieren, **zuletzt** echte Kubuntu-Abnahme. Kein Stable.
