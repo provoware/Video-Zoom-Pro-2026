@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "vorlagen": [
+    {
+      "name": "kurzer_synthetischer_song",
+      "type": "wav",
+      "dauer": 4,
+      "samplerate": 8000
+    },
+    {
+      "name": "testbild_01",
+      "type": "png",
+      "pixel": [
+        64,
+        48
+      ]
+    },
+    {
+      "name": "testbild_02",
+      "type": "png",
+      "pixel": [
+        64,
+        48
+      ]
+    }
+  ],
+  "generator": "tests/fixtures/generieren.py",
+  "hinweis": "Frei erzeugte Testdaten, keine Fremdinhalte."
+}
