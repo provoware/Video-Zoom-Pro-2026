@@ -4,6 +4,18 @@
 
 Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus WAV-Dateien und Bildern. **VideoBatch bleibt ein anderes Projekt.** Die Oberfläche läuft ausschließlich lokal im Browser, ohne Tk und ohne Cloud.
 
+## 🧭 Funktionsgrafiken und Designreferenz
+
+Die zwei Abläufe sind als **versionierte, direkt in GitHub sichtbare Diagramme** dokumentiert:
+
+- [🔄 Einfacher Ablauf: vom WAV bis zum geprüften Video](docs/diagramme/01_einfacher_prozess.md).
+- [🔧 Technischer Funktionsfluss: Python, FFmpeg, Parameter und Fehlerwege](docs/diagramme/02_funktionsfluss_technik.md).
+- [🎨 DateiFinder-Designanalyse und Transfermatrix](docs/DESIGN_TRANSFER_DATEIFINDER.md).
+
+Der aktuelle Bildschirm hat vier Bereiche: **Songs vorbereiten, Stapelverarbeitung, Diagnose und Protokoll**. Die DateiFinder-Referenz dient für klare Farben, Arbeitsbereiche, Status, Fokusringe und reproduzierbare Bildprüfungen. **Nicht** kopiert werden DateiFinder-Technik (Tauri/Rust), Mini-Schriften oder die feste Seitenleiste. Ziel bleibt eine gut lesbare Tk-freie Oberfläche ohne horizontales Scrollen, auch bei **800×600/200 %**. Der eigentliche Dateifluss und seine Sicherheitsregeln bleiben unabhängig.
+
+**Entwicklungsstand:** Die beiden Diagramme und die Designanalyse sind dokumentiert. Die darin beschriebenen **neuen Designmaßnahmen stehen in der TODO** und gelten erst nach implementiertem Code und bestandenen Tests als fertig. Die echte Kubuntu-Endabnahme bleibt der letzte Schritt.
+
 ## Einfacher Start
 
 1. Repository als ZIP herunterladen und vollständig entpacken.

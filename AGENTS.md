@@ -104,5 +104,26 @@ Dieser Zusatz übernimmt nur fachlich nachweislich passende Regeln aus TOOL_2026
 
 Nur die Prinzipien wurden uebernommen; **kein Codeimport**, keine Tk-Abhaengigkeit, keine VideoBatch-Kopplung.
 
+
+## DateiFinder-Designtransfer – verbindlicher Zusatz (01.11.2026)
+
+**Referenz:** `provoware/PROVOWARE_DATEIFINDER`, main `9cc035240ece8a32ffd0b53774754e77ade6d422`, insbesondere `index.html`, `src/styles.css`, `docs/VISUAL_REGRESSION.md` und das versionierte Referenzbild `dateifinder-768x512-chromium-linux.png`.
+
+**Eigene Artefakte / Single Source of Truth:**
+- `docs/DESIGN_TRANSFER_DATEIFINDER.md` – beobachtete Komponenten, Transferentscheidung, Konfliktmatrix, Abnahmekriterien.
+- `docs/diagramme/01_einfacher_prozess.md` – fachlicher Ablauf mit Mermaid-Grafik.
+- `docs/diagramme/02_funktionsfluss_technik.md` – konkrete Python-/FFmpeg-Übergänge und Datenparameter.
+- `docs/TODO.md` – priorisierter Plan; Mermaid-Diagramme sind **abgeleitete Dokumentation**, der tatsächlich geprüfte Python-Code ist maßgebend.
+
+**Transfer-Grenzen:**
+- Nur eigene HTML/CSS/JavaScript-Muster übernehmen: konsistente Farbtokens und 4 Akzentfarben, Kontrast, Phasen-/Statusführung, sichtbarer Tastaturfokus, sichere scrollbare Detailbereiche, responsive Kacheln und deterministische Screenshot-Prüfungen.
+- **Nicht kopieren:** Tauri, Rust, Node/npm, DateiFinder-Dateisuche, 159px-Zwangsseitenleiste, Mini-Schriftgrößen, Tauri-Fensterknöpfe, Code/Icons/Schriftdateien oder nicht freigegebene Fremdassets. Kein neues Paket ohne Nutzen-/Abhängigkeitsprüfung.
+- Video Zoom Pro bleibt **Python-Standardbibliothek + FFmpeg + lokaler Browser**, ohne Tk/Cloud. Start-, Auftrags-, Render-, Archiv- und Netzwerkschutzverträge nicht durch Designarbeit verändern.
+- Keine feste Zweispaltigkeit bei 800×600/200%; mindestens 44px große Primäraktionen, ausreichende Schrift, Tab-Fokus und Textstatus. Layout darf vertikal scrollen, nicht horizontal abschneiden.
+- Eine sichtbare Gestaltung nur mit dokumentierter Pixel-/Layout-/Tastaturprüfung als fertig markieren. Lokale Quellcode-Screenshots sind **kein** Kubuntu-Endabnahmebeleg. Keine Referenzbilder stillschweigend „grün“ überschreiben.
+- Designpatches strikt getrennt von Medien-/Archiv-Änderungen. Pro Patch Änderung → gezielte Browser- und Sicherheitsprüfung → volle CI → dokumentierte Wirkung / Risiko. Die abschließende reale Kubuntu-Abnahme wird **nicht vorgezogen**.
+
+**Pflichtmatrix bei UI-Änderungen:** 800×600 bei 100%, 125%, 150%, 200%; 1280×720 Desktop; Cyan/Violett/Grün/Orange; Tastaturfokus, Lesbarkeit, kein horizontaler Überlauf, Status/Fehlertext, Begrenzung der lokalen API und Originalschutz. Fehlende manuelle Sichtprüfung bleibt explizit OFFEN.
+
 ## Qualitätsnachtrag: bewährte Regeln selektiv übernommen (01.11.2026)
 Aus PROVOWARE/TOOL_2026_Multi: **ein Hauptziel je Patch**, eine feste Obergrenze für Wiederholungen, nachvollziehbare Ereignisgründe und nutzerverständliche Fehlerhinweise. Aus PROVOWARE_DATEIFINDER: **Frozen Current Plan**, kein zweiter schreibender Prozess, Prüfung auf exakt aktuellem SHA, sichere isolierte Fehler-Injektion und unveränderliche Originaldateien. Bei gefährdeten Quelldaten gilt immer Stopp nur für den betroffenen Auftrag, kein blindes Überschreiben. Neue Architekturideen nur in die nächste Aufgabenwarteschlange aufnehmen. Herkunft der Regel ist nicht gleich technische Abhängigkeit; es wird kein Code aus den anderen Repositories importiert.

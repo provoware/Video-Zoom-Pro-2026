@@ -15,3 +15,12 @@
 - CPU-Ziel 30 % der zugänglichen Gesamtkapazität via systemd-CPUQuota; RAM separat.
 - Startprüfung und sichere Paket-Simulation, keine Installationen ohne Benutzerzustimmung.
 - Offline und Tk-frei, laienfreundliche große UI bei 800x600 und Zoom.
+
+## Neues Anforderungsprofil – Designtransfer aus DateiFinder (01.11.2026)
+- Dunkles, eigenständiges Design mit vier wählbaren Akzentfarben (Cyan, Violett, Grün, Orange) und dauerhaft gespeicherter Auswahl.
+- Klare Gliederung in Songs vorbereiten, Stapelverarbeitung, Diagnose und Protokoll; wesentliche Aktionen ohne Suchen erreichbar.
+- Für 800×600 und 100–200% Anzeige keine horizontal abgeschnittenen Eingaben oder Schaltflächen; vertikal scrollbare, große Bedienelemente.
+- Status immer in verständlichem Text zusätzlich zu Farben; gut sichtbarer Tastaturfokus, klare Stopp- und Fehlerfunktionen.
+- Reduzierte Animationen; keine Ablenkung bei laufenden Renderaufträgen.
+- Bildprüfung mit reproduzierbaren Browserreferenzen und kontrollierten Änderungen; letzte Kubuntu-Sichtabnahme nicht vorziehen.
+- Übertragene Designregeln nur aus eigenem CSS/HTML, keine DateiFinder-Runtime, kein Qt/Tk/Tauri-/Rust-Import.
