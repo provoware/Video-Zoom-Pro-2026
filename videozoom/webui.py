@@ -53,7 +53,7 @@ pre{font:0.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:bre
 <p id="phase">Kein Vorgang aktiv</p>
 </article><article><h2>3 · Diagnose</h2>
 <p>CPU-Ziel: maximal 30 % der zugänglichen Prozessorkapazität. Ohne nachgewiesene Grenze kein Rendern.</p>
-<button onclick="diagnose()">Systemprüfung ausführen</button><pre id="diagnose">Noch nicht geprüft</pre>
+<button onclick="diagnose()">Systemprüfung ausführen</button><pre id="diagnose">Noch nicht geprüft</pre><h2>Aktuelle Sensordaten</h2><pre id="sensoren">Wird gemessen</pre>
 <p><small>Die Vorbereitung kann unabhängig von der CPU-Grenze weiterlaufen.</small></p>
 </article><article><h2>4 · Protokoll</h2><pre id="jobs">Noch keine Aufträge.</pre><pre id="log">Bereit.</pre>
 </article></div>
@@ -76,6 +76,7 @@ catch(e){el('diagnose').textContent=e.message;}}
 async function status(){try{let r=await api('/status');
  el('bar').value=r.event.prozent||0;el('phase').textContent=(r.event.phase||'Bereit')+' · '+(r.event.titel||'');
  el('jobs').textContent=JSON.stringify(r.jobs,null,2);el('log').textContent=(r.messages||[]).join('\n');
+ el('sensoren').textContent=JSON.stringify(r.sensoren||{},null,2);
  el('ready').textContent=r.jobs.BEREIT||0;el('wait').textContent=r.jobs.WARTET||0;
  if(!el('downloads').dataset.ready){
   for(let id of ['downloads','arbeitsordner','format','kategorie'])el(id).value=r.cfg[id];
@@ -87,7 +88,7 @@ for(let [id,list] of [['format',['BREI','HOCH','QUAD','KLAS','4K']],
 ['kategorie',['PROVOWARE','CODING','THEMA']]]){
  el(id).innerHTML=list.map(x=>'<option>'+x+'</option>').join('');
 }
-status();setInterval(status,1500);
+status();diagnose();setInterval(status,1500);
 </script></body></html>'''
 
 
@@ -113,7 +114,8 @@ class Bedienung:
         with self.lock:
             info = self.service.status() if self.service else {"auftraege": {}}
             return {"cfg": self.cfg, "jobs": info["auftraege"], "event": self.event,
-                    "messages": list(self.messages), "active": bool(self.thread and self.thread.is_alive())}
+                    "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
+                    "active": bool(self.thread and self.thread.is_alive())}
 
     def einstellungen(self, data):
         with self.lock:
