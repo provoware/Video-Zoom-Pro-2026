@@ -38,7 +38,18 @@ jobs:
       - name: Alle Funktions- und Medienprüfungen
         run: python3 scripts/regression.py --all --bericht "$RUNNER_TEMP/provoware_regression.json"
       - name: Startdiagnose
-        run: bash STARTEN.sh --doctor
+        run: |
+          python3 - <<'PYCODE'
+          import json, subprocess
+          p = subprocess.run(["bash", "STARTEN.sh", "--doctor"], capture_output=True, text=True, timeout=60)
+          report = json.loads(p.stdout)
+          assert isinstance(report.get("startbereit"), bool), report
+          assert p.returncode == (0 if report["startbereit"] else 1), (p.returncode, report)
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          print("Diagnosevertrag geprüft; Zielsystem-Startbereitschaft:", report["startbereit"])
+          PYCODE
+      - name: Browser-Zeitbudgets und Abfragefolge pruefen
+        run: python3 scripts/browser_contract_check.py
       - name: Browser-Layout ohne Nutzerdaten pruefen
         run: python3 scripts/layout_check.py --ziel "$RUNNER_TEMP/videozoom-layout"
       - name: Screenshot- und Messbelege sichern

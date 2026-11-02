@@ -31,8 +31,9 @@ def main(argv=None):
             cfg[key] = str(val)
     cfg = konfigurieren(cfg)
     if args.doctor:
-        print(json.dumps(pruefen(cfg=cfg), ensure_ascii=False, indent=2))
-        return 0
+        bericht = pruefen(cfg=cfg)
+        print(json.dumps(bericht, ensure_ascii=False, indent=2))
+        return 0 if bericht.get("startbereit") is True else 1
     def fragen(prompt):
         if sys.stdin.isatty():
             return input(prompt+" [j/N] ").lower().strip() in ("j","ja")

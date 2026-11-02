@@ -43,6 +43,14 @@ class DiagnoseEinstellungen(unittest.TestCase):
                 __main__.main(["--doctor","--format","QUAD"])
             self.assertEqual(check.call_args.kwargs["cfg"]["format"],"QUAD")
 
+    def test_doctor_fehlende_voraussetzungen_sind_kein_erfolg(self):
+        for bericht in ({"startbereit":False,"pruefungen":[]}, {}):
+            with self.subTest(bericht=bericht), tempfile.TemporaryDirectory() as tmp:
+                with patch.object(__main__, "SETTINGS", Path(tmp)/"missing.json"), \
+                     patch.object(__main__, "pruefen", return_value=bericht), \
+                     redirect_stdout(io.StringIO()):
+                    self.assertEqual(__main__.main(["--doctor"]),1)
+
 
 if __name__=="__main__":
     unittest.main()

@@ -42,13 +42,13 @@ class EntpackterStart(unittest.TestCase):
                 cmd=["bash",str(app/"STARTEN.sh"),*args]
                 result=subprocess.run(cmd,env=env,cwd=base,capture_output=True,
                                       text=True,timeout=50,check=False)
-                self.assertEqual(result.returncode,0,
-                                 "Frisch entpackter Start fehlgeschlagen: "+result.stderr[-800:])
                 if args==["--doctor"]:
                     raw=json.loads(result.stdout)
                     self.assertIn("pruefungen",raw)
                     self.assertIsInstance(raw["startbereit"],bool)
+                    self.assertEqual(result.returncode, 0 if raw["startbereit"] else 1)
                 else:
+                    self.assertEqual(result.returncode,0,result.stderr[-800:])
                     self.assertIn("--vorbereiten",result.stdout)
             self.assertFalse((app/"PROTOKOLLE").exists())
             self.assertFalse((app/"Downloads").exists())
