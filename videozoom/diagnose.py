@@ -1,6 +1,7 @@
 """Startprüfung ohne Tk. Systempakete nur nach Simulation und Zustimmung."""
 from __future__ import annotations
 import os
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -28,17 +29,44 @@ def scope_verfuegbar(cfg: dict | None = None):
 
 def pruefen(real_scope=True, cfg: dict | None = None):
     checks = []
+    actions = {
+        "Python":"Python 3.11 oder neuer über die Systemverwaltung bereitstellen.",
+        "ffmpeg":"FFmpeg über die angebotene, vorher simulierte Reparatur installieren.",
+        "ffprobe":"FFmpeg-Paket über die angebotene, vorher simulierte Reparatur prüfen.",
+        "Filter":"FFmpeg-Paket und benötigte Filter über die Systemverwaltung prüfen.",
+        "Kodierer":"FFmpeg mit libx264 und AAC über die Systemverwaltung bereitstellen.",
+        "Begrenzung":"Im normalen Linux-Benutzerkonto mit aktiver systemd-Benutzersitzung starten.",
+        "Downloads":"Vorhandenen beschreibbaren Downloads-Ordner wählen und Einstellungen speichern.",
+        "Arbeitsordner":"Eigenen beschreibbaren Arbeitsordner außerhalb der Downloads wählen und speichern.",
+    }
     def add(name, ok, detail):
-        checks.append({"name":name,"ok":bool(ok),"hinweis":detail})
+        checks.append({"name":name,"ok":bool(ok),"hinweis":detail,
+                       "handlung":"Keine Korrektur nötig." if ok else actions.get(name,"Einstellung prüfen.")})
+    from .core import konfigurieren
+    config = konfigurieren(cfg or {})
+    downloads = Path(config["downloads"]).expanduser().absolute()
+    arbeit = Path(config["arbeitsordner"]).expanduser().absolute()
+    def sicher(p):
+        return not any(x.is_symlink() for x in (p,*p.parents))
+    add("Downloads",downloads.is_dir() and sicher(downloads) and os.access(downloads,os.R_OK|os.W_OK|os.X_OK),
+        "Eingangsordner muss vorhanden, lesbar und beschreibbar sein.")
+    ancestor = next((p for p in (arbeit,*arbeit.parents) if p.exists()),None)
+    arbeits_ok = (sicher(arbeit) and arbeit!=downloads and downloads not in arbeit.parents
+                  and not (arbeit.exists() and not arbeit.is_dir()) and ancestor is not None
+                  and ancestor.is_dir() and os.access(ancestor,os.R_OK|os.W_OK|os.X_OK))
+    add("Arbeitsordner",arbeits_ok,"Eigener beschreibbarer Ordner außerhalb des Eingangs; Anlage erst beim Arbeitsstart.")
     add("Python",sys.version_info >= (3,11),"Mindestens Python 3.11.")
     for name in ("ffmpeg","ffprobe"):
-        add(name,bool(shutil.which(name)),"Wird zur lokalen Medienprüfung benötigt.")
+        vorhanden = bool(shutil.which(name))
+        ok, version = run([name,"-version"],5) if vorhanden else (False,"")
+        add(name, vorhanden and ok,
+            version.splitlines()[0][:200] if ok and version.splitlines() else "Wird zur lokalen Medienprüfung benötigt.")
     if shutil.which("ffmpeg"):
-        ok, raw = run(["ffmpeg","-hide_banner","-filters"])
+        ok, raw = run(["ffmpeg","-hide_banner","-filters"],12)
         present = set(re.findall(r"(?m)^\s*[TSC\.]{3}\s+(\w+)\s",raw))
         missing = sorted({"zoompan","xfade","concat","scale","pad"} - present)
         add("Filter",ok and not missing,", ".join(missing) or "Verfügbar.")
-        ok, raw = run(["ffmpeg","-hide_banner","-encoders"])
+        ok, raw = run(["ffmpeg","-hide_banner","-encoders"],12)
         present = set(re.findall(r"(?m)^\s*[VAS\.FSXBD]{6}\s+(\w+)\s",raw))
         missing = sorted({"libx264","aac"} - present)
         add("Kodierer",ok and not missing,", ".join(missing) or "Verfügbar.")

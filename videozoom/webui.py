@@ -152,6 +152,7 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <p id="hinweis" role="alert" aria-live="assertive"></p><div class="grid">
 <article id="vorbereitung"><h2>1 · Songs vorbereiten</h2>
 <p>WAV erkennen, Titel bereinigen, Bilder zuordnen.</p>
+<ol aria-label="Erste Einrichtung"><li>Downloads- und eigenen Arbeitsordner wählen.</li><li>Einstellungen speichern und Systemprüfung ausführen.</li><li>WAV fertig herunterladen, Bilder im zugehörigen Songordner ablegen, dann vorbereiten.</li></ol>
 <label for="downloads">Downloads-Ordner</label>
 <div class="ordner"><input id="downloads" aria-label="Downloads-Ordnerpfad">
 <button type="button" onclick="ordnerwahl('downloads')">📁 Ordner wählen</button></div>
@@ -203,11 +204,13 @@ function formatHinweis(){
  el('formatinfo').textContent=FORMATHILFE[code]||'Bitte ein gültiges Format auswählen.';
 }
 function prozentWert(value){
+ if(value===null||value===undefined||value==='')return null;
  const n=Number(value);
- return Number.isFinite(n)?Math.min(100,Math.max(0,Math.floor(n))):0;
+ return Number.isFinite(n)?Math.min(100,Math.max(0,Math.floor(n))):null;
 }
 function fortschrittAnzeigen(id,feld,info){
  const wert=prozentWert(info&&info.prozent);
+ if(wert===null){el(id).removeAttribute('value');el(feld).textContent='Noch unbekannt';return;}
  el(id).value=wert;
  el(feld).textContent=wert+' %';
 }
@@ -249,7 +252,17 @@ async function speichern(){try{
  const cfg={};for(let id of ['downloads','arbeitsordner','format','kategorie','theme'])cfg[id]=el(id).value;
  el('hinweis').textContent=(await api('/einstellungen',{cfg})).meldung;
 }catch(e){el('hinweis').textContent=e.message;}}
-async function diagnose(){try{el('diagnose').textContent=JSON.stringify(await api('/diagnose',undefined,60000),null,2);}
+function diagnoseText(bericht){
+ const zeilen=[bericht.startbereit?'BEREIT · Systemprüfung bestanden.':'HANDLUNG NÖTIG · Vor Videoberechnung die offenen Punkte beheben.'];
+ for(const punkt of bericht.pruefungen||[]){
+  zeilen.push((punkt.ok?'OK · ':'PRÜFEN · ')+punkt.name+': '+punkt.hinweis);
+  if(!punkt.ok)zeilen.push('Nächster Schritt: '+(punkt.handlung||'Einstellung prüfen.'));
+ }
+ zeilen.push('Originaldateien werden durch diese Prüfung nicht verändert.');
+ zeilen.push('Technische Einzelheiten:\n'+JSON.stringify(bericht,null,2));
+ return zeilen.join('\n\n');
+}
+async function diagnose(){try{el('diagnose').textContent=diagnoseText(await api('/diagnose',undefined,60000));}
 catch(e){el('diagnose').textContent=e.message;}}
 let statusLaeuft=false;
 async function status(){
@@ -290,9 +303,9 @@ class Bedienung:
         self.thread = None
         self.messages = deque(maxlen=20)
         self.event = {"phase": "bereit", "prozent": 0}
-        self.vorbereitung = {"prozent": 0}
-        self.stapel = {"prozent": 0}
-        self.video = {"prozent": 0}
+        self.vorbereitung = {"prozent": None}
+        self.stapel = {"prozent": None}
+        self.video = {"prozent": None}
         self.lock = threading.RLock()
 
     def _meldung(self, msg):
