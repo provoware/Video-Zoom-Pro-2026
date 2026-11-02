@@ -1,6 +1,8 @@
 """Sichere lokale Browser-Oberfläche: kein Tk, kein Netzwerkdienst nach außen."""
 from __future__ import annotations
 import json
+import fcntl
+import stat
 import os
 import secrets
 import shutil
@@ -295,7 +297,7 @@ async function status(){
   themaWaehlen();formatHinweis();
   el('downloads').dataset.ready='1';
  }
- el('status').textContent=r.active?'In Arbeit':'Bereit / pausiert';
+ el('status').textContent=r.andere_instanz?'Arbeitet im anderen Fenster':r.active?'In Arbeit':'Bereit / pausiert';
 }catch(e){el('status').textContent='Anzeige veraltet: '+e.message;}
  finally{statusLaeuft=false;setTimeout(status,1500);}}
 for(let [id,list] of [['format',['BREI','HOCH','QUAD','KLAS','4K']],
@@ -336,19 +338,44 @@ class Bedienung:
                            "video_fertig", "video_pausiert"}:
                 self.video = value
 
+    def _anderer_schreiber(self):
+        """Vorhandene Kern-Sperre nur prüfen; niemals anlegen/löschen."""
+        pfad = Path(self.cfg["arbeitsordner"]).expanduser().absolute() / "PROTOKOLLE" / "dienst.lock"
+        if any(p.is_symlink() for p in (pfad, *pfad.parents)):
+            raise RuntimeError("Unsicherer Sperrpfad: symbolische Verknüpfung; Arbeitsordner prüfen.")
+        try:
+            fd = os.open(pfad, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        except FileNotFoundError:
+            return False
+        with os.fdopen(fd, "rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise RuntimeError("Sperrdatei ist nicht regulär; keine Verarbeitung starten.")
+            try:
+                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return True
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+        return False
+
     def status(self):
         with self.lock:
             fehler = None
+            aktiv = bool(self.thread and self.thread.is_alive())
+            andere = False
             try:
-                info = self.service.status() if self.service else self._gespeicherter_status()
+                andere = not aktiv and self._anderer_schreiber()
+                info = self.service.status() if aktiv and self.service else self._gespeicherter_status()
             except (RuntimeError, OSError, ValueError, KeyError, TypeError) as exc:
                 info = {"auftraege": {}}
-                fehler = "Gespeicherte Aufträge nicht lesbar; Original bleibt erhalten: " + str(exc)
-
-            return {"cfg": self.cfg, "jobs": info["auftraege"], "event": self.event, "fehler": fehler,
-                    "vorbereitung": self.vorbereitung, "stapel": self.stapel,
-                    "video": self.video, "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
-                    "active": bool(self.thread and self.thread.is_alive())}
+                fehler = "Auftrags-/Sperrstand nicht lesbar; Original bleibt erhalten: " + str(exc)
+            unbekannt = {"prozent": None}
+            event = {"phase": "Verarbeitung im anderen Fenster", "prozent": None} if andere else self.event
+            return {"cfg": self.cfg, "jobs": info["auftraege"], "event": event, "fehler": fehler,
+                    "vorbereitung": unbekannt if andere else self.vorbereitung,
+                    "stapel": unbekannt if andere else self.stapel,
+                    "video": unbekannt if andere else self.video,
+                    "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
+                    "active": aktiv, "andere_instanz": andere}
 
     def _gespeicherter_status(self):
         """Aktuellen Journalstand lesen, ohne Workflow/Ordner/Dateien anzulegen."""
@@ -368,6 +395,8 @@ class Bedienung:
 
     def einstellungen(self, data):
         with self.lock:
+            if not (self.thread and self.thread.is_alive()) and self._anderer_schreiber():
+                raise RuntimeError("Anderes Fenster verarbeitet diesen Arbeitsordner. Einstellungen dort ändern.")
             cfg = konfigurieren({**self.cfg, **data})
             medienaenderung = any(cfg[k] != self.cfg[k] for k in cfg if k != "theme")
             if self.thread and self.thread.is_alive() and medienaenderung:
@@ -379,7 +408,7 @@ class Bedienung:
 
     def ruecksetzen(self, modus, gruppe):
         with self.lock:
-            if self.thread and self.thread.is_alive():
+            if (self.thread and self.thread.is_alive()) or self._anderer_schreiber():
                 raise RuntimeError("Vor dem Rücksetzen Verarbeitung sicher stoppen und Ende abwarten.")
             if modus == "zuruecksetzen":
                 cfg, backup = zuruecksetzen(self.config_path, self.cfg, gruppe)
@@ -394,7 +423,11 @@ class Bedienung:
 
     def aktion(self, mode):
         with self.lock:
+            if not (self.thread and self.thread.is_alive()) and self._anderer_schreiber():
+                raise RuntimeError("Anderes Fenster verarbeitet diesen Arbeitsordner. Dort sicher stoppen; hier nur ansehen.")
             if mode == "stop":
+                if not (self.thread and self.thread.is_alive()):
+                    return "Keine laufende Verarbeitung in diesem Fenster."
                 if self.service:
                     self.service.stop.set()
                 return "Stopp angefordert. Auftrag wird gesichert."

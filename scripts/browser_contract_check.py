@@ -56,6 +56,8 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  el('resetgruppe').value='ansicht';await ruecksetzen(false);assert(el('theme').value==='cyan'&&el('hinweis').textContent==='Gesichert','Rücksetzmeldung');tests++;
  globalThis.fetch=async()=>({ok:false,json:async()=>({fehler:'Erst stoppen'})});await ruecksetzen(true);
  assert(el('hinweis').textContent==='Erst stoppen'&&el('theme').value==='cyan','Rücksetzfehler erhält Anzeige');tests++;
+ timers.clear();globalThis.fetch=async()=>({ok:true,json:async()=>({...data,andere_instanz:true})});
+ await status();assert(el('status').textContent==='Arbeitet im anderen Fenster','Fremde Verarbeitung sichtbar');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);
@@ -85,7 +87,7 @@ def pruefen(node=False):
             if not match:raise RuntimeError('Kein JavaScript-Nachweis aus Chromium')
             report=json.loads(html.unescape(match.group(1)))
             report['engine']='Chromium'
-        if not report.get('bestanden') or report.get('tests')!=12:
+        if not report.get('bestanden') or report.get('tests')!=13:
             raise RuntimeError(str(report))
         report['commit']=os.environ.get('GITHUB_SHA')
         return report

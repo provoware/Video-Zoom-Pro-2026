@@ -22,3 +22,6 @@ Prognose: Fehlbedienung sicher rücknehmbar und Farbwahl ohne Produktionsstopp m
 
 ## UX-04: ausgeführte Tastatur-/Kontrastprüfung
 Branch `test/browser-keyboard-contrast` basiert auf Integration von #38 (`45ae369e04003ff0e8cef27d87ec7e6123da5835`). Neuer isolierter Chromium-Test über dessen lokale Entwicklungsschnittstelle, ausschließlich Standardbibliothek: echte Tab-/Leertasten, natürliche Fokusfolge, berechnete Text-/Fokusfarben, disabled/Hover und 20 Themen-/Größenfälle. Erster tatsächlicher Chromium-Lauf im PR auswerten, keine vorweggenommene Erfolgsmeldung. Pixelreferenz und reale Kubuntu-Sichtprüfung bleiben OFFEN. Produktcode unverändert.
+
+## UX-05 – zweites Fenster
+Branch `fix/second-window-readonly`, auf Tastaturprüfpaket aufgebaut. Vorhandene Kern-Sperre nur lesend prüfen, echte fremde Verarbeitung klar anzeigen, Journal auch bei altem inaktivem Service frisch lesen, keine fingierten fremden Prozente. Start/Stopp/Schreiben/Rücksetzen im fremden Fenster verweigern; eigene aktive Verarbeitung nicht als fremd behandeln. Sechs neue Kernel-Sperr-/Journal-/Symlinktests und ein weiterer ausgeführter JavaScript-Vertrag. Finalen SHA/CI im PR auswerten. #38 und #39 sind regulär integriert; ihre Main-Nachprüfungen separat nachverfolgen. UX-04 bleibt für Pixelreferenz und reale Sichtprüfung offen.
