@@ -124,3 +124,6 @@ Vor dem Rendern wird ein konservativer Bedarf aus Bildgröße, Bildrate und Song
 
 ## Verständliche Einrichtung und Diagnose
 Die Vorbereitung zeigt die Einrichtungsfolge: Ordner wählen, speichern, System prüfen und fertige Medien vorbereiten. Die Systemprüfung kontrolliert Ordnerlage/Zugriff, FFmpeg-/FFprobe-Versionen, Filter/Kodierer und Ressourcenbegrenzung ohne neue Ordner oder Originaldateien zu schreiben. Offene Punkte nennen Ursache und nächste Handlung; vollständige technische Einzelheiten bleiben erreichbar. Solange kein bestätigter Fortschrittswert vorliegt, erscheint „Noch unbekannt“; echte 0 % bleiben als 0 % sichtbar.
+
+## Prüfstand des gemeinsamen Entwicklungspakets
+Produktstand `2aac596c3d8b00bcb61569658fb5b61cf30c3f56`: 136 lokale Gesamtprüfungen bestanden; GitHub-Lauf #41375236315 auf Test-Merge `16c50bd3c26fabff9e772946e330a8d4380e1597` bestätigt 136 Python-/Medientests, zehn ausgeführte Chromium-Verträge und 20 Layoutfälle. Issue #31 und Browser/Start sind separat in main integriert; weitere Pakete und Restaufgaben siehe STATUS/TODO. Keine Stable- oder Kubuntu-Endfreigabe.

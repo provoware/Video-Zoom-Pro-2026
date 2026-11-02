@@ -5,7 +5,7 @@ Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md
 
 ## 1 · Implementiert und gezielt geprüft, Integration getrennt
 - [x] 2026-11-02 | R31 · Audit 1/5 | nichtblockierende FFmpeg-Überwachung, CPU-Stillstandsprüfung und Benutzer-Stopp ohne technischen Versuch | prüfen: Branch `fix/issue-31-render-watchdog`, HEAD `dffacf22c0f9d23d39615c5d1c92e352ed317632`, lokal 117/117; PR #32 CI #41373964285 mit 117 Tests und 20 Layoutfällen auf Test-Merge `fff828d1044adebabbe5ea63de928fd25bc34a0b` | fertig wenn: Implementierung reproduzierbar geprüft; Main-Integration bleibt separat.
-- [x] 2026-11-02 | BS · Audit 2/3/4/10 | Browserbudget, Einzelabfrage, veraltete Anzeige, Doctor-Exitcode, Journal-Nur-Lesen | prüfen: Branch `fix/browser-start-after-31`, PR #33, Code `ef6d7a645117e9aeb853005fe51d32440b1801a1`; lokale Vorprüfung 122/122 und acht JavaScript-Verträge | fertig wenn: Code/Negative vorhanden; endgültige Chromium-CI separat offen.
+- [x] 2026-11-02 | BS · Audit 2/3/4/10 | Browserbudget, Einzelabfrage, veraltete Anzeige, Doctor-Exitcode, Journal-Nur-Lesen | prüfen: Branch `fix/browser-start-after-31`, PR #33, Code `ef6d7a645117e9aeb853005fe51d32440b1801a1`; lokale Vorprüfung 122/122 und acht JavaScript-Verträge; inzwischen Main-Integration `709b6876d708f7a15c70f668485ba997ae5c1adc`, Main-CI #41375074616 erfolgreich | fertig wenn: Code/Negative vorhanden; integrierter Browser-/Startstand erfolgreich; weitere Änderungen separat prüfen.
 - [ ] 2026-11-02 | INTEGRATION | #32 → #33 → Strategie/Folgepakete kontrolliert prüfen | prüfen: jede PR-/Basis-SHA, vollständige Python-/Medien-/Browserbelege, keine konkurrierenden Schreiber | fertig wenn: alle erforderlichen Prüfungen grün und Integration ausdrücklich im Status belegt.
 
 ## 2 · Nächste kleine Datenpakete (in dieser Reihenfolge)
@@ -30,3 +30,6 @@ Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md
 - [ ] 2026-11-02 | RECHT | Lizenz und Veröffentlichungsrechte ausdrücklich klären | prüfen: Rechteinhaberentscheidung und verwendete Dateien | fertig wenn: nachvollziehbar entschieden; nicht eigenmächtig festlegen.
 - [ ] 2026-11-02 | RC | unveränderlichen Kandidaten mit ZIP-Manifest und Prüfsumme einfrieren | prüfen: alle vorherigen Gates, Code-/ZIP-SHA | fertig wenn: keine offenen angenommenen Funktionsänderungen.
 - [ ] 2026-11-02 | KUBUNTU | einmalige reale Endabnahme als letzter Schritt | prüfen: Zielrechner, 800×600/100–200 %, Tastatur/Dialoge, 30-%-CPU-/RAM-Limit, Langzeitbetrieb | fertig wenn: echte Zielsystembelege und persönliche Endentscheidung vorliegen.
+
+## Letzte gemeinsame Nachweiskette
+Produkt-HEAD `2aac596c3d8b00bcb61569658fb5b61cf30c3f56`: 136/136 lokal, CI #41375236315 auf Test-Merge `16c50bd3c26fabff9e772946e330a8d4380e1597` mit 136 Python-/Medientests, zehn Chromium-Verträgen und 20 Layoutfällen erfolgreich. Dokumentationsnachtrag wird erneut geprüft; keine vorweggenommene Freigabe seines neuen SHA. Nächste Arbeitsfolge: verbleibende Integrationsstände kontrollieren, dann UX-01b/UX-03 und UX-04 in kleinen eigenen Paketen; alle weiteren offenen Punkte bleiben sichtbar.
