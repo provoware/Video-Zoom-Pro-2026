@@ -19,3 +19,6 @@ Prognose: Fehlbedienung sicher rücknehmbar und Farbwahl ohne Produktionsstopp m
 
 ## Nächste offene Schritte
 `docs/TODO.md` ist führend. Nach diesem Paket verbleiben UX-04 (Kontrast/Tab/Pixel), UX-05 (zweite Oberfläche), die dokumentierten Architektur-/Sicherheitsbewertungen und QA-FINAL. Rechteentscheidung, eingefrorener Kandidat und reale Kubuntu-Endabnahme bleiben separat OFFEN; Kubuntu zuletzt. Kein Stable-Release.
+
+## UX-04: ausgeführte Tastatur-/Kontrastprüfung
+Branch `test/browser-keyboard-contrast` basiert auf Integration von #38 (`45ae369e04003ff0e8cef27d87ec7e6123da5835`). Neuer isolierter Chromium-Test über dessen lokale Entwicklungsschnittstelle, ausschließlich Standardbibliothek: echte Tab-/Leertasten, natürliche Fokusfolge, berechnete Text-/Fokusfarben, disabled/Hover und 20 Themen-/Größenfälle. Erster tatsächlicher Chromium-Lauf im PR auswerten, keine vorweggenommene Erfolgsmeldung. Pixelreferenz und reale Kubuntu-Sichtprüfung bleiben OFFEN. Produktcode unverändert.

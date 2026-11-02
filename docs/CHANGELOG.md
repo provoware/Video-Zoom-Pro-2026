@@ -69,3 +69,7 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Gruppenweise Einstellungsrücksetzung mit exakter Original-Sicherung und wiederaufnehmbarer, fingerabdruckgeprüfter Rücknahme; Medien/Pfade/Ressourcen bleiben erhalten.
 - Farbschema während laufender Verarbeitung speicherbar; Renderparameter bleiben gesperrt und Worker-Konfiguration unverändert.
 - Neun neue Pythonprüfungen und zwei zusätzliche JavaScript-Verträge; Modul im Offline-ZIP.
+
+## 2026-11-02 – echte Browser-Bedienungsprüfung
+- Isolierten Chromium-Test ohne neue Pakete ergänzt: echte Tab-/Leertasten, Fokusreihenfolge, Text-/Fokus-/disabled-/Hover-Kontrast in 20 Fällen.
+- SHA-bezogenen JSON-Nachweis in bestehendes CI-Artefakt aufnehmen; fehlende Pixel-/Kubuntu-Abnahme ausdrücklich offen.
