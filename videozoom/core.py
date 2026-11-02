@@ -15,6 +15,7 @@ import time
 import unicodedata
 from datetime import datetime, timezone
 from .sensoren import Sensoren
+from .wav_eingang import vollstaendig, DownloadWartet
 from .render_watchdog import rendern, ProduktionGestoppt
 
 FORMATE = {
@@ -457,6 +458,7 @@ class Workflow:
                 wartet += 1
             else:
                 try:
+                    vollstaendig(pfad)
                     length = dauer(pfad)
                     zeitplan(length, len(bilder), self.cfg["fps"], self.cfg["uebergang"])
                     paths = [pfad, *bilder]
@@ -466,6 +468,10 @@ class Workflow:
                                                       "dateien": manifest, "laenge": length,
                                                       "versuche": old.get("versuche", 0)}
                     bereit += 1
+                except DownloadWartet as exc:
+                    self.zustand["auftraege"][key] = {"titel": name, "status": "WARTET",
+                                                      "hinweis": str(exc), "versuche": old.get("versuche", 0)}
+                    wartet += 1
                 except (OSError, ValueError, subprocess.SubprocessError) as exc:
                     self.zustand["auftraege"][key] = {"titel": name, "status": "PRUEFEN",
                                                       "hinweis": str(exc)[:300]}

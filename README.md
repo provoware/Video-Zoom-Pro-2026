@@ -115,3 +115,6 @@ Stumme FFmpeg-Prozesse blockieren die Stopptaste nicht mehr. Nach 120 Sekunden o
 
 ## Start- und Verbindungsdiagnose
 `--doctor` liefert bei fehlender Startbereitschaft Exitcode 1, bei bestätigter Startbereitschaft 0. Gespeicherte Auftragszahlen erscheinen beim Öffnen ohne schreibenden Programmstart. Beschädigte oder verknüpfte Journale bleiben unverändert und melden einen Fehler. Browserstatus: 10 s Zeitbudget, nächste Abfrage erst nach Abschluss; bei Ausfall steht „Anzeige veraltet“. Manuelle Ordnerwahl hat separat 125 s, ausführliche Systemdiagnose 60 s. Abbruch eines Browseraufrufs beendet keinen gespeicherten Auftrag.
+
+## WAV-Downloadprüfung
+Vor der Vorbereitung wird zusätzlich zum Dateialter geprüft, ob die im WAV-Kopf angegebenen RIFF/RIFX/RF64-Blöcke vollständig vorhanden sind. Eine alte, aber abgeschnittene Datei wartet weiter und verbraucht keinen technischen Fehlversuch; nach vollständiger Kopie kann sie erneut vorbereitet werden. Originaldateien werden nicht repariert oder verändert. Grenze: Eine bereits komplett vorreservierte Datei mit formal gültigem Kopf ist ohne Abschlusssignal des Downloadprogramms nicht sicher von einem fertigen Download unterscheidbar; Ton-/Längenprüfung bleibt zusätzlich bestehen.

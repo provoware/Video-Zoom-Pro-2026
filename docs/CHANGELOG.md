@@ -49,3 +49,7 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Führende TODO ohne konkurrierende historische Offen-/Aktuell-Aussagen; alten Wortlaut getrennt erhalten.
 - Medien-/Prozessänderungen erzwingen volle Regression, Browser-/CLI-Testauswahl um fehlende Verträge ergänzt.
 - CI sichert Python-/Medienbericht, JavaScript-Verträge und SHA-bezogene Layoutbelege gemeinsam.
+
+## 2026-11-02 – DATA-01
+- Vollständige WAV-Containerblöcke einschließlich RF64 vor Vorbereitung prüfen; Teilkopie oder laufende Änderung wartet statt Render/Fehlversuch.
+- Fünf neue Negative/Wiederanlaufprüfungen; Modul ausdrücklich im Offline-ZIP.
