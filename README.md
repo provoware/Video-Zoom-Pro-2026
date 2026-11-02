@@ -101,3 +101,7 @@ python3 scripts/build_bundle.py
 ```
 
 Das ZIP wird unter `dist/` abgelegt und besitzt ein internes `MANIFEST.json` mit SHA-256-Prüfsummen. Bestehende ZIPs werden nie überschrieben. **Die Stable-Freigabe ist ausdrücklich gesperrt**, bis die Lizenzentscheidung und die abschließende Kubuntu-Abnahme vorliegen. ZIP-Erzeugung und Dateiverifikation sind automatisiert geprüft; ein endgültiger Zielsystem-Installationstest folgt zuletzt.
+
+## ⏱️ Zeitlimits und offene Qualitätsarbeiten
+
+Die neue [verbindliche PROVOWARE-Zeitlimitregel](docs/PROVOWARE_TIMEOUT_STANDARD.md) schützt den Entwicklungsprozess vor endlosen Prüfungen. Im [20-Punkte-Qualitätsbericht](docs/QUALITY_AUDIT_2026-11-02.md) sind konkret nachgewiesene oder noch zu prüfende Schwachstellen der Start-, Browser- und Videologik priorisiert. **Die technische Runtime-Umsetzung der offenen Befunde ist noch nicht abgeschlossen.** Originalschutz und die letzte Kubuntu-Nutzer-Endabnahme bleiben verbindlich.

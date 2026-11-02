@@ -61,3 +61,15 @@
 - [ ] 2026-11-01 | Kubuntu-Endabnahme | 800×600, 100/125/150/200 %, Tastatur, echte Dateidialoge, 30%-CPU-/RAM-cgroup-Messung und Langzeitbetrieb | prüfen: Zielrechner, Screenshots, JSON-Messbericht, Originalschutz, Release-SHA | fertig wenn: alle realen Belege auf eingefrorenem Kandidaten positiv und Stable-Entscheidung dokumentiert.
 
 **Nächster erlaubter Schritt:** DateiFinder-Designtransfer bei Textkontrasten, verständlicher Detailansicht und Pixel-/Tastaturregression fertigstellen und danach die geprüfte gemeinsame Dokumentation einfrieren. Danach Lizenz/Rechte verbindlich entscheiden, einen unveränderlichen Releasekandidaten bilden; **Kubuntu-Endabnahme bleibt strikt der letzte Schritt.**
+
+## P0/P1 – NI-20261102-02: Hänger, Start, Robustheit und Gestaltung
+
+**Beleg:** `docs/QUALITY_AUDIT_2026-11-02.md` (20 nummerierte Quellcodebefunde); `docs/PROVOWARE_TIMEOUT_STANDARD.md` (Repo-übergreifender Vertrag). Dokumentation ist noch kein kompletter Laufzeitwächter.
+
+- [ ] 2026-11-02 | P0 · Render | Blockierende FFmpeg-Ausgabe durch echte Fortschritts-/Stillstandsüberwachung ersetzen | prüfen: künstlich stummer Kindprozess, gestoppte Produktion, intakte Originaldateien | fertig wenn: TIMEOUT ohne Datenverlust zuverlässig erkannt.
+- [ ] 2026-11-02 | P1 · Browser | fetch-Zeitbudget und maximal eine laufende Statusabfrage implementieren | prüfen: blockierter lokaler Handler und verspätete Antworten | fertig wenn: keine endlos hängende Benutzeroberfläche.
+- [ ] 2026-11-02 | P1 · Startdiagnose | Fehlende FFmpeg-/Systemd-Voraussetzungen müssen im Doctor zu Exitcode ungleich null führen | prüfen: echte Negativtests | fertig wenn: falsches CI-PASS unmöglich.
+- [ ] 2026-11-02 | P1 · Wiederaufnahme | Gespeicherte Auftragszahlen sofort anzeigen, Nutzer-Stopp getrennt von technischen Fehlversuchen behandeln | prüfen: GUI-Neustart, Pause, Wiederaufnahme | fertig wenn: Originaldaten und Status konsistent.
+- [ ] 2026-11-02 | P1 · Eingangsprüfung | Pausierte Downloads und zu wenig freien Ausgabespeicher sicher erkennen | prüfen: Teil-WAV, knapper Datenträger | fertig wenn: keine frühzeitige Verarbeitung unvollständiger Dateien.
+- [ ] 2026-11-02 | P2 · Qualität | geführter Start, verständliche Fehlerhilfe, Kontrast-/Tastatur- und Pixelprüfung, Versions-/Schema-Test ergänzen | prüfen: Negativtests, 800×600/200 %, echte Interaktion | fertig wenn: ohne Terminal und ohne Datenverlust zuverlässig nutzbar.
+- [ ] 2026-11-02 | P1 · Integration | nach Umsetzung alle Sicherheits-, Medien-, Browser- und Restarttests auf einem Commit grün | prüfen: GitHub-Hauptzweig-SHA, Artefakte, keine Release-Falschfreigabe | fertig wenn: technische Gates erfüllt, Kubuntu-Endabnahme weiterhin letzter Schritt.
