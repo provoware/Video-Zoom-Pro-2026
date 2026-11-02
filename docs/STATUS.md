@@ -25,3 +25,6 @@ Stable: NEIN. Main-Integration nicht behauptet. Rechte/Lizenz, unveränderlicher
 
 ## DATA-01 – nächstes Datenpaket
 Branch `fix/wav-completeness-after-34`, Basis Strategie-Commit `b27ea651a4282b1ecde4db31d70ecd72084feedb`. WAV-Kopf-/Blockprüfung ergänzt; Teilkopien und während der Prüfung veränderte Dateien warten ohne Quellmutation. Fünf gezielte Prüfungen bestanden, finale Gesamt-/CI-Nachweise im PR separat. Nächster Schritt DATA-02: Speicherreserve.
+
+## DATA-02 – Speicher
+Branch `fix/storage-reserve-after-35`, Basis `bdabda649e6cc5d4ee1785c43a558ceea831ecd2`. Konservative Render-/faststart-/Archivreserve mit 256 MiB Puffer; Archive insgesamt vor erster Quellbewegung prüfen. Platzmangel ist eine Wartebedingung ohne technischen Versuchsverbrauch. Fünf gezielte Tests einschließlich unabhängigem Folgeauftrag; vollständige Prüfung/CI im PR. Keine garantierte Dateigrößenobergrenze oder exklusive Plattenplatzreservierung behauptet.

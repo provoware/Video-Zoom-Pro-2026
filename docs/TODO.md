@@ -10,7 +10,7 @@ Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md
 
 ## 2 · Nächste kleine Datenpakete (in dieser Reihenfolge)
 - [x] 2026-11-02 | DATA-01 · Audit 6 | pausierte/unvollständige Downloads erkennen; WAV-Header und Nutzdatenumfang vor Verarbeitung prüfen | prüfen: Teil-WAV mit alter Änderungszeit, weitergeschriebene Datei, gültige WAV und Wiederanlauf | fertig wenn: unvollständige Datei wartet ohne Quellmutation oder technischen Fehlversuch. Implementiert: RIFF/RIFX/RF64-Blockgrößen und Dateiänderungsprüfung; fünf neue Negative/Wiederanlaufproben lokal bestanden. Commit-Gesamtprüfung separat.
-- [ ] 2026-11-02 | DATA-02 · Audit 7 | konservative Reserve vor Render/Archivierung prüfen | prüfen: künstlich knapper Speicher, keine fertige MP4 und keine Quelldatei entfernen, späterer Wiederanlauf | fertig wenn: betroffener Auftrag verständlich wartet, andere Aufträge unabhängig bleiben.
+- [x] 2026-11-02 | DATA-02 · Audit 7 | konservative Reserve vor Render/Archivierung prüfen | prüfen: künstlich knapper Speicher, keine fertige MP4 und keine Quelldatei entfernen, späterer Wiederanlauf | fertig wenn: betroffener Auftrag verständlich wartet, andere Aufträge unabhängig bleiben. Implementiert: konservative Render-/faststart-/Archivplanung, 256-MiB-Reserve und Vorabprüfung aller Archivquellen; fünf gezielte Tests. Commit-CI separat prüfen.
 
 ## 3 · Bedienung nach Datengates
 - [ ] 2026-11-02 | UX-01 · Audit 8/17 | Erststart und Reparaturführung für Ordner, Rechte, FFmpeg und systemd verbessern | prüfen: fehlender Desktop/Ordner/Filter, apt-Simulation und Zustimmung, keine globalen Updates | fertig wenn: sichere nächste Handlung ohne Terminal verständlich ist.
