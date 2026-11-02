@@ -22,3 +22,6 @@ Browser/Start: Budget und Abfragefolge ausgeführt geprüft, Fehlercode und Jour
 Vor weiterer Mutation Nutzer-Input, Zweig-/Basis-SHA und CI lesen. Nächste kleine Aufgabe nach Strategieprüfung: DATA-01, Teil-WAV erkennen; danach DATA-02, Speicherreserve. Bereits grüne unveränderte Prüfungen nicht grundlos wiederholen. Integrationsreihenfolge #32 → #33 → Strategie → weitere Datenpakete.
 
 Stable: NEIN. Main-Integration nicht behauptet. Rechte/Lizenz, unveränderlicher Releasekandidat und echte Kubuntu-Endabnahme OFFEN; Kubuntu ausdrücklich zuletzt.
+
+## DATA-01 – nächstes Datenpaket
+Branch `fix/wav-completeness-after-34`, Basis Strategie-Commit `b27ea651a4282b1ecde4db31d70ecd72084feedb`. WAV-Kopf-/Blockprüfung ergänzt; Teilkopien und während der Prüfung veränderte Dateien warten ohne Quellmutation. Fünf gezielte Prüfungen bestanden, finale Gesamt-/CI-Nachweise im PR separat. Nächster Schritt DATA-02: Speicherreserve.

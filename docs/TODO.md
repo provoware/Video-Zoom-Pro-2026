@@ -9,7 +9,7 @@ Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md
 - [ ] 2026-11-02 | INTEGRATION | #32 → #33 → Strategie/Folgepakete kontrolliert prüfen | prüfen: jede PR-/Basis-SHA, vollständige Python-/Medien-/Browserbelege, keine konkurrierenden Schreiber | fertig wenn: alle erforderlichen Prüfungen grün und Integration ausdrücklich im Status belegt.
 
 ## 2 · Nächste kleine Datenpakete (in dieser Reihenfolge)
-- [ ] 2026-11-02 | DATA-01 · Audit 6 | pausierte/unvollständige Downloads erkennen; WAV-Header und Nutzdatenumfang vor Verarbeitung prüfen | prüfen: Teil-WAV mit alter Änderungszeit, weitergeschriebene Datei, gültige WAV und Wiederanlauf | fertig wenn: unvollständige Datei wartet ohne Quellmutation oder technischen Fehlversuch.
+- [x] 2026-11-02 | DATA-01 · Audit 6 | pausierte/unvollständige Downloads erkennen; WAV-Header und Nutzdatenumfang vor Verarbeitung prüfen | prüfen: Teil-WAV mit alter Änderungszeit, weitergeschriebene Datei, gültige WAV und Wiederanlauf | fertig wenn: unvollständige Datei wartet ohne Quellmutation oder technischen Fehlversuch. Implementiert: RIFF/RIFX/RF64-Blockgrößen und Dateiänderungsprüfung; fünf neue Negative/Wiederanlaufproben lokal bestanden. Commit-Gesamtprüfung separat.
 - [ ] 2026-11-02 | DATA-02 · Audit 7 | konservative Reserve vor Render/Archivierung prüfen | prüfen: künstlich knapper Speicher, keine fertige MP4 und keine Quelldatei entfernen, späterer Wiederanlauf | fertig wenn: betroffener Auftrag verständlich wartet, andere Aufträge unabhängig bleiben.
 
 ## 3 · Bedienung nach Datengates
