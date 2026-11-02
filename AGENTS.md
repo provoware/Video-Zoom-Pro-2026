@@ -162,3 +162,6 @@ Für jede Änderung an `videozoom/webui.py` gelten zusätzlich zu den Python-/FF
 ## NI-20261102-02 – Zeitbudgets für Fehlerprüfungen und hängende Aktionen
 
 Der Standard `docs/PROVOWARE_TIMEOUT_STANDARD.md` ist für neue Entwicklungsarbeiten verbindlich. Die konkrete offene Runtime-Umsetzung steht in `docs/QUALITY_AUDIT_2026-11-02.md`. Warnzeit, fehlender echter Fortschritt und maximale Prüfzeit getrennt bewerten; nicht auf einen blockierenden FFmpeg-stdout-Read vertrauen. Nur eigene Kindprozesse kontrolliert stoppen, Originale erhalten, Fehler niemals zu PASS erklären. Bereits bestehende 15-Minuten-CI-Grenze und finale Kubuntu-Endabnahme unverändert.
+
+## Issue #31 – Renderüberwachung
+`videozoom/render_watchdog.py` hält beide Pipes nichtblockierend und begrenzt. Warnzeit 120 s, Stillstandsprüfung 300 s; steigende Medienzeit und CPU-Arbeit des eigenen Prozessbaums getrennt bewerten. Kein absolutes Renderlimit. Eigene Sitzung mit 5 s Aufräumfrist, danach gezieltem Kill/Wait. Benutzer-Stopp verbraucht keinen technischen Versuch. Modul bleibt ausdrücklich im ZIP-Manifest.

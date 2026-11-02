@@ -34,3 +34,8 @@ Recherchiert: Shutter Encoder, HandBrake, Adobe Media Encoder, LosslessCut und C
 ## 02.11.2026 – Visuelle Komfortdetails übernommen (#28)
 
 Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protokolle und tatsächliche Prozentangaben an drei Balken. Auftrags-, Render-, Archiv- und CPU-Verträge unverändert. Zusätzlich 800px-Pfadfelder verbreitert und 180px-Breiten-Gate ergänzt. PR-HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d`: 108 Tests plus 20 Chromium-Fälle bestanden; integrierter `main` `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`. Kubuntu-Endabnahme zuletzt.
+
+## 2026-11-02 – Issue #31
+- FFmpeg-Ausgaben nichtblockierend und begrenzt lesen; Warnung/Stillstand mit monotoner Uhr und CPU-Nachweis.
+- Eigene Prozesssitzung kontrolliert beenden; Teilvideo erhalten; Benutzer-Stopp ohne technischen Fehlversuch.
+- Neun dauerhafte Negativ-/Regressionsfälle; ZIP-Liste um benötigtes Modul ergänzt.
