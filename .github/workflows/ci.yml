@@ -50,6 +50,8 @@ jobs:
           PYCODE
       - name: Browser-Zeitbudgets und Abfragefolge pruefen
         run: python3 scripts/browser_contract_check.py --bericht "$RUNNER_TEMP/browser-vertraege.json"
+      - name: Echte Tabfolge und Farbkontraste pruefen
+        run: python3 scripts/browser_bedienung.py --ziel "$RUNNER_TEMP/videozoom-layout"
       - name: Browser-Layout ohne Nutzerdaten pruefen
         run: python3 scripts/layout_check.py --ziel "$RUNNER_TEMP/videozoom-layout"
       - name: Screenshot- und Messbelege sichern
