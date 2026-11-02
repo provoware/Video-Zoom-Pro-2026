@@ -118,3 +118,6 @@ Stumme FFmpeg-Prozesse blockieren die Stopptaste nicht mehr. Nach 120 Sekunden o
 
 ## WAV-Downloadprüfung
 Vor der Vorbereitung wird zusätzlich zum Dateialter geprüft, ob die im WAV-Kopf angegebenen RIFF/RIFX/RF64-Blöcke vollständig vorhanden sind. Eine alte, aber abgeschnittene Datei wartet weiter und verbraucht keinen technischen Fehlversuch; nach vollständiger Kopie kann sie erneut vorbereitet werden. Originaldateien werden nicht repariert oder verändert. Grenze: Eine bereits komplett vorreservierte Datei mit formal gültigem Kopf ist ohne Abschlusssignal des Downloadprogramms nicht sicher von einem fertigen Download unterscheidbar; Ton-/Längenprüfung bleibt zusätzlich bestehen.
+
+## Platzbedarf vor großen Schreibvorgängen
+Vor dem Rendern wird ein konservativer Bedarf aus Bildgröße, Bildrate und Songlänge geschätzt: 1 Bit je Pixel und Bild plus AAC-Ton, 25 % Zuschlag und zweite MP4-Kopie für `faststart`, dazu Archivquellen und 256 MiB freie Reserve. Vor Archivierung wird der gesamte noch zu kopierende Umfang geprüft; vorhandene bestätigte Archive/Teilkopien werden berücksichtigt. Bei Platzmangel wartet der betroffene Auftrag ohne Verbrauch eines technischen Render-/Archivversuchs. Nach Freigabe von Speicher kann er fortgesetzt werden. Die Schätzung ist keine garantierte Obergrenze und reserviert keinen Platz gegen andere Programme.

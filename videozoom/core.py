@@ -82,6 +82,20 @@ def kategorie(name: str) -> str | None:
     return next(iter(moeglich)) if len(moeglich) == 1 else None
 
 
+class SpeicherWartet(RuntimeError):
+    """Fehlender Platz ist eine Wartebedingung, kein technischer Fehlversuch."""
+
+
+def speicher_pruefen(ordner: Path, bedarf: int, reserve: int = 256 * 1024**2):
+    frei = shutil.disk_usage(ordner).free
+    noetig = max(0, int(bedarf)) + reserve
+    if frei < noetig:
+        mib = 1024**2
+        raise SpeicherWartet(
+            f"Zu wenig freier Speicher: {frei//mib} MiB verfügbar, mindestens "
+            f"{math.ceil(noetig/mib)} MiB benötigt. Platz freigeben; Originale bleiben erhalten.")
+
+
 def regulaer(pfad: Path) -> bool:
     return pfad.is_file() and not pfad.is_symlink()
 
@@ -281,6 +295,7 @@ def kopieren_und_archivieren(quelle: Path, ziel: Path, hashwert: str) -> None:
                 raise RuntimeError("Kein sicherer Ablageplatz für die Teilkopie.")
             tmp.unlink()
         if not tmp.exists():
+            speicher_pruefen(ziel.parent, quelle.stat().st_size)
             with quelle.open("rb") as src, tmp.open("xb") as dest:
                 shutil.copyfileobj(src, dest, 1024 * 1024)
                 dest.flush()
@@ -564,6 +579,18 @@ class Workflow:
                 except (ValueError, KeyError, TypeError) as exc:
                     raise RuntimeError("Datenfehler: Archivprotokoll beschaedigt; "
                                        "keine stillschweigende Reparatur.") from exc
+        # Gesamtbedarf vor der ersten Quellbewegung prüfen; vorhandene
+        # Archive/Teilkopien benötigen keine erneute Vollkopie.
+        archivbedarf = 0
+        for entry in job["dateien"]:
+            src = Path(entry["pfad"])
+            dest = self.ordner / "VERWENDET" / (src.stem + "_verwendet_" + entry["sha256"][:8] + src.suffix)
+            tmp = dest.with_name("." + dest.name + "." + entry["sha256"][:12] + ".teil")
+            if regulaer(src) and not dest.exists() and not (
+                    regulaer(tmp) and pruefsumme(tmp) == entry["sha256"]):
+                archivbedarf += src.stat().st_size
+        if archivbedarf:
+            speicher_pruefen(self.ordner / "VERWENDET", archivbedarf)
         for entry in job["dateien"]:
             src = Path(entry["pfad"])
             dest = self.ordner / "VERWENDET" / (src.stem + "_verwendet_" + entry["sha256"][:8] + src.suffix)
@@ -589,6 +616,13 @@ class Workflow:
             p = Path(item["pfad"])
             if not regulaer(p) or pruefsumme(p) != item["sha256"]:
                 raise RuntimeError("Datenfehler: Quellmedium fehlt oder wurde verändert.")
+        breite, hoehe = FORMATE[self.cfg["format"]]
+        # Konservative Planung: 1 Bit/Pixel/Frame + AAC, 25 % Zuschlag
+        # und zweite MP4-Kopie für faststart; dazu alle Archivquellen.
+        videobedarf = math.ceil(job["laenge"] *
+                               (breite * hoehe * self.cfg["fps"] / 8 + 24000) * 2.5)
+        archivbedarf = sum(Path(item["pfad"]).stat().st_size for item in job["dateien"])
+        speicher_pruefen(self.ordner / "FERTIG", videobedarf + archivbedarf)
         zielbasis = slug(job["titel"]) + "_" + self.cfg["format"]
         zielordner = self.ordner / "FERTIG"
         ziel = next((zielordner / (zielbasis + ("" if i == 0 else "_" + str(i)) + ".mp4")
@@ -657,6 +691,12 @@ class Workflow:
                 job["archiv_versuche"] = int(job.get("archiv_versuche", 0)) + 1
                 self.speichern()
                 self._archive(key, job)
+            except SpeicherWartet as exc:
+                job["archiv_versuche"] = max(0, job["archiv_versuche"] - 1)
+                job["status"] = "ARCHIV_WARTET"
+                job["hinweis"] = str(exc)
+                job["archiv_retry_after"] = time.time() + 60
+                self.speichern()
             except (OSError, RuntimeError) as exc:
                 job["status"] = "ARCHIV_WARTET"
                 job["hinweis"] = str(exc)[-500:]
@@ -684,12 +724,26 @@ class Workflow:
                     job["archiv_versuche"] = 1
                     self.speichern()
                     self._archive(key, job)
+                except SpeicherWartet as exc:
+                    job["archiv_versuche"] = 0
+                    job["status"] = "ARCHIV_WARTET"
+                    job["hinweis"] = str(exc)
+                    job["archiv_retry_after"] = time.time() + 60
+                    self.speichern()
                 except (OSError, RuntimeError) as exc:
                     job["status"] = "ARCHIV_WARTET"
                     job["hinweis"] = str(exc)[-500:]
                     job["archiv_retry_after"] = time.time() + 60
                     self.speichern()
                 done += 1
+            except SpeicherWartet as exc:
+                job["versuche"] = max(0, job["versuche"] - 1)
+                job["status"] = "PAUSIERT"
+                job["hinweis"] = str(exc)
+                job["retry_after"] = time.time() + 60
+                self.speichern()
+                self.fortschreiben("video_pausiert", min(99, self.ereignis["prozent"]),
+                                  titel=job["titel"], hinweis=str(exc))
             except ProduktionGestoppt as exc:
                 job["versuche"] = max(0, job["versuche"] - 1)
                 job["status"] = "PAUSIERT"

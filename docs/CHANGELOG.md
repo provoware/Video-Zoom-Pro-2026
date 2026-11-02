@@ -53,3 +53,8 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 ## 2026-11-02 – DATA-01
 - Vollständige WAV-Containerblöcke einschließlich RF64 vor Vorbereitung prüfen; Teilkopie oder laufende Änderung wartet statt Render/Fehlversuch.
 - Fünf neue Negative/Wiederanlaufprüfungen; Modul ausdrücklich im Offline-ZIP.
+
+## 2026-11-02 – DATA-02
+- Konservativen Render-/faststart-/Archivbedarf und freie Reserve vor großen Schreibvorgängen prüfen.
+- Gesamtes Archiv vor erster Quellbewegung prüfen; gültige vorhandene Kopien weiterverwenden.
+- Speicherknappheit pausiert ohne technischen Versuch; unabhängige Aufträge bleiben bearbeitbar.
