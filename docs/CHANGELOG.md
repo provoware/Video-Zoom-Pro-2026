@@ -73,3 +73,8 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 ## 2026-11-02 – echte Browser-Bedienungsprüfung
 - Isolierten Chromium-Test ohne neue Pakete ergänzt: echte Tab-/Leertasten, Fokusreihenfolge, Text-/Fokus-/disabled-/Hover-Kontrast in 20 Fällen.
 - SHA-bezogenen JSON-Nachweis in bestehendes CI-Artefakt aufnehmen; fehlende Pixel-/Kubuntu-Abnahme ausdrücklich offen.
+
+## 2026-11-02 – zweite Oberfläche als Nur-Leser
+- Aktive fremde Kern-Sperre ohne Anlage/Löschung prüfen; frischen Journalstand und eindeutigen Fensterhinweis anzeigen.
+- Fremde Start-/Stopp-/Einstellungs-/Rücksetzversuche abweisen, keine erfundenen fremden Prozentwerte.
+- Sechs neue Pythonfälle, ein weiterer JavaScript-Vertrag und lange Statusmeldung in der echten Browsermatrix.
