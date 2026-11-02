@@ -78,3 +78,8 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Aktive fremde Kern-Sperre ohne Anlage/Löschung prüfen; frischen Journalstand und eindeutigen Fensterhinweis anzeigen.
 - Fremde Start-/Stopp-/Einstellungs-/Rücksetzversuche abweisen, keine erfundenen fremden Prozentwerte.
 - Sechs neue Pythonfälle, ein weiterer JavaScript-Vertrag und lange Statusmeldung in der echten Browsermatrix.
+
+## 2026-11-02 – Abschlussnachweis der Integrations- und Bedienpakete
+- #34–#40 mit getrennten Quell-/Test-Merge-/Main-Nachweisen dokumentiert.
+- TODO trennt erledigte automatisierte Tastatur-/Kontrastprüfungen von offener Pixel-/Zielsystemfreigabe.
+- Gemeinsamer geprüfter Produktumfang: 151 Python-/Medientests, 13 Chromium-Verträge sowie je 20 Tastatur-/Kontrast- und Layoutfälle.
