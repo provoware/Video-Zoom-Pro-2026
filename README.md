@@ -105,3 +105,6 @@ Das ZIP wird unter `dist/` abgelegt und besitzt ein internes `MANIFEST.json` mit
 ## ⏱️ Zeitlimits und offene Qualitätsarbeiten
 
 Die neue [verbindliche PROVOWARE-Zeitlimitregel](docs/PROVOWARE_TIMEOUT_STANDARD.md) schützt den Entwicklungsprozess vor endlosen Prüfungen. Im [20-Punkte-Qualitätsbericht](docs/QUALITY_AUDIT_2026-11-02.md) sind konkret nachgewiesene oder noch zu prüfende Schwachstellen der Start-, Browser- und Videologik priorisiert. **Die technische Runtime-Umsetzung der offenen Befunde ist noch nicht abgeschlossen.** Originalschutz und die letzte Kubuntu-Nutzer-Endabnahme bleiben verbindlich.
+
+## Renderüberwachung (Issue #31)
+Stumme FFmpeg-Prozesse blockieren die Stopptaste nicht mehr. Nach 120 Sekunden ohne steigende Medienzeit erscheint eine Warnung; nach 300 Sekunden ohne Medienfortschritt und nachweisbare CPU-Arbeit wird der eigene Renderprozess beendet. Aktive Berechnung hat keine pauschale Fünf-Minuten-Grenze. Teilvideo und Originale bleiben geschützt. Bewusster Stopp zählt nicht als technischer Fehlversuch. Entwicklungszweig `fix/issue-31-render-watchdog`; CI-/Zielsystemfreigabe getrennt prüfen.

@@ -15,6 +15,7 @@ import time
 import unicodedata
 from datetime import datetime, timezone
 from .sensoren import Sensoren
+from .render_watchdog import rendern, ProduktionGestoppt
 
 FORMATE = {
     "HOCH": (1080, 1920), "BREI": (1920, 1080), "QUAD": (1080, 1080),
@@ -601,24 +602,10 @@ class Workflow:
             command = ffmpeg_befehl(audio, images, teil, job["laenge"], self.cfg, weich)
             if not self.testmodus:
                 command = quota_befehl(command, self.cfg)
-            with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                  text=True, bufsize=1) as proc:
-                try:
-                    for line in proc.stdout:
-                        if self.stop.is_set():
-                            proc.terminate()
-                            raise RuntimeError("Produktion angehalten; Auftrag bleibt gespeichert.")
-                        if line.startswith("out_time_ms="):
-                            micros = int(line.split("=",1)[1])
-                            pct = min(90, max(1, int(micros / (job["laenge"] * 1e6) * 90)))
-                            self.fortschreiben("rendern", pct, titel=job["titel"])
-                    _, err = proc.communicate(timeout=max(90, job["laenge"] * 35))
-                    if proc.returncode:
-                        raise RuntimeError(err[-900:])
-                finally:
-                    if proc.poll() is None:
-                        proc.kill()
-                        proc.wait()
+            def fortschritt(micros):
+                pct = min(90, max(1, int(micros / (job["laenge"] * 1e6) * 90)))
+                self.fortschreiben("rendern", pct, titel=job["titel"])
+            rendern(command, self.stop, fortschritt, self.melden)
         try:
             try:
                 starten()
@@ -697,6 +684,14 @@ class Workflow:
                     job["archiv_retry_after"] = time.time() + 60
                     self.speichern()
                 done += 1
+            except ProduktionGestoppt as exc:
+                job["versuche"] = max(0, job["versuche"] - 1)
+                job["status"] = "PAUSIERT"
+                job["hinweis"] = str(exc)
+                job.pop("retry_after", None)
+                self.speichern()
+                self.fortschreiben("video_pausiert", min(99, self.ereignis["prozent"]),
+                                  titel=job["titel"], hinweis=str(exc))
             except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
                 detail = str(exc)[-500:]
                 datenfehler = ("Datenfehler" in detail or "Quelle seit" in detail

@@ -73,3 +73,10 @@
 - [ ] 2026-11-02 | P1 · Eingangsprüfung | Pausierte Downloads und zu wenig freien Ausgabespeicher sicher erkennen | prüfen: Teil-WAV, knapper Datenträger | fertig wenn: keine frühzeitige Verarbeitung unvollständiger Dateien.
 - [ ] 2026-11-02 | P2 · Qualität | geführter Start, verständliche Fehlerhilfe, Kontrast-/Tastatur- und Pixelprüfung, Versions-/Schema-Test ergänzen | prüfen: Negativtests, 800×600/200 %, echte Interaktion | fertig wenn: ohne Terminal und ohne Datenverlust zuverlässig nutzbar.
 - [ ] 2026-11-02 | P1 · Integration | nach Umsetzung alle Sicherheits-, Medien-, Browser- und Restarttests auf einem Commit grün | prüfen: GitHub-Hauptzweig-SHA, Artefakte, keine Release-Falschfreigabe | fertig wenn: technische Gates erfüllt, Kubuntu-Endabnahme weiterhin letzter Schritt.
+
+## Aktiver Ablauf – NI-20261102-03 (Nutzerauftrag, Issue #31 zuerst)
+Feste Reihenfolge: Renderüberwachung → FFmpeg-Negative → vollständige Regression → Browser/Start → Strategie → weitere priorisierte Aufgaben. Historische Häkchen sind keine aktuelle Gesamtfreigabe.
+- [x] 2026-11-02 | Issue #31 Implementierung | eigenen Entwicklungszweig, sichere Pipe-/Prozessüberwachung und Stopp implementieren | prüfen: neun neue Negativ-/Regressionsfälle, lokale Gesamtvorprüfung 117/117 | fertig wenn: Code vorhanden; Commit-CI separat offen.
+- [ ] 2026-11-02 | Issue #31 Nachweis | unveränderten Commit vollständig prüfen | prüfen: PR-CI inklusive Medien, Sicherheit, Browsermatrix | fertig wenn: exakter HEAD ohne Fehler, Kubuntu separat OFFEN.
+- [ ] 2026-11-02 | Browser/Start | erst nach Gesamtprüfung Zeitbudget, Einzelabfrage, Doctor-Exitcode und Startjournal korrigieren | prüfen: negative API-, Diagnose- und Nur-Lese-Tests | fertig wenn: keine Doppelabfrage, keine falsche Startfreigabe, keine Journalmutation.
+- [ ] 2026-11-02 | Strategie | Folgeaufgaben nach Datenrisiko, Nutzen und Abhängigkeit ordnen, doppelte/überholte TODO-Angaben bereinigen | prüfen: Audit zu Aufgaben zu Tests zu SHA | fertig wenn: eine führende eindeutige Warteschlange existiert.

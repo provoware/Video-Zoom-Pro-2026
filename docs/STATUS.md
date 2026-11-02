@@ -44,3 +44,6 @@ Vorgesehene kleine UI-Anpassungen: fünf Auftragskacheln aus existierendem `GET 
 - Format-Hilfetext für fünf Formate, vier native `details`-Bereiche und drei lesbare Prozentwerte; Ordnerfelder auf kleinen Karten breiter.
 - 108 Python-/Medien-/Negativtests und 20 Chromium-Layoutfälle auf PR-HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d` erfolgreich; alle Eingabefelder im Browser-Layout mindestens 333 Pixel breit.
 - Integration nach `main` `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`; [Main-CI #41364010012](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41364010012). Keine neue Runtime; Lizenzentscheidung und echte Kubuntu-Endabnahme **offen**.
+
+## Arbeitsstand 02.11.2026 – Issue #31
+Basis-main: `b200d1769de889d779c28481d39e27abbc2bb2a9`. Zweig: `fix/issue-31-render-watchdog`. Implementiert: nichtblockierende Pipe-Abfrage, 120/300-s-Wächter, begrenzte Diagnosen, eigener Prozessabschluss, Stopp ohne Versuchsverbrauch und ZIP-Modulaufnahme. Lokale Vorprüfung: 117 Tests ohne Fehler/Überspringen, einschließlich echter synthetischer Medien. Dieser Lauf war vor dem Commit; maßgebende SHA-Nachweise folgen in PR/CI, kein PASS für einen ungetesteten Commit. Kubuntu-Endabnahme weiterhin OFFEN. Nächster Schritt: finalen Issue-31-Commit komplett prüfen, erst dann Browser-/Startpaket.
