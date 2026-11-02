@@ -121,3 +121,6 @@ Vor der Vorbereitung wird zusätzlich zum Dateialter geprüft, ob die im WAV-Kop
 
 ## Platzbedarf vor großen Schreibvorgängen
 Vor dem Rendern wird ein konservativer Bedarf aus Bildgröße, Bildrate und Songlänge geschätzt: 1 Bit je Pixel und Bild plus AAC-Ton, 25 % Zuschlag und zweite MP4-Kopie für `faststart`, dazu Archivquellen und 256 MiB freie Reserve. Vor Archivierung wird der gesamte noch zu kopierende Umfang geprüft; vorhandene bestätigte Archive/Teilkopien werden berücksichtigt. Bei Platzmangel wartet der betroffene Auftrag ohne Verbrauch eines technischen Render-/Archivversuchs. Nach Freigabe von Speicher kann er fortgesetzt werden. Die Schätzung ist keine garantierte Obergrenze und reserviert keinen Platz gegen andere Programme.
+
+## Verständliche Einrichtung und Diagnose
+Die Vorbereitung zeigt die Einrichtungsfolge: Ordner wählen, speichern, System prüfen und fertige Medien vorbereiten. Die Systemprüfung kontrolliert Ordnerlage/Zugriff, FFmpeg-/FFprobe-Versionen, Filter/Kodierer und Ressourcenbegrenzung ohne neue Ordner oder Originaldateien zu schreiben. Offene Punkte nennen Ursache und nächste Handlung; vollständige technische Einzelheiten bleiben erreichbar. Solange kein bestätigter Fortschrittswert vorliegt, erscheint „Noch unbekannt“; echte 0 % bleiben als 0 % sichtbar.

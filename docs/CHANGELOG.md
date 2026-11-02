@@ -58,3 +58,8 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Konservativen Render-/faststart-/Archivbedarf und freie Reserve vor großen Schreibvorgängen prüfen.
 - Gesamtes Archiv vor erster Quellbewegung prüfen; gültige vorhandene Kopien weiterverwenden.
 - Speicherknappheit pausiert ohne technischen Versuch; unabhängige Aufträge bleiben bearbeitbar.
+
+## 2026-11-02 – Einrichtung und echte Fortschrittswerte
+- Einrichtungsfolge, Ordner-/Zugriffs-/Versionsprüfung und klare nächste Handlung ohne Dateianlage.
+- Unbekannter Fortschritt als unbestimmt statt erfundener Null; technische Einzelheiten bleiben vollständig.
+- Vier neue Pythonfälle und zwei zusätzliche ausgeführte JavaScript-Verträge; Auswahlregeln nachgeführt.

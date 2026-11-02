@@ -28,3 +28,6 @@ Branch `fix/wav-completeness-after-34`, Basis Strategie-Commit `b27ea651a4282b1e
 
 ## DATA-02 – Speicher
 Branch `fix/storage-reserve-after-35`, Basis `bdabda649e6cc5d4ee1785c43a558ceea831ecd2`. Konservative Render-/faststart-/Archivreserve mit 256 MiB Puffer; Archive insgesamt vor erster Quellbewegung prüfen. Platzmangel ist eine Wartebedingung ohne technischen Versuchsverbrauch. Fünf gezielte Tests einschließlich unabhängigem Folgeauftrag; vollständige Prüfung/CI im PR. Keine garantierte Dateigrößenobergrenze oder exklusive Plattenplatzreservierung behauptet.
+
+## Einrichtung und Fortschrittsführung
+Branch `feat/start-guidance-after-36`, auf Speicherpaket `0fb42f97be52d8e95e8080ad94a27182f899af94` aufgebaut. Ordnerlage/Rechte ohne Schreibzugriff prüfen, Werkzeugversionen im Diagnosebericht, Ursachen/Handlungen in Klartext, unbekannter Fortschritt getrennt von 0. Vier neue Pythonfälle und zwei zusätzliche JavaScript-Verträge; Gesamt-/Chromiumprüfung am endgültigen Stand im PR. Konfigurations-Rücksetzoption bleibt gesondert offen.

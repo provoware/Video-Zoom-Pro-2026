@@ -48,6 +48,10 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  assert(!el('status').textContent.includes('veraltet'),'Keine Erholung');tests++;
  timers.clear();blockFetch();p=ordnerwahl('downloads');assert(timer(125000),'Manueller Dialog zu kurz');fire(125000);await p;tests++;
  timers.clear();blockFetch();p=diagnose();assert(timer(60000),'Diagnosebudget');fire(60000);await p;tests++;
+ fortschrittAnzeigen('videobar','video-wert',{});assert(el('video-wert').textContent==='Noch unbekannt','Unbekannter Fortschritt');
+ fortschrittAnzeigen('videobar','video-wert',{prozent:0});assert(el('videobar').value===0&&el('video-wert').textContent==='0 %','Echte Null');tests++;
+ const text=diagnoseText({startbereit:false,pruefungen:[{name:'Test',ok:false,hinweis:'Ursache',handlung:'Lösung'}]});
+ assert(text.includes('HANDLUNG NÖTIG')&&text.includes('Nächster Schritt: Lösung')&&text.includes('Technische Einzelheiten'),'Diagnoseführung');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);
@@ -64,7 +68,7 @@ def pruefen(node=False):
     with tempfile.TemporaryDirectory(prefix='videozoom-js-') as tmp:
         root=Path(tmp)
         if node:
-            prefix = """const document={body:{dataset:{}},getElementById:id=>elements[id]||(elements[id]={dataset:{},value:'',textContent:'',innerHTML:''})};const elements={};const location={href:'http://127.0.0.1/?token=test'};\n"""
+            prefix = """const document={body:{dataset:{}},getElementById:id=>elements[id]||(elements[id]={dataset:{},value:'',textContent:'',innerHTML:'',removeAttribute:function(name){delete this[name];}})};const elements={};const location={href:'http://127.0.0.1/?token=test'};\n"""
             target=root/'contract.cjs';target.write_text(prefix+script+HARNESS)
             result=subprocess.run(['node',str(target)],capture_output=True,text=True,timeout=30,check=True)
             report=json.loads(result.stdout)
@@ -77,7 +81,7 @@ def pruefen(node=False):
             if not match:raise RuntimeError('Kein JavaScript-Nachweis aus Chromium')
             report=json.loads(html.unescape(match.group(1)))
             report['engine']='Chromium'
-        if not report.get('bestanden') or report.get('tests')!=8:
+        if not report.get('bestanden') or report.get('tests')!=10:
             raise RuntimeError(str(report))
         report['commit']=os.environ.get('GITHUB_SHA')
         return report
