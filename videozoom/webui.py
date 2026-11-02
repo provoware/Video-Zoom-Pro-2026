@@ -14,6 +14,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from .core import Workflow, konfigurieren, json_sicher, lesen
 from .diagnose import pruefen
+from .einstellungen_sicher import zuruecksetzen, wiederherstellen
 
 
 def ordner_waehlen(feld: str, startwert: str) -> str | None:
@@ -162,6 +163,12 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <label for="format">Videoformat</label><select id="format" onchange="formatHinweis()"></select><p class="format-hint" id="formatinfo">Format auswählen</p>
 <label for="kategorie">Dateikategorie</label><select id="kategorie"></select>
 <button onclick="speichern()">Einstellungen speichern</button>
+<p><small>Während der Verarbeitung lässt sich nur das Farbschema speichern.</small></p>
+<label for="resetgruppe">Ausgewählte Einstellungen zurücksetzen</label>
+<select id="resetgruppe"><option value="ansicht">Nur Farbschema</option><option value="format">Nur Format und Kategorie</option><option value="bedienung">Farbschema, Format und Kategorie</option></select>
+<button onclick="ruecksetzen(false)">Auswahl zurücksetzen · Sicherung anlegen</button>
+<button onclick="ruecksetzen(true)">Letzte Rücksetzung zurücknehmen</button>
+<p><small>Ordner, Medien und CPU-/RAM-Grenzen bleiben erhalten. Rücksetzen nur bei angehaltener Verarbeitung.</small></p>
 <button onclick="aktion('prepare')">Songs vorbereiten</button>
 <p><strong id="ready">0</strong> bereit · <strong id="wait">0</strong> warten</p>
 </article><article id="stapel-karte"><h2>2 · Stapelverarbeitung</h2>
@@ -251,6 +258,11 @@ async function ordnerwahl(feld){try{
 async function speichern(){try{
  const cfg={};for(let id of ['downloads','arbeitsordner','format','kategorie','theme'])cfg[id]=el(id).value;
  el('hinweis').textContent=(await api('/einstellungen',{cfg})).meldung;
+}catch(e){el('hinweis').textContent=e.message;}}
+async function ruecksetzen(zurueck){try{
+ const r=await api('/ruecksetzen',{modus:zurueck?'wiederherstellen':'zuruecksetzen',gruppe:el('resetgruppe').value});
+ for(const id of ['theme','format','kategorie'])el(id).value=r.cfg[id];
+ themaWaehlen();formatHinweis();el('hinweis').textContent=r.meldung;
 }catch(e){el('hinweis').textContent=e.message;}}
 function diagnoseText(bericht){
  const zeilen=[bericht.startbereit?'BEREIT · Systemprüfung bestanden.':'HANDLUNG NÖTIG · Vor Videoberechnung die offenen Punkte beheben.'];
@@ -356,13 +368,29 @@ class Bedienung:
 
     def einstellungen(self, data):
         with self.lock:
-            if self.thread and self.thread.is_alive():
-                raise RuntimeError("Während der Verarbeitung keine Einstellungen ändern.")
             cfg = konfigurieren({**self.cfg, **data})
-            if not Path(cfg["downloads"]).expanduser().is_dir():
+            medienaenderung = any(cfg[k] != self.cfg[k] for k in cfg if k != "theme")
+            if self.thread and self.thread.is_alive() and medienaenderung:
+                raise RuntimeError("Während der Verarbeitung nur das Farbschema ändern.")
+            if medienaenderung and not Path(cfg["downloads"]).expanduser().is_dir():
                 raise ValueError("Downloads-Ordner existiert nicht.")
             json_sicher(self.config_path, cfg)
             self.cfg = cfg
+
+    def ruecksetzen(self, modus, gruppe):
+        with self.lock:
+            if self.thread and self.thread.is_alive():
+                raise RuntimeError("Vor dem Rücksetzen Verarbeitung sicher stoppen und Ende abwarten.")
+            if modus == "zuruecksetzen":
+                cfg, backup = zuruecksetzen(self.config_path, self.cfg, gruppe)
+                meldung = "Auswahl zurückgesetzt. Bisherige Einstellungen gesichert: " + backup
+            elif modus == "wiederherstellen":
+                cfg = wiederherstellen(self.config_path, self.cfg)
+                meldung = "Zurückgesetzte Werte wiederhergestellt. Ordner und Medien unverändert."
+            else:
+                raise ValueError("Unbekannte Rücksetzaktion.")
+            self.cfg = cfg
+            return {"cfg": {k:cfg[k] for k in ("theme","format","kategorie")}, "meldung": meldung}
 
     def aktion(self, mode):
         with self.lock:
@@ -457,6 +485,8 @@ def starten(cfg, config_path, port=0, browser=True, bereit=None):
                     value = {"pfad": ziel, "meldung": (
                         "Ordner übernommen; Einstellungen bitte speichern." if ziel
                         else "Auswahl abgebrochen, Einstellungen unverändert.")}
+                elif path=="/ruecksetzen":
+                    value=bedienung.ruecksetzen(data.get("modus"),data.get("gruppe"))
                 elif path=="/einstellungen":
                     if not isinstance(data.get("cfg"),dict): raise ValueError("Einstellungen fehlen.")
                     bedienung.einstellungen(data["cfg"])

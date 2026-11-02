@@ -6,7 +6,7 @@ Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus 
 
 ## Aktueller Entwicklungsablauf (02.11.2026)
 
-Issue #31 liegt separat in PR #32 und ist mit 117 Tests sowie 20 Chromium-Layoutfällen geprüft. Browser-/Startkorrekturen folgen in PR #33. Die [führende TODO](docs/TODO.md) und [Entwicklungsstrategie](docs/ENTWICKLUNGSSTRATEGIE.md) trennen Implementierung, exakte Prüfbelege, Integration und finale Zielsystemabnahme. Quell- und Speicherprüfung haben Vorrang vor weiterer Gestaltung. Historische Testzahlen unten gelten nur für die dort genannten früheren Stände.
+Issue #31, Browser/Start und die Folgepakete #34–#37 sind in main integriert. Jede Übernahme erhielt eine eigene erfolgreiche vollständige Hauptzweigprüfung. Der gemeinsame Stand umfasst 136 Python-/Medientests, zehn Chromium-Verträge und 20 Layoutfälle. Weitere offene Entwicklungs- und Freigabeschritte stehen in der [führenden TODO](docs/TODO.md).
 
 ## 🧭 Funktionsgrafiken und Designreferenz
 
@@ -127,3 +127,8 @@ Die Vorbereitung zeigt die Einrichtungsfolge: Ordner wählen, speichern, System 
 
 ## Prüfstand des gemeinsamen Entwicklungspakets
 Produktstand `2aac596c3d8b00bcb61569658fb5b61cf30c3f56`: 136 lokale Gesamtprüfungen bestanden; GitHub-Lauf #41375236315 auf Test-Merge `16c50bd3c26fabff9e772946e330a8d4380e1597` bestätigt 136 Python-/Medientests, zehn ausgeführte Chromium-Verträge und 20 Layoutfälle. Issue #31 und Browser/Start sind separat in main integriert; weitere Pakete und Restaufgaben siehe STATUS/TODO. Keine Stable- oder Kubuntu-Endfreigabe.
+
+## Einstellungen sicher ändern und zurücksetzen
+Während der Verarbeitung kann das Farbschema über „Einstellungen speichern“ dauerhaft geändert werden. Medienparameter bleiben bis zum Ende des Auftrags gesperrt. Die Konfiguration des laufenden Renderprozesses wird nicht geändert.
+
+Im Vorbereitungsbereich kann wahlweise nur das Farbschema, nur Format/Kategorie oder beides auf die Standardwerte zurückgesetzt werden. Vorher wird der exakte bisherige Einstellungsinhalt als eigene geschützte Sicherungsdatei gespeichert. „Letzte Rücksetzung zurücknehmen“ stellt nur die damals gewählten Werte wieder her, auch nach einem Neustart. Ordner, Medien, CPU-/RAM-Grenzen und später geänderte andere Einstellungen bleiben erhalten. Rücksetzen/Rücknahme sind bei laufender Verarbeitung gesperrt. Extern geänderte Einstellungen und beschädigte Sicherungen werden nicht still überschrieben.

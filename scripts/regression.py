@@ -29,7 +29,7 @@ AUSWIRKUNGEN = {
     "videozoom/webui.py": (
         "tests.test_webui", "tests.test_workflow", "tests.test_progress",
         "tests.test_start_status", "tests.test_ui_theme", "tests.test_ui_polish",
-        "tests.test_visual_layout", "tests.test_diagnose_guidance",
+        "tests.test_visual_layout", "tests.test_diagnose_guidance", "tests.test_settings_safety",
     ),
     "videozoom/__main__.py": ("tests.test_cli_settings", "tests.test_zip_smoke", "tests.test_workflow", "tests.test_webui"),
     "videozoom/__init__.py": ("tests.test_workflow", "tests.test_webui"),

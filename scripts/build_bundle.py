@@ -24,6 +24,7 @@ PROGRAMM = (
     "videozoom/__init__.py",
     "videozoom/__main__.py",
     "videozoom/core.py",
+    "videozoom/einstellungen_sicher.py",
     "videozoom/render_watchdog.py",
     "videozoom/wav_eingang.py",
     "videozoom/diagnose.py",

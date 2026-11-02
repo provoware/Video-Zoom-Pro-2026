@@ -63,3 +63,9 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Einrichtungsfolge, Ordner-/Zugriffs-/Versionsprüfung und klare nächste Handlung ohne Dateianlage.
 - Unbekannter Fortschritt als unbestimmt statt erfundener Null; technische Einzelheiten bleiben vollständig.
 - Vier neue Pythonfälle und zwei zusätzliche ausgeführte JavaScript-Verträge; Auswahlregeln nachgeführt.
+
+## 2026-11-02 – Integration und sichere Bedienwerte
+- #34–#37 der Reihe nach mit jeweils erfolgreicher Main-Gesamtprüfung übernommen.
+- Gruppenweise Einstellungsrücksetzung mit exakter Original-Sicherung und wiederaufnehmbarer, fingerabdruckgeprüfter Rücknahme; Medien/Pfade/Ressourcen bleiben erhalten.
+- Farbschema während laufender Verarbeitung speicherbar; Renderparameter bleiben gesperrt und Worker-Konfiguration unverändert.
+- Neun neue Pythonprüfungen und zwei zusätzliche JavaScript-Verträge; Modul im Offline-ZIP.
