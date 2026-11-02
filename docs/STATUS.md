@@ -1,52 +1,24 @@
-# Status und Recovery-Key – PROVOWARE Video Zoom Pro 2026
+# Status und Wiederaufnahme – 02.11.2026
 
-**Aktuelle geprüfte Basis, 01.11.2026:** `main` `d486f30d2098777b59bc99330ddc3e5e1e2a884e`; [GitHub-Prüfung #41356578575](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41356578575) erfolgreich.
+## Ausgangsstand und Zweige
+- Repo: `provoware/Video-Zoom-Pro-2026`; main bei Arbeitsbeginn `b200d1769de889d779c28481d39e27abbc2bb2a9`.
+- Issue #31: `fix/issue-31-render-watchdog`, PR #32, HEAD `dffacf22c0f9d23d39615c5d1c92e352ed317632`.
+- Browser/Start danach: `fix/browser-start-after-31`, PR #33, HEAD `ef6d7a645117e9aeb853005fe51d32440b1801a1`.
+- Strategie danach: `chore/development-gates-after-33`, auf #33 aufgebaut; aktueller HEAD und CI werden im PR geführt. Ein Schreiber; main nicht verändert.
 
-## Abgeschlossene Entwicklung
-- Kern-Workflow WAV → Bildregie → MP4 → Archiv, Dauer- und Prüfsummenkontrolle, drei Formatbereiche und fünf Formate.
-- #8/#9: Basisintegration und Kubuntu-Prüfhelfer.
-- #10/#14/#15/#16: Fortschritt ohne falsche 100 %, Bilder-/Quoten-/Archiv-Härtung, 20-Song-Test, Offline-ZIP und Diagnose.
-- #17/#18: Dokumentations- und Zustandsbereinigung.
-- #19: maximale Wiederholungsanzahl, Wartefrist, status PRUEFEN statt unendlicher Fehlerschleifen; 86/86 Tests auf PR und erfolgreicher Hauptzweig-Lauf.
-- #20: isolierter Start aus frisch entpacktem Offline-ZIP (STARTEN.sh --help/--doctor), keine installierten Zusatzpakete; 88/88 PR-Tests und Main-CI erfolgreich.
-- Qualitätsstandards aus TOOL_2026_Multi und PROVOWARE_DATEIFINDER nur selektiv übernommen: kleine Scope-Änderung, Single Writer, belegter SHA, wiederholbare Negativtests, keine riskanten automatischen Reparaturen.
+## Unveränderte Nachweise
+- Issue-31-HEAD lokal vollständig: 117/117, keine Fehler oder Überspringer.
+- PR #32 CI #41373964285 erfolgreich: 117 Python-/Medientests plus 20 Chromium-Layoutfälle. Tatsächlich ausgecheckter GitHub-Test-Merge `fff828d1044adebabbe5ea63de928fd25bc34a0b`, nicht als HEAD-Test ausgeben.
+- Browser-/Start-Vorprüfung: 122 Pythonfälle plus acht ausgeführte JavaScript-Verträge lokal bestanden. Chromium und endgültige SHA-Nachprüfung separat im PR auswerten.
 
-## Verbleibende Gates (in dieser Reihenfolge)
-1. **Recht/Lizenz:** Nutzerentscheidung für die öffentliche Quellcode-Lizenz und Rechte-/Veröffentlichungsprüfung; die Software setzt keine Lizenz stillschweigend voraus.
-2. **Releasekandidat:** Nach Entscheidung exakten Quellcode- und ZIP-SHA dokumentieren und Entwicklung einfrieren.
-3. **Zuletzt Kubuntu:** echte Sichtprüfung 800×600/100–200 %, native Dialoge und Tastatur; 30%-CPU-/RAM-cgroup-Messung und reale Langzeit-Stapelverarbeitung. Nicht in GitHub simulierbar.
+## Führende Dateien
+`docs/TODO.md` enthält allein die operative Reihenfolge. `docs/ENTWICKLUNGSSTRATEGIE.md` begründet Prüf- und Entwicklungsgates. Frühere TODO-Wortlaute stehen nur als Historie in `docs/HISTORIE_TODO_2026-11-02.md`.
 
-## Recovery-Key
-- Repo: `provoware/Video-Zoom-Pro-2026`, aktueller bestätigter Ausgangsstand siehe oben; bei jeder Mutation SHA erneut lesen.
-- Quellprojekt VideoBatch bleibt unberührt; keine Tk- oder Cloud-Abhängigkeit.
-- `docs/TODO.md` = einziger verbindlicher offener Aufgabenplan; `docs/TESTPLAN.md` = Prüfanweisung.
-- Geprüftes Ergebnis ≠ Stable. Bis zur Kubuntu-Endabnahme kein Release als fertig kennzeichnen.
+## Prognose und Wirkung
+Issue #31: blockierender stdout-Pfad durch begrenzte nichtblockierende Abfrage ersetzt; synthetischer stiller Prozess wird beendet, Teilvideo bleibt gesichert, Originale unverändert, Stopp verbraucht keinen Fehlversuch. 20-Song-Regressionsfall bleibt erfolgreich. CPU-Aktivität verhindert pauschalen Zeitabbruch; ein CPU-beschäftigter aber fachlich nutzloser Prozess ist damit noch nicht automatisch beweisbar als Hänger erkennbar.
+Browser/Start: Budget und Abfragefolge ausgeführt geprüft, Fehlercode und Journal-Nur-Lesen getestet. Echter Browsernachweis nicht durch Node-Vorprüfung ersetzen.
 
-## 01.11.2026 – DateiFinder-Designtransfer (Stand der Entwicklung, nicht Stable)
+## Wiederaufnahme
+Vor weiterer Mutation Nutzer-Input, Zweig-/Basis-SHA und CI lesen. Nächste kleine Aufgabe nach Strategieprüfung: DATA-01, Teil-WAV erkennen; danach DATA-02, Speicherreserve. Bereits grüne unveränderte Prüfungen nicht grundlos wiederholen. Integrationsreihenfolge #32 → #33 → Strategie → weitere Datenpakete.
 
-- Referenz: DateiFinder main `9cc035240ece8a32ffd0b53774754e77ade6d422`. Nur Layout-/Qualitätsprinzipien übertragen, kein CSS-Import, kein Tauri/Rust oder Tk.
-- #22: zwei Mermaid-Diagramme und Design-Konfliktmatrix versioniert; `AGENTS.md`, TODO, README und Anforderungen ergänzt.
-- #23: vier Farbschemata mit Whitelist/Persistenz, Kopfzeile und phasenbezogener Navigation; CI erfolgreich.
-- #24: reproduzierbare Chrome/Chromium-Layoutkontrollen und Screenshot-Artefakte; CI erfolgreich.
-- #25: 800px-/200%-Kopf kompakter, kurze Bedienbezeichnungen, Testdaten in Dropdowns und Prüfung auf abgeschnittenen Navigationstext. Auf PR-HEAD `013f3f54f0023320ba4538227c016424917ca61d` **100/100 Python-Tests + 20 Browserproben** erfolgreich; Main-Nachkontrolle nach Merge separat prüfen.
-- **Noch offen vor letzter Kubuntu-Abnahme:** vollständige Kontrast-/Tastaturprüfung, optional einklappbare Details und Pixel-Referenzvergleich; Lizenz/Rechte und finale Release-SHA.
-- **Weiterhin kein Stable.** Browser-Vortests verwenden CSS-Zoomsimulation, echte Kubuntu- und Nutzer-Sichtabnahme bleibt zuletzt.
-
-## 02.11.2026 – Recherchegestützte UI-Komfortverbesserung (NI-20261102-01)
-
-Recherche: Shutter Encoder (Renderliste/Status), HandBrake (Warteschlange/Format), Adobe Media Encoder (Auftrags-/Encodingtrennung), LosslessCut (kompakte Details), CapCut (Einstellungsstruktur). Quellen, Aufwands-/Konfliktmatrix und ausdrücklich ausgeschlossene Elemente in `docs/DESIGN_RECHERCHE_MEDIEN_UI_2026-11-02.md`.
-
-Vorgesehene kleine UI-Anpassungen: fünf Auftragskacheln aus existierendem `GET /status`, lesbare Formatabmessungen, native aufklappbare Diagnose/Logs, Textwerte an drei Fortschrittsbalken und dezente Flächen. Keine Änderungen am Renderer oder der Archivierung. **Prüfstatus pro Patch anhand GitHub-Run und SHA aktualisieren; nicht mit Stable oder der persönlichen Kubuntu-Endabnahme verwechseln.**
-
-## 02.11.2026 – Recherchebasierte UI-Ergänzung integriert (#28)
-
-- Neue kompakte Statuskacheln für `BEREIT`, `WARTET`, `LAEUFT`, `ARCHIVIERT`, `PRUEFEN/ARCHIV_WARTET` ausschließlich aus bestehenden lokalen Statusdaten.
-- Format-Hilfetext für fünf Formate, vier native `details`-Bereiche und drei lesbare Prozentwerte; Ordnerfelder auf kleinen Karten breiter.
-- 108 Python-/Medien-/Negativtests und 20 Chromium-Layoutfälle auf PR-HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d` erfolgreich; alle Eingabefelder im Browser-Layout mindestens 333 Pixel breit.
-- Integration nach `main` `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`; [Main-CI #41364010012](https://github.com/provoware/Video-Zoom-Pro-2026/actions/runs/41364010012). Keine neue Runtime; Lizenzentscheidung und echte Kubuntu-Endabnahme **offen**.
-
-## Arbeitsstand 02.11.2026 – Issue #31
-Basis-main: `b200d1769de889d779c28481d39e27abbc2bb2a9`. Zweig: `fix/issue-31-render-watchdog`. Implementiert: nichtblockierende Pipe-Abfrage, 120/300-s-Wächter, begrenzte Diagnosen, eigener Prozessabschluss, Stopp ohne Versuchsverbrauch und ZIP-Modulaufnahme. Lokale Vorprüfung: 117 Tests ohne Fehler/Überspringen, einschließlich echter synthetischer Medien. Dieser Lauf war vor dem Commit; maßgebende SHA-Nachweise folgen in PR/CI, kein PASS für einen ungetesteten Commit. Kubuntu-Endabnahme weiterhin OFFEN. Nächster Schritt: finalen Issue-31-Commit komplett prüfen, erst dann Browser-/Startpaket.
-
-## Folgepaket Browser/Start – NI-20261102-03
-Issue-31-Commit `dffacf22c0f9d23d39615c5d1c92e352ed317632`: lokale unveränderte Gesamtprüfung 117/117, keine Überspringer. PR #32 / CI #41373964285; GitHub-Abschluss separat kontrollieren. Folgebranch `fix/browser-start-after-31` basiert darauf. Browserbudget, Einzelabfrage, Fehlerkennzeichnung, Doctor-Exitcode und geschütztes Nur-Lesen des Journals implementiert. Gezielte Vorprüfung: 14 Python-Tests plus 8 ausgeführte JavaScript-Verträge (Node nur als Entwicklungswerkzeug, kein Chromium-Nachweis). Chromium-Verträge und 20 Layoutfälle laufen in CI. Zielsystemprüfung bleibt OFFEN.
+Stable: NEIN. Main-Integration nicht behauptet. Rechte/Lizenz, unveränderlicher Releasekandidat und echte Kubuntu-Endabnahme OFFEN; Kubuntu ausdrücklich zuletzt.

@@ -44,3 +44,8 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Browseraufrufe begrenzen, Statusabfragen serialisieren und veraltete Anzeigen sichtbar markieren; manuelle Dialoge mit eigenem Budget.
 - Doctor-Exitcode entspricht Startbereitschaft; CI/ZIP prüfen diesen Vertrag ohne fehlende systemd-Benutzersitzung als Startbereitschaft auszugeben.
 - Journal bei Oberflächenstart nur lesen, Datenfehler sichtbar erhalten. Acht ausführbare JavaScript-Verträge und vier Journaltests ergänzt.
+
+## 2026-11-02 – Entwicklungsstrategie und Nachweiskette
+- Führende TODO ohne konkurrierende historische Offen-/Aktuell-Aussagen; alten Wortlaut getrennt erhalten.
+- Medien-/Prozessänderungen erzwingen volle Regression, Browser-/CLI-Testauswahl um fehlende Verträge ergänzt.
+- CI sichert Python-/Medienbericht, JavaScript-Verträge und SHA-bezogene Layoutbelege gemeinsam.

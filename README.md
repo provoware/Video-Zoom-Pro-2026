@@ -4,6 +4,10 @@
 
 Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus WAV-Dateien und Bildern. **VideoBatch bleibt ein anderes Projekt.** Die Oberfläche läuft ausschließlich lokal im Browser, ohne Tk und ohne Cloud.
 
+## Aktueller Entwicklungsablauf (02.11.2026)
+
+Issue #31 liegt separat in PR #32 und ist mit 117 Tests sowie 20 Chromium-Layoutfällen geprüft. Browser-/Startkorrekturen folgen in PR #33. Die [führende TODO](docs/TODO.md) und [Entwicklungsstrategie](docs/ENTWICKLUNGSSTRATEGIE.md) trennen Implementierung, exakte Prüfbelege, Integration und finale Zielsystemabnahme. Quell- und Speicherprüfung haben Vorrang vor weiterer Gestaltung. Historische Testzahlen unten gelten nur für die dort genannten früheren Stände.
+
 ## 🧭 Funktionsgrafiken und Designreferenz
 
 Die zwei Abläufe sind als **versionierte, direkt in GitHub sichtbare Diagramme** dokumentiert:

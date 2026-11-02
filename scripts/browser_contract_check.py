@@ -3,6 +3,7 @@
 import argparse
 import html
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -78,8 +79,14 @@ def pruefen(node=False):
             report['engine']='Chromium'
         if not report.get('bestanden') or report.get('tests')!=8:
             raise RuntimeError(str(report))
+        report['commit']=os.environ.get('GITHUB_SHA')
         return report
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--node',action='store_true')
-    args=p.parse_args();print(json.dumps(pruefen(args.node),ensure_ascii=False))
+    p.add_argument('--bericht',type=Path)
+    args=p.parse_args();report=pruefen(args.node)
+    if args.bericht:
+        args.bericht.parent.mkdir(parents=True,exist_ok=True)
+        args.bericht.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+    print(json.dumps(report,ensure_ascii=False))

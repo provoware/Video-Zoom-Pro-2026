@@ -14,17 +14,16 @@ import regression
 class RegressionAuswahl(unittest.TestCase):
     def test_core_loest_medien_und_recovery_aus(self):
         alles, module, grund = regression.betroffene(["videozoom/core.py"])
-        self.assertFalse(alles)
-        self.assertIn("tests.test_workflow", module)
-        self.assertIn("tests.test_recovery", module)
-        self.assertIn("tests.test_archive_evidence", module)
-        self.assertIn("tests.test_progress", module)
-        self.assertIn("tests.test_category_quota", module)
+        self.assertTrue(alles)
+        self.assertIn("Gesamtpruefung", grund)
+        self.assertTrue(regression.betroffene(["videozoom/render_watchdog.py"])[0])
 
     def test_webui_loest_browser_und_workflow_aus(self):
         alles, module, _ = regression.betroffene(["videozoom/webui.py"])
         self.assertFalse(alles)
         self.assertIn("tests.test_webui", module)
+        self.assertIn("tests.test_start_status", module)
+        self.assertIn("tests.test_ui_polish", module)
         self.assertIn("tests.test_workflow", module)
 
     def test_unbekannte_datei_erfordert_gesamtpruefung(self):
