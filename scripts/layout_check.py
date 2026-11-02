@@ -156,7 +156,7 @@ def pruefen(ziel: Path) -> dict:
                                    (width, height), screenshot=shot)
                     if not shot.is_file() or shot.stat().st_size < 1000:
                         raise RuntimeError("Screenshot wurde nicht erzeugt: " + str(shot))
-    report = {"schema": 1, "browser": Path(browser).name,
+    report = {"schema": 1, "commit": os.environ.get("GITHUB_SHA"), "browser": Path(browser).name,
               "pruefungen": len(messungen), "werte": messungen,
               "visuelle_nutzerabnahme": "OFFEN", "stable": False}
     (ziel / "layout_bericht.json").write_text(

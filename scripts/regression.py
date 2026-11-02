@@ -26,8 +26,12 @@ AUSWIRKUNGEN = {
     ),
     "videozoom/diagnose.py": ("tests.test_workflow", "tests.test_category_quota"),
     "videozoom/sensoren.py": ("tests.test_workflow",),
-    "videozoom/webui.py": ("tests.test_webui", "tests.test_workflow", "tests.test_progress"),
-    "videozoom/__main__.py": ("tests.test_workflow", "tests.test_webui"),
+    "videozoom/webui.py": (
+        "tests.test_webui", "tests.test_workflow", "tests.test_progress",
+        "tests.test_start_status", "tests.test_ui_theme", "tests.test_ui_polish",
+        "tests.test_visual_layout",
+    ),
+    "videozoom/__main__.py": ("tests.test_cli_settings", "tests.test_zip_smoke", "tests.test_workflow", "tests.test_webui"),
     "videozoom/__init__.py": ("tests.test_workflow", "tests.test_webui"),
     "tests/fixtures/generieren.py": ("tests.test_workflow",),
     "config/formate.json": ("tests.test_workflow",),
@@ -41,6 +45,8 @@ def betroffene(dateien: list[str]) -> tuple[bool, tuple[str, ...], str]:
     """True bedeutet kompletter Lauf: niemals sicherheitsblind selektieren."""
     if not dateien:
         return True, (), "Keine Aenderungsliste: sicherheitshalber Gesamtpruefung."
+    if any(p in {"videozoom/core.py", "videozoom/render_watchdog.py"} for p in dateien):
+        return True, (), "Medien-/Archiv-/Prozessgrenze geaendert: Gesamtpruefung."
     module: set[str] = set()
     for pfad in dateien:
         pfad = pfad.replace("\\", "/").lstrip("./")
@@ -93,6 +99,8 @@ def durchlauf(*, alles: bool = False, pfade: list[str] | None = None,
     lauf = unittest.TextTestRunner(verbosity=2, stream=sys.stderr).run(suite)
     info = {
         "schema": 1,
+        "umfang": "Python-/Medientests; Chromium-Nachweis separat",
+        "stable": False,
         "zeit_utc": datetime.now(timezone.utc).isoformat(),
         "commit": os.environ.get("GITHUB_SHA") or git_head(),
         "aenderungen": files,
