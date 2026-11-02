@@ -52,6 +52,10 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  fortschrittAnzeigen('videobar','video-wert',{prozent:0});assert(el('videobar').value===0&&el('video-wert').textContent==='0 %','Echte Null');tests++;
  const text=diagnoseText({startbereit:false,pruefungen:[{name:'Test',ok:false,hinweis:'Ursache',handlung:'Lösung'}]});
  assert(text.includes('HANDLUNG NÖTIG')&&text.includes('Nächster Schritt: Lösung')&&text.includes('Technische Einzelheiten'),'Diagnoseführung');tests++;
+ globalThis.fetch=async(url,options)=>{const body=JSON.parse(options.body);assert(body.modus==='zuruecksetzen'&&body.gruppe==='ansicht','Rücksetzauswahl');return {ok:true,json:async()=>({cfg:{theme:'cyan',format:'BREI',kategorie:'PROVOWARE'},meldung:'Gesichert'})};};
+ el('resetgruppe').value='ansicht';await ruecksetzen(false);assert(el('theme').value==='cyan'&&el('hinweis').textContent==='Gesichert','Rücksetzmeldung');tests++;
+ globalThis.fetch=async()=>({ok:false,json:async()=>({fehler:'Erst stoppen'})});await ruecksetzen(true);
+ assert(el('hinweis').textContent==='Erst stoppen'&&el('theme').value==='cyan','Rücksetzfehler erhält Anzeige');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);
@@ -81,7 +85,7 @@ def pruefen(node=False):
             if not match:raise RuntimeError('Kein JavaScript-Nachweis aus Chromium')
             report=json.loads(html.unescape(match.group(1)))
             report['engine']='Chromium'
-        if not report.get('bestanden') or report.get('tests')!=10:
+        if not report.get('bestanden') or report.get('tests')!=12:
             raise RuntimeError(str(report))
         report['commit']=os.environ.get('GITHUB_SHA')
         return report
