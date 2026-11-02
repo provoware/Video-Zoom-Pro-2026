@@ -108,3 +108,6 @@ Die neue [verbindliche PROVOWARE-Zeitlimitregel](docs/PROVOWARE_TIMEOUT_STANDARD
 
 ## Renderüberwachung (Issue #31)
 Stumme FFmpeg-Prozesse blockieren die Stopptaste nicht mehr. Nach 120 Sekunden ohne steigende Medienzeit erscheint eine Warnung; nach 300 Sekunden ohne Medienfortschritt und nachweisbare CPU-Arbeit wird der eigene Renderprozess beendet. Aktive Berechnung hat keine pauschale Fünf-Minuten-Grenze. Teilvideo und Originale bleiben geschützt. Bewusster Stopp zählt nicht als technischer Fehlversuch. Entwicklungszweig `fix/issue-31-render-watchdog`; CI-/Zielsystemfreigabe getrennt prüfen.
+
+## Start- und Verbindungsdiagnose
+`--doctor` liefert bei fehlender Startbereitschaft Exitcode 1, bei bestätigter Startbereitschaft 0. Gespeicherte Auftragszahlen erscheinen beim Öffnen ohne schreibenden Programmstart. Beschädigte oder verknüpfte Journale bleiben unverändert und melden einen Fehler. Browserstatus: 10 s Zeitbudget, nächste Abfrage erst nach Abschluss; bei Ausfall steht „Anzeige veraltet“. Manuelle Ordnerwahl hat separat 125 s, ausführliche Systemdiagnose 60 s. Abbruch eines Browseraufrufs beendet keinen gespeicherten Auftrag.

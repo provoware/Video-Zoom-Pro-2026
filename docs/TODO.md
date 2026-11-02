@@ -80,3 +80,7 @@ Feste Reihenfolge: Renderüberwachung → FFmpeg-Negative → vollständige Regr
 - [ ] 2026-11-02 | Issue #31 Nachweis | unveränderten Commit vollständig prüfen | prüfen: PR-CI inklusive Medien, Sicherheit, Browsermatrix | fertig wenn: exakter HEAD ohne Fehler, Kubuntu separat OFFEN.
 - [ ] 2026-11-02 | Browser/Start | erst nach Gesamtprüfung Zeitbudget, Einzelabfrage, Doctor-Exitcode und Startjournal korrigieren | prüfen: negative API-, Diagnose- und Nur-Lese-Tests | fertig wenn: keine Doppelabfrage, keine falsche Startfreigabe, keine Journalmutation.
 - [ ] 2026-11-02 | Strategie | Folgeaufgaben nach Datenrisiko, Nutzen und Abhängigkeit ordnen, doppelte/überholte TODO-Angaben bereinigen | prüfen: Audit zu Aufgaben zu Tests zu SHA | fertig wenn: eine führende eindeutige Warteschlange existiert.
+
+### Folgepaket Browser/Start – Implementierung
+- [x] 2026-11-02 | Browser/Start Code | 10-s-Standardbudget, sequentielle Statusabfrage, veraltete Anzeige, korrekter Doctor-Exitcode und Nur-Lese-Startjournal | prüfen: 14 gezielte Pythonfälle, acht JavaScript-Verträge; vollständige Commit-CI separat offen | fertig wenn: Implementierung und reproduzierbare Negative vorhanden.
+- [ ] 2026-11-02 | Browser/Start Nachweis | vollständige Regression und Chromium-Verträge/20 Layoutfälle auf endgültigem SHA | prüfen: Folge-PR und CI-Artefakte | fertig wenn: identischer Commit überall erfolgreich.

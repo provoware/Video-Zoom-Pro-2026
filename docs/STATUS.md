@@ -47,3 +47,6 @@ Vorgesehene kleine UI-Anpassungen: fünf Auftragskacheln aus existierendem `GET 
 
 ## Arbeitsstand 02.11.2026 – Issue #31
 Basis-main: `b200d1769de889d779c28481d39e27abbc2bb2a9`. Zweig: `fix/issue-31-render-watchdog`. Implementiert: nichtblockierende Pipe-Abfrage, 120/300-s-Wächter, begrenzte Diagnosen, eigener Prozessabschluss, Stopp ohne Versuchsverbrauch und ZIP-Modulaufnahme. Lokale Vorprüfung: 117 Tests ohne Fehler/Überspringen, einschließlich echter synthetischer Medien. Dieser Lauf war vor dem Commit; maßgebende SHA-Nachweise folgen in PR/CI, kein PASS für einen ungetesteten Commit. Kubuntu-Endabnahme weiterhin OFFEN. Nächster Schritt: finalen Issue-31-Commit komplett prüfen, erst dann Browser-/Startpaket.
+
+## Folgepaket Browser/Start – NI-20261102-03
+Issue-31-Commit `dffacf22c0f9d23d39615c5d1c92e352ed317632`: lokale unveränderte Gesamtprüfung 117/117, keine Überspringer. PR #32 / CI #41373964285; GitHub-Abschluss separat kontrollieren. Folgebranch `fix/browser-start-after-31` basiert darauf. Browserbudget, Einzelabfrage, Fehlerkennzeichnung, Doctor-Exitcode und geschütztes Nur-Lesen des Journals implementiert. Gezielte Vorprüfung: 14 Python-Tests plus 8 ausgeführte JavaScript-Verträge (Node nur als Entwicklungswerkzeug, kein Chromium-Nachweis). Chromium-Verträge und 20 Layoutfälle laufen in CI. Zielsystemprüfung bleibt OFFEN.

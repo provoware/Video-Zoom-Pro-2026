@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
-from .core import Workflow, konfigurieren, json_sicher
+from .core import Workflow, konfigurieren, json_sicher, lesen
 from .diagnose import pruefen
 
 
@@ -224,16 +224,24 @@ function themaWaehlen(){
  const theme=el('theme').value;
  if(THEMEN.includes(theme))document.body.dataset.theme=theme;
 }
-async function api(path,data){
- const r=await fetch(path+'?token='+encodeURIComponent(token),{method:data?'POST':'GET',
- headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,cache:'no-store'});
- const v=await r.json();if(!r.ok)throw Error(v.fehler||'Aktion fehlgeschlagen');return v;
+async function api(path,data,budget=10000){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),budget);
+ try{
+  const r=await fetch(path+'?token='+encodeURIComponent(token),{method:data?'POST':'GET',
+   headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,
+   cache:'no-store',signal:controller.signal});
+  const v=await r.json();if(!r.ok)throw Error(v.fehler||'Aktion fehlgeschlagen');return v;
+ }catch(e){
+  if(e.name==='AbortError')throw Error('Zeitlimit erreicht. Verbindung prüfen; Auftrag bleibt gespeichert.');
+  throw e;
+ }finally{clearTimeout(timer);}
 }
 async function aktion(mode){try{let r=await api('/aktion',{mode});el('hinweis').textContent=r.meldung;}
 catch(e){el('hinweis').textContent=e.message;}}
 async function ordnerwahl(feld){try{
  el('hinweis').textContent='Grafische Ordnerauswahl wird geöffnet …';
- const r=await api('/ordnerwahl',{feld});
+ const r=await api('/ordnerwahl',{feld},125000);
  if(r.pfad)el(feld).value=r.pfad;
  el('hinweis').textContent=r.meldung;
 }catch(e){el('hinweis').textContent=e.message;}}
@@ -241,9 +249,14 @@ async function speichern(){try{
  const cfg={};for(let id of ['downloads','arbeitsordner','format','kategorie','theme'])cfg[id]=el(id).value;
  el('hinweis').textContent=(await api('/einstellungen',{cfg})).meldung;
 }catch(e){el('hinweis').textContent=e.message;}}
-async function diagnose(){try{el('diagnose').textContent=JSON.stringify(await api('/diagnose'),null,2);}
+async function diagnose(){try{el('diagnose').textContent=JSON.stringify(await api('/diagnose',undefined,60000),null,2);}
 catch(e){el('diagnose').textContent=e.message;}}
-async function status(){try{let r=await api('/status');
+let statusLaeuft=false;
+async function status(){
+ if(statusLaeuft)return;
+ statusLaeuft=true;
+ try{let r=await api('/status');
+ if(r.fehler)throw Error(r.fehler);
  fortschrittAnzeigen('vorbereitungsbar','vorbereitung-wert',r.vorbereitung);
  fortschrittAnzeigen('stapelbar','stapel-wert',r.stapel);
  fortschrittAnzeigen('videobar','video-wert',r.video);
@@ -258,13 +271,14 @@ async function status(){try{let r=await api('/status');
   el('downloads').dataset.ready='1';
  }
  el('status').textContent=r.active?'In Arbeit':'Bereit / pausiert';
-}catch(e){el('status').textContent=e.message;}}
+}catch(e){el('status').textContent='Anzeige veraltet: '+e.message;}
+ finally{statusLaeuft=false;setTimeout(status,1500);}}
 for(let [id,list] of [['format',['BREI','HOCH','QUAD','KLAS','4K']],
 ['kategorie',['PROVOWARE','CODING','THEMA']],
 ['theme',['cyan','violett','gruen','orange']]]){
  el(id).innerHTML=list.map(x=>'<option>'+x+'</option>').join('');
 }
-formatHinweis();status();diagnose();setInterval(status,1500);
+formatHinweis();status();diagnose();
 </script></body></html>'''
 
 
@@ -299,11 +313,33 @@ class Bedienung:
 
     def status(self):
         with self.lock:
-            info = self.service.status() if self.service else {"auftraege": {}}
-            return {"cfg": self.cfg, "jobs": info["auftraege"], "event": self.event,
+            fehler = None
+            try:
+                info = self.service.status() if self.service else self._gespeicherter_status()
+            except (RuntimeError, OSError, ValueError, KeyError, TypeError) as exc:
+                info = {"auftraege": {}}
+                fehler = "Gespeicherte Aufträge nicht lesbar; Original bleibt erhalten: " + str(exc)
+
+            return {"cfg": self.cfg, "jobs": info["auftraege"], "event": self.event, "fehler": fehler,
                     "vorbereitung": self.vorbereitung, "stapel": self.stapel,
                     "video": self.video, "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
                     "active": bool(self.thread and self.thread.is_alive())}
+
+    def _gespeicherter_status(self):
+        """Aktuellen Journalstand lesen, ohne Workflow/Ordner/Dateien anzulegen."""
+        pfad = Path(self.cfg["arbeitsordner"]).expanduser().absolute() / "PROTOKOLLE" / "auftraege.json"
+        if any(p.is_symlink() for p in (pfad, *pfad.parents)):
+            raise RuntimeError("Unsicherer Journalpfad: symbolische Verknüpfung.")
+        journal = lesen(pfad, {"schema": 1, "auftraege": {}})
+        if journal.get("schema") != 1 or not isinstance(journal.get("auftraege"), dict):
+            raise RuntimeError("Unbekanntes Auftragsjournal.")
+        counts = {}
+        for job in journal["auftraege"].values():
+            if not isinstance(job, dict) or not isinstance(job.get("status"), str):
+                raise RuntimeError("Ungültiger gespeicherter Auftrag.")
+            key = job["status"]
+            counts[key] = counts.get(key, 0) + 1
+        return {"auftraege": counts}
 
     def einstellungen(self, data):
         with self.lock:

@@ -39,3 +39,8 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - FFmpeg-Ausgaben nichtblockierend und begrenzt lesen; Warnung/Stillstand mit monotoner Uhr und CPU-Nachweis.
 - Eigene Prozesssitzung kontrolliert beenden; Teilvideo erhalten; Benutzer-Stopp ohne technischen Fehlversuch.
 - Neun dauerhafte Negativ-/Regressionsfälle; ZIP-Liste um benötigtes Modul ergänzt.
+
+## 2026-11-02 – Browser/Start nach Issue #31
+- Browseraufrufe begrenzen, Statusabfragen serialisieren und veraltete Anzeigen sichtbar markieren; manuelle Dialoge mit eigenem Budget.
+- Doctor-Exitcode entspricht Startbereitschaft; CI/ZIP prüfen diesen Vertrag ohne fehlende systemd-Benutzersitzung als Startbereitschaft auszugeben.
+- Journal bei Oberflächenstart nur lesen, Datenfehler sichtbar erhalten. Acht ausführbare JavaScript-Verträge und vier Journaltests ergänzt.
