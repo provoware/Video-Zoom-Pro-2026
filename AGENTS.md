@@ -158,3 +158,7 @@ Für jede Änderung an `videozoom/webui.py` gelten zusätzlich zu den Python-/FF
 - Abschluss der kleinen UI-Änderungen: PR #28, geprüfter HEAD `db5f600963df2a57dd2a983bb541adbcd9ba3e8d`, **108 Python-/Medientests und 20 Chromium-Layoutprüfungen**. Integration `ee3f9014a8ea8d2822c53a5c762db316738b6fe8`, Main-CI #41364010012 getrennt.
 - Bei künftigem UI-Patch bleiben Browser-Screenshots und die echten `pfadfeldBreiten` verbindliche Layoutbelege. Werte unter 180 px in der Testmatrix = FAIL. Nicht mit realem KDE-/Native-Zoom gleichsetzen.
 - Oberflächenkacheln dürfen WARTET/PRUEFEN/ARCHIV_WARTET nicht zu einem scheinbaren „FERTIG“ zusammenfassen. Medien-/Archivstatus bleiben allein unter Kontrolle des Workflows.
+
+## NI-20261102-02 – Zeitbudgets für Fehlerprüfungen und hängende Aktionen
+
+Der Standard `docs/PROVOWARE_TIMEOUT_STANDARD.md` ist für neue Entwicklungsarbeiten verbindlich. Die konkrete offene Runtime-Umsetzung steht in `docs/QUALITY_AUDIT_2026-11-02.md`. Warnzeit, fehlender echter Fortschritt und maximale Prüfzeit getrennt bewerten; nicht auf einen blockierenden FFmpeg-stdout-Read vertrauen. Nur eigene Kindprozesse kontrolliert stoppen, Originale erhalten, Fehler niemals zu PASS erklären. Bereits bestehende 15-Minuten-CI-Grenze und finale Kubuntu-Endabnahme unverändert.
