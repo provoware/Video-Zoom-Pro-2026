@@ -4,9 +4,11 @@
 
 Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus WAV-Dateien und Bildern. **VideoBatch bleibt ein anderes Projekt.** Die Oberfläche läuft ausschließlich lokal im Browser, ohne Tk und ohne Cloud.
 
-## Aktueller Entwicklungsablauf (02.11.2026)
+## Aktueller Entwicklungsstand (02.11.2026)
 
-Issue #31, Browser/Start und die Folgepakete #34–#37 sind in main integriert. Jede Übernahme erhielt eine eigene erfolgreiche vollständige Hauptzweigprüfung. Der gemeinsame Stand umfasst 136 Python-/Medientests, zehn Chromium-Verträge und 20 Layoutfälle. Weitere offene Entwicklungs- und Freigabeschritte stehen in der [führenden TODO](docs/TODO.md).
+Die Folgepakete #34 → #35 → #36 → #37 wurden geordnet mit jeweils erfolgreicher Hauptzweigprüfung integriert. Anschließend folgten sichere Einstellungsrücksetzung/Farbwahl (#38), echte Tastatur-/Kontrastprüfung (#39) und der Nur-Lese-Schutz für zweite Fenster (#40).
+
+Der geprüfte Produktstand umfasst **151 Python-/Medientests, 13 ausgeführte Chromium-Verträge, 20 echte Tastatur-/Kontrastfälle und 20 Layoutfälle**. Prüfnachweise, Quell-HEAD und GitHub-Test-Merge bleiben in [STATUS](docs/STATUS.md) getrennt. Die [führende TODO](docs/TODO.md) hält die verbleibenden Pixel-/Zielsystem- und Architektur-/Sicherheitsaufgaben offen. Kein Stable-Release.
 
 ## 🧭 Funktionsgrafiken und Designreferenz
 
@@ -124,9 +126,6 @@ Vor dem Rendern wird ein konservativer Bedarf aus Bildgröße, Bildrate und Song
 
 ## Verständliche Einrichtung und Diagnose
 Die Vorbereitung zeigt die Einrichtungsfolge: Ordner wählen, speichern, System prüfen und fertige Medien vorbereiten. Die Systemprüfung kontrolliert Ordnerlage/Zugriff, FFmpeg-/FFprobe-Versionen, Filter/Kodierer und Ressourcenbegrenzung ohne neue Ordner oder Originaldateien zu schreiben. Offene Punkte nennen Ursache und nächste Handlung; vollständige technische Einzelheiten bleiben erreichbar. Solange kein bestätigter Fortschrittswert vorliegt, erscheint „Noch unbekannt“; echte 0 % bleiben als 0 % sichtbar.
-
-## Prüfstand des gemeinsamen Entwicklungspakets
-Produktstand `2aac596c3d8b00bcb61569658fb5b61cf30c3f56`: 136 lokale Gesamtprüfungen bestanden; GitHub-Lauf #41375236315 auf Test-Merge `16c50bd3c26fabff9e772946e330a8d4380e1597` bestätigt 136 Python-/Medientests, zehn ausgeführte Chromium-Verträge und 20 Layoutfälle. Issue #31 und Browser/Start sind separat in main integriert; weitere Pakete und Restaufgaben siehe STATUS/TODO. Keine Stable- oder Kubuntu-Endfreigabe.
 
 ## Einstellungen sicher ändern und zurücksetzen
 Während der Verarbeitung kann das Farbschema über „Einstellungen speichern“ dauerhaft geändert werden. Medienparameter bleiben bis zum Ende des Auftrags gesperrt. Die Konfiguration des laufenden Renderprozesses wird nicht geändert.

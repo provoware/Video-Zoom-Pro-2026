@@ -1,27 +1,31 @@
 # Status und Wiederaufnahme – 02.11.2026
 
-## Vollzogene Integration
-#34 → #35 → #36 → #37 regulär und ohne Force-Push in main übernommen. Keine Freigabeprüfung abgeschwächt.
-
-| Paket | Main-Commit | Erfolgreicher Main-Lauf |
+## Integration vollständig durchgeführt
+| Paket | Hauptzweig-Commit | Hauptzweigprüfung |
 |---|---|---|
-| #34 Strategie | d470ea00d239fc1d57031fcd43808d1ae0e6e353 | 41377347113 |
-| #35 WAV | 60b24d9806f346f15f3f6bd645cde1cad7fb5589 | 41377490494 |
-| #36 Speicher | 8fca030174d4a00bcf2b4dca7e673a8b93494951 | 41377620159 |
-| #37 Einrichtung | e544b711794080be5300158dd6608b964c5b9bea | 41377743071 |
+| #34 Strategie | d470ea00d239fc1d57031fcd43808d1ae0e6e353 | #41377347113 erfolgreich |
+| #35 WAV | 60b24d9806f346f15f3f6bd645cde1cad7fb5589 | #41377490494 erfolgreich |
+| #36 Speicher | 8fca030174d4a00bcf2b4dca7e673a8b93494951 | #41377620159 erfolgreich |
+| #37 Einrichtung | e544b711794080be5300158dd6608b964c5b9bea | #41377743071 erfolgreich |
+| #38 sichere Bedienwerte | 45ae369e04003ff0e8cef27d87ec7e6123da5835 | #41378432136 erfolgreich |
+| #39 echte Tastatur/Kontrast | 83545bc26496a6d723fc4ea5eab723f9a1df1caf | #41378950862 erfolgreich |
+| #40 zweites Fenster | 2eec90242b9477c2f41e0af690e0a35f5e287620 | #41379321415 erfolgreich |
 
-Alle 63 versionierten lokalen Dateien nach #37 mit dem integrierten Git-Baum abgeglichen: null Abweichungen. Gemeinsamer integrierter Umfang: 136 Python-/Medientests, zehn Chromium-Verträge, 20 Layoutfälle. Diese Nachweise gehören zu diesem Stand, nicht zu zukünftigen Änderungen.
+Alle Übernahmen regulär, ohne Force-Push und ohne Abschwächung einer Pflichtprüfung. Originalauftrag #34 → #35 → #36 → #37 eingehalten, danach Bedienung implementiert.
 
-## Aktuelles Bedienungspaket
-Branch `feat/safe-settings-after-37`, Basis-main `e544b711794080be5300158dd6608b964c5b9bea`. UX-01b und UX-03: gewählte Bedienwerte mit exakter alter Dateisicherung, Fingerabdruck und gruppenweiser Rücknahme nach Neustart; Farbschema während eines laufenden Auftrags speichern, ohne dessen Medienkonfiguration zu ändern.
+## Exakte Nachweise des letzten Produktstands
+- Quell-HEAD #40: `f82e377f23c5d7991bc1af066e44707681aa06a6`, lokal 151/151 ohne Überspringer; alle 67 versionierten lokalen Dateien per Git-Blob-Fingerabdruck mit veröffentlichtem Quellbaum identisch.
+- PR-CI #41379032590 erfolgreich auf tatsächlichem Test-Merge `2876ec0016e23a79ddb83460e242290bc44ebf67`: 151 Python-/Medientests, 13 ausgeführte Chromium-Verträge, 20 echte Tastatur-/Kontrastfälle, 20 Layoutfälle.
+- Berichte tragen die tatsächlich geprüfte CI-SHA. Artefakt `videozoom-layout-nachweise`, ID 13112139788 im #40-Lauf. Quell-HEAD, Test-Merge und Hauptzweig-Commit nicht gleichsetzen.
+- Vorherige Tastaturprüfung #39: 25 natürliche Tab-Stopps pro Fall, kleinster gemessener Textkontrast 7,127:1 und Fokuskontrast 10,900:1. Diese Messwerte beziehen sich auf den #39-Artefaktbericht, nicht auf einen ungemessenen zukünftigen Stand. Entwickler-Sichtprobe der 800×600/200%- und 1280×720-Aufnahmen erfolgt; echte Kubuntu-Sichtprüfung bleibt OFFEN.
 
-Prognose: Fehlbedienung sicher rücknehmbar und Farbwahl ohne Produktionsstopp möglich. Gemessen: neun gezielte Pythonfälle inklusive echter HTTP-/Zugriffsschutzprüfung und zwölf ausgeführte JavaScript-Verträge als lokale Vorprüfung. Endgültige Gesamt-/Chromium-CI des neuen Commit separat im PR auswerten, nicht vorwegnehmen. Kein Eingriff in Quellmedien, keine neue Produktruntime.
+## Implementierte Wirkung
+- Ausgewählte Bedienwerte mit exakter alter Dateisicherung, Fingerabdruck und gruppenweiser Rücknahme auch nach Neustart; keine Änderung von Medien/Pfaden/Ressourcen oder später veränderten anderen Werten. Schreibfehler, externe Einstellungsänderung und manipulierte Sicherung verhindern stilles Überschreiben.
+- Während eigener laufender Verarbeitung nur das Farbschema speichern; laufende Worker-Konfiguration bleibt unverändert.
+- Zweite Oberfläche prüft vorhandene Kern-Sperre nur lesend, zeigt frisches Journal und fremde Verarbeitung an, erfindet keine Prozente und verweigert fremde Start-/Stopp-/Schreibaktionen. Kein Löschen alter Sperren.
+- Echte Tab-/Leertasten und berechnete Text-/Fokus-/disabled-/Hover-Kontraste in 20 Fällen; getrennte bestehende Layoutmatrix bleibt erhalten. Keine zusätzliche Produktruntime.
 
-## Nächste offene Schritte
-`docs/TODO.md` ist führend. Nach diesem Paket verbleiben UX-04 (Kontrast/Tab/Pixel), UX-05 (zweite Oberfläche), die dokumentierten Architektur-/Sicherheitsbewertungen und QA-FINAL. Rechteentscheidung, eingefrorener Kandidat und reale Kubuntu-Endabnahme bleiben separat OFFEN; Kubuntu zuletzt. Kein Stable-Release.
+## Wiederaufnahme und verbleibender Umfang
+Branch dieses reinen Nachweisabgleichs: `docs/ui-integration-evidence`, Basis `2eec90242b9477c2f41e0af690e0a35f5e287620`; neuer Dokumentations-HEAD/PR und seine vollständige Nachprüfung stehen im PR. Produktdateien unverändert. Vor weiteren Mutationen Nutzer-Input, main-HEAD und offene PRs erneut lesen.
 
-## UX-04: ausgeführte Tastatur-/Kontrastprüfung
-Branch `test/browser-keyboard-contrast` basiert auf Integration von #38 (`45ae369e04003ff0e8cef27d87ec7e6123da5835`). Neuer isolierter Chromium-Test über dessen lokale Entwicklungsschnittstelle, ausschließlich Standardbibliothek: echte Tab-/Leertasten, natürliche Fokusfolge, berechnete Text-/Fokusfarben, disabled/Hover und 20 Themen-/Größenfälle. Erster tatsächlicher Chromium-Lauf im PR auswerten, keine vorweggenommene Erfolgsmeldung. Pixelreferenz und reale Kubuntu-Sichtprüfung bleiben OFFEN. Produktcode unverändert.
-
-## UX-05 – zweites Fenster
-Branch `fix/second-window-readonly`, auf Tastaturprüfpaket aufgebaut. Vorhandene Kern-Sperre nur lesend prüfen, echte fremde Verarbeitung klar anzeigen, Journal auch bei altem inaktivem Service frisch lesen, keine fingierten fremden Prozente. Start/Stopp/Schreiben/Rücksetzen im fremden Fenster verweigern; eigene aktive Verarbeitung nicht als fremd behandeln. Sechs neue Kernel-Sperr-/Journal-/Symlinktests und ein weiterer ausgeführter JavaScript-Vertrag. Finalen SHA/CI im PR auswerten. #38 und #39 sind regulär integriert; ihre Main-Nachprüfungen separat nachverfolgen. UX-04 bleibt für Pixelreferenz und reale Sichtprüfung offen.
+`docs/TODO.md` bleibt allein operativ. Bedienfunktionen erledigt; UX-04b (freigegebene Pixelreferenz, Verlaufspixel/Farbsehprüfung) bleibt sichtbar offen. Danach Architektur-/Sicherheitsbewertungen, QA-FINAL, Rechte-/Lizenzentscheidung und eingefrorener Releasekandidat. Echte Kubuntu-/Nutzer-Endabnahme ausdrücklich zuletzt. Stable: NEIN.
