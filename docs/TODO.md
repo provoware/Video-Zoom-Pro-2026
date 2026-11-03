@@ -3,6 +3,15 @@
 Stand nach Main-Integration: 03.11.2026. Letzter gemeinsam geprüfter Produktstand: `771891f062ef11b84c2355bdac96b4cbe12bdf2c`, Main-CI #41736344529 erfolgreich. Kein Stable. Historie: `HISTORIE_TODO_2026-11-02.md`, ausschließlich diese Liste ist operativ.
 Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md` (Auditnummern unten). Arbeitsstrategie: `ENTWICKLUNGSSTRATEGIE.md`.
 
+## NI-20261104-01 · Scanwahl, sicherer Abschluss und sichtbarer Arbeitsablauf
+Quelle: aktueller ausdrücklicher Nutzerauftrag, einschließlich Existenz eingestellter Ordner und zentraler Laienbedienung. Ein Schreiber, eigener Zweig, keine automatischen Codex-Reviews.
+- [ ] SCAN: gesicherter Fundlisten-Reset mit Neuscan; getrennte automatische/manuelle Bild- und Audioauswahl; Originalschutz und Wiederaufnahme prüfen.
+- [ ] ENDE: Autosave und eigener Serverabschluss bei bewusster Schließung, Fensterverlust und abfangbaren Signalen; Schreibfehler sichtbar halten.
+- [ ] ORDNER: Existenz und Verwendbarkeit der gewählten Ordner prüfen, nur bewusst anlegen, Verknüpfungen und Dateiblocker ablehnen.
+- [ ] UX: wichtigste Aktionen direkt sichtbar, vier echte Arbeitsschritte, verständliche nächste Handlung; vollständige Chromium-Matrix und Tastatur/Kontrast prüfen.
+- [ ] SPARSAM: unveränderte Eingänge über Metadaten erkennen, Sensor-/Statusbudget drosseln, Leerlauf-Scan verlängern; volle Quellprüfung vor Render erhalten.
+- [ ] MAIN: gesamte Regression, Chromium-Belege und ZIP prüfen; anschließend kontrolliert in main integrieren. Kein Stable und keine vorgetäuschte Kubuntu-Endabnahme.
+
 ## NI-20261103-01 · Vier Auditkorrekturen, danach Vorschau/Aufträge/Messung
 Quelle: ausdrücklicher Nutzerauftrag 03.11.2026. Basis main d8798d35. Ein Arbeitszweig, getrennte Korrektur-Commits, eine gemeinsame abschließende Prüfung und ein PR. Keine parallelen Schreiber.
 - [x] 2026-11-03 | A01 | Journal nach erfolgreicher Sperrübernahme neu laden; bei defektem Stand Sperre freigeben | geprüft: zwei neue Gegenproben + sechs Fremdfensterfälle lokal erfolgreich | fertig wenn: neuere Aufträge bleiben erhalten; Main/CI separat.

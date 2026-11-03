@@ -177,3 +177,12 @@ Ein bestätigter MP4-Lesefehler wird bei der Wiederaufnahme als Datenfehler daue
 Die gezielte Entwickleraufnahme der offenen Songliste erfolgt über dieselbe direkte Browsersteuerung wie die Tastaturprüfung. Eine leere oder unvollständige Aufnahme verhindert einen erfolgreichen Bildnachweis. Diese Entwickleraufnahme ersetzt keine persönliche Kubuntu-Endabnahme.
 
 Die Browserprüfung kontrolliert auch die tatsächliche Ausblendung: Ohne fertige Vorschau erscheint kein leerer Videoplayer; bei archivierten Songs bleibt die Einzel-Freigabe verborgen. Infohinweise verwenden ein systemschriftunabhängiges „(i)“.
+
+## Neue zentrale Bedienung (0.10.0-dev)
+Die Hauptoberfläche bündelt **Eingang prüfen**, **Videos erstellen**, **Sicher stoppen** und **Speichern & beenden**. Vier Arbeitsschritte und ein Klartexthinweis zeigen, was als Nächstes nötig ist. Fehlende Downloads- und Arbeitsordner werden sichtbar gemeldet und über **Ordner prüfen & anlegen** bewusst erstellt; unzulässige Pfade werden abgelehnt.
+
+Für Audio und Bilder lässt sich **Automatisch** getrennt ausschalten. Dann WAV-Dateien beziehungsweise Bilder je Song im Systemdialog auswählen. Das Programm verwendet geprüfte Arbeitskopien; ausgewählte Originale bleiben erhalten. **Fundliste zurücksetzen & neu prüfen** sichert das Journal und baut nur ungestartete Einträge neu auf. Bearbeitete Aufträge, Fehlersperren und manuelle Auswahl bleiben erhalten.
+
+Beim Beenden stoppt der eigene Worker kontrolliert, speichert und schließt seinen Server. Auch das letzte geschlossene Browserfenster (mit kurzer Wartezeit für Neuladen) und SIGINT/SIGTERM/SIGHUP lösen den Abschluss aus. Bei Speicherfehlern bleibt der Server mit verständlicher Meldung offen. Stromausfall und SIGKILL erlauben keinen Abschluss; atomare Journale sichern den letzten bestätigten Stand.
+
+Ressourcenschonung: unveränderte vorbereitete Eingänge ohne erneute Vollanalyse, Sensorabfragen höchstens alle fünf Sekunden, Statusdatei höchstens pro Sekunde außer Phasenwechsel/Abschluss, Browserstatus im Leerlauf alle fünf Sekunden und längere Scanpausen bis mindestens 60 Sekunden bei unverändertem Eingang. Vor jedem Render werden Quellen weiterhin vollständig geprüft. Die vorhandenen CPU-/RAM-Grenzen bleiben Pflicht.

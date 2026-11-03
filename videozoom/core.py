@@ -144,6 +144,7 @@ def konfiguration() -> dict:
         "arbeitsordner": str(Path.home() / "Video-Zoom-Pro"),
         "format": "BREI", "kategorie": "PROVOWARE", "theme": "cyan",
         "fps": 25, "cpu_prozent": 30, "ram_mb": 2048,
+        "audio_auto": True, "bilder_auto": True,
         "intervall": 15, "uebergang": 0.45, "stapelgroesse": 3,
     }
 
@@ -161,6 +162,14 @@ def konfigurieren(cfg: dict) -> dict:
         if not low <= value <= high:
             raise ValueError(key + " außerhalb der zulässigen Grenzen.")
         data[key] = value
+    for key in ("downloads", "arbeitsordner"):
+        if not isinstance(data[key], str) or not data[key].strip() or any(c in data[key] for c in "\0\n\r"):
+            raise ValueError("Ordnerpfad fehlt oder enthält ungültige Zeichen.")
+        if not Path(data[key]).expanduser().is_absolute():
+            raise ValueError("Vollständigen Ordnerpfad wählen, beginnend mit /.")
+    for key in ("audio_auto", "bilder_auto"):
+        if not isinstance(data[key], bool):
+            raise ValueError("Automatikwahl muss ein echter Schalterwert sein.")
     data["fps"] = 25
     data["uebergang"] = min(1.2, max(0.0, float(data["uebergang"])))
     return data
@@ -385,6 +394,8 @@ class Workflow:
             raise ValueError("Downloads-Ordner fehlt oder ist unsicher.")
         if self.ordner == self.downloads or self.downloads in self.ordner.parents:
             raise ValueError("Arbeitsordner darf nicht innerhalb des Downloads-Ordners liegen.")
+        from .eingang import ordner_pruefen
+        ordner_pruefen(self.cfg)
         self.meldung = meldung or (lambda text: None)
         self.fortschritt = fortschritt or (lambda event: None)
         self.testmodus = testmodus
@@ -398,6 +409,12 @@ class Workflow:
             raise RuntimeError("Unbekanntes Auftragsjournal – keine automatische Ersetzung.")
         self.ereignis = {"phase": "bereit", "prozent": 0}
         self.sensoren = Sensoren()
+        self._scan_cache = {}
+        self._sensor_cache = None
+        self._sensor_zeit = 0
+        self._status_zeit = 0
+        self._status_phase = None
+        self.scan_pause = self.cfg["intervall"]
 
     def sperren(self):
         if self.lock_file is not None:
@@ -427,19 +444,26 @@ class Workflow:
             self.lock_file = None
 
     def status(self):
+        now = time.monotonic()
+        if self._sensor_cache is None or now-self._sensor_zeit >= 5:
+            self._sensor_cache = self.sensoren.lesen(self.ordner)
+            self._sensor_zeit = now
         stats = {}
         for job in self.zustand["auftraege"].values():
             key = job["status"]
             stats[key] = stats.get(key, 0) + 1
         from .auftraege import uebersicht
         return {"zeit_utc": zeit(), "auftraege": stats, "liste": uebersicht(self.zustand["auftraege"], self.cfg), "aktueller_vorgang": self.ereignis,
-                "sensoren": self.sensoren.lesen(self.ordner),
+                "sensoren": self._sensor_cache, "scan_pause": self.scan_pause,
                 "cpu_ziel_prozent": self.cfg["cpu_prozent"]}
 
     def fortschreiben(self, phase, prozent, **details):
         self.ereignis = {"phase": phase, "prozent": min(100, max(0, int(prozent))), **details}
         self.fortschritt(self.ereignis)
-        json_sicher(self.ordner / "PROTOKOLLE" / "STATUS.json", self.status())
+        now = time.monotonic()
+        if phase != self._status_phase or now-self._status_zeit >= 1 or prozent == 100:
+            json_sicher(self.ordner / "PROTOKOLLE" / "STATUS.json", self.status())
+            self._status_phase, self._status_zeit = phase, now
 
     def speichern(self):
         json_sicher(self.journal, self.zustand)
@@ -492,8 +516,11 @@ class Workflow:
         return sortiert, offen
 
     def vorbereiten(self):
-        self.bilder_einsortieren()
-        wavs = sorted(p for p in self.downloads.glob("*.wav") if stabil(p))
+        from .eingang import auswahl, audio_dateien, signatur
+        registry = auswahl(self)
+        if self.cfg["bilder_auto"]:
+            self.bilder_einsortieren()
+        wavs = audio_dateien(self)
         bereit = wartet = 0
         for idx, pfad in enumerate(wavs, 1):
             if self.stop.is_set():
@@ -501,8 +528,6 @@ class Workflow:
             name = titel(pfad.name)
             bilder_ordner = self.ordner / "EINGANG" / slug(name) / "BILDER"
             bilder_ordner.mkdir(parents=True, exist_ok=True)
-            bilder = sorted(p for p in bilder_ordner.iterdir()
-                            if p.suffix.lower() in BILDTYPEN and stabil(p))
             key = hashlib.sha256(str(pfad).encode()).hexdigest()[:24]
             old = self.zustand["auftraege"].get(key, {})
             if old.get("status") == "ARCHIVIERT":
@@ -531,6 +556,18 @@ class Workflow:
             if old.get("status") == "PAUSIERT" and time.time() < float(old.get("retry_after", 0)):
                 wartet += 1
                 continue
+            if self.cfg["bilder_auto"]:
+                bilder = sorted(p for p in bilder_ordner.iterdir() if p.suffix.lower() in BILDTYPEN and stabil(p))
+            else:
+                bilder = [Path(p) for p in registry["bilder"].get(key, [])]
+                if any(p.parent != bilder_ordner or p.is_symlink() for p in bilder):
+                    raise RuntimeError("Unsichere gespeicherte Bildauswahl.")
+                bilder = [p for p in bilder if stabil(p)]
+            if bilder and old.get("status") == "BEREIT":
+                current = signatur([pfad,*bilder])
+                if self._scan_cache.get(key) == current:
+                    bereit += 1
+                    continue  # Nur Anzeige-Cache; vor Rendern weiterhin vollständige Hashprüfung.
             if not bilder:
                 self.zustand["auftraege"][key] = {"titel": name, "status": "WARTET",
                                                   "hinweis": f"Bilder nach {bilder_ordner} kopieren."}
@@ -550,6 +587,7 @@ class Workflow:
                     identitaet = lambda items: [(item.get("pfad"), item.get("sha256")) for item in items]
                     if old.get("vorschau") and identitaet(old.get("dateien", [])) == identitaet(manifest):
                         self.zustand["auftraege"][key]["vorschau"] = old["vorschau"]
+                    self._scan_cache[key] = signatur(paths)
                     bereit += 1
                 except DownloadWartet as exc:
                     self.zustand["auftraege"][key] = {"titel": name, "status": "WARTET",
@@ -630,8 +668,9 @@ class Workflow:
         # Auftrag auf erlaubte Quellbereiche beschraenken.
         for entry in job["dateien"]:
             src = Path(entry["pfad"])
-            audio = (src.parent == self.downloads and src.suffix.lower() == ".wav"
-                     and src.resolve().parent == self.downloads.resolve())
+            from .eingang import audio_erlaubt
+            audio = (audio_erlaubt(src, self.downloads, self.ordner)
+                     and not any(p.is_symlink() for p in (src,*src.parents)))
             bilderbasis = self.ordner / "EINGANG"
             bild = (src.suffix.lower() in BILDTYPEN and src.parent.name == "BILDER"
                     and src.parent.parent.parent == bilderbasis
@@ -870,10 +909,14 @@ class Workflow:
             self.melden("Automatik gestartet.")
             while not self.stop.is_set():
                 try:
+                    vorher = json.dumps(self.zustand, sort_keys=True)
                     self.vorbereiten()
                     self.stapel()
+                    gleich = vorher == json.dumps(self.zustand, sort_keys=True)
+                    self.scan_pause = min(max(60, self.cfg["intervall"]), self.scan_pause*2) if gleich else self.cfg["intervall"]
                 except (OSError, RuntimeError, ValueError) as exc:
                     self.melden("Automatik: " + str(exc))
-                self.stop.wait(self.cfg["intervall"])
+                self.stop.wait(self.scan_pause)
         finally:
-            self.freigeben()
+            try:self.speichern()
+            finally:self.freigeben()

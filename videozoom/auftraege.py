@@ -29,7 +29,8 @@ def quellen(workflow, key, job=None):
         if not p.is_absolute() or any(x.is_symlink() for x in (p, *p.parents)):
             raise RuntimeError("Unsichere Quelle; keine Datei verändert.")
         if index == 0:
-            erlaubt = p.parent == workflow.downloads and p.suffix.lower() == ".wav"
+            from .eingang import audio_erlaubt
+            erlaubt = audio_erlaubt(p, workflow.downloads, workflow.ordner)
         else:
             from .core import BILDTYPEN
             erlaubt = (p.suffix.lower() in BILDTYPEN and p.parent.name == "BILDER"
@@ -48,7 +49,8 @@ def erneut_vorbereiten(workflow, key, job):
     from .core import (titel, slug, stabil, pruefsumme, vollstaendig, dauer,
                        zeitplan, BILDTYPEN)
     candidates = []
-    for audio in workflow.downloads.glob("*.wav"):
+    from .eingang import audio_dateien
+    for audio in audio_dateien(workflow,alle=True):
         if titel(audio.name) != job.get("titel") or not stabil(audio):
             continue
         pathkey = hashlib.sha256(str(audio).encode()).hexdigest()[:24]
