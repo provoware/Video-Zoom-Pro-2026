@@ -140,3 +140,5 @@ Wenn ein anderes Fenster bereits verarbeitet, zeigt diese Oberfläche „Arbeite
 
 ## Auditkorrekturen 03.11.2026
 Der Entwicklungszweig lädt das Auftragsjournal nach Übernahme der Schreibsperre erneut. Vorab geöffnete Instanzen können dadurch keinen neueren Auftragsstand überschreiben. Zwei neue Gegenproben und sechs bestehende Fremdfensterfälle lokal bestanden; gemeinsamer Commit-/CI-Nachweis folgt separat. Weitere beauftragte Pakete: siehe führende TODO NI-20261103-01.
+
+Prüfbedürftige Aufträge bleiben auch nach erneuter Vorbereitung gesperrt. Direkt vor jedem Renderstart wird zusätzlich die Drei-Versuche-Grenze kontrolliert. Zwei neue Gegenproben einschließlich acht Automatikrunden bestanden lokal; eine bewusste Einzel-Freigabe folgt im Auftragslistenpaket.

@@ -465,7 +465,7 @@ class Workflow:
                             if p.suffix.lower() in BILDTYPEN and stabil(p))
             key = hashlib.sha256(str(pfad).encode()).hexdigest()[:24]
             old = self.zustand["auftraege"].get(key, {})
-            if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG", "LAEUFT"):
+            if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG", "LAEUFT", "PRUEFEN"):
                 continue
             if old.get("status") == "PAUSIERT" and old.get("render_hash"):
                 continue  # Das verifizierte Video erst im Stapel sicher wiederaufnehmen.
@@ -721,6 +721,11 @@ class Workflow:
         for index, (key, job) in enumerate(ready[:self.cfg["stapelgroesse"]],1):
             if self.stop.is_set():
                 break
+            if int(job.get("versuche", 0)) >= MAX_AUTO_VERSUCHE:
+                job["status"] = "PRUEFEN"
+                job["hinweis"] = "Automatische Versuche erschoepft; Auftrag bewusst prüfen und freigeben."
+                self.speichern()
+                continue
             job["status"] = "LAEUFT"
             job["versuche"] = job.get("versuche", 0) + 1
             self.fortschreiben("video_start", 0, titel=job["titel"])

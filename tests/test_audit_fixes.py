@@ -1,5 +1,9 @@
 """Dauerhafte Gegenproben zu NI-20261103-01, ausschließlich isolierte Testdaten."""
+import os
+import time
 import tempfile
+from unittest.mock import patch
+from tests.fixtures.generieren import wav, png
 from pathlib import Path
 import unittest
 
@@ -39,3 +43,35 @@ class AuditFixes(unittest.TestCase):
         self.assertEqual(a.journal.read_text(), "{kaputt")
         with self.assertRaises(RuntimeError):
             a.sperren()  # Die erste Fehlerprüfung hat die Sperre freigegeben.
+
+    def medien(self):
+        audio = wav(self.root / "Downloads" / "Song.wav")
+        image = png(self.root / "Work/EINGANG/song/BILDER/1.png", breite=128, hoehe=96)
+        for p in (audio, image):
+            os.utime(p, (time.time()-20,)*2)
+        return audio, image
+
+    def test_a02_pruefsperre_ueberlebt_automatikrunden(self):
+        self.medien()
+        w = Workflow(self.cfg, testmodus=True)
+        w.vorbereiten()
+        job = next(iter(w.zustand["auftraege"].values()))
+        with patch.object(w, "_render", side_effect=OSError("defekt")) as render:
+            for _ in range(8):
+                for current in w.zustand["auftraege"].values():
+                    current["retry_after"] = 0
+                w.vorbereiten()
+                w.stapel()
+        self.assertEqual(render.call_count, 3)
+        job = next(iter(w.zustand["auftraege"].values()))
+        self.assertEqual(job["versuche"], 3)
+        self.assertEqual(job["status"], "PRUEFEN")
+
+    def test_a02_bereit_mit_erschoepften_versuchen_startet_nicht(self):
+        w = Workflow(self.cfg, testmodus=True)
+        job = {"status": "BEREIT", "titel": "Alt", "versuche": 3}
+        w.zustand["auftraege"]["alt"] = job
+        with patch.object(w, "_render") as render:
+            w.stapel()
+            render.assert_not_called()
+        self.assertEqual(job["status"], "PRUEFEN")
