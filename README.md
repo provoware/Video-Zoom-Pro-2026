@@ -151,3 +151,10 @@ Die Videoprüfung vergleicht jetzt erwartete Auflösung, 25 Bilder pro Sekunde u
 Der Vorschaukern erstellt die ersten bis zu zehn Sekunden mit derselben Bildreihenfolge, Bewegung und Übergangsplanung in höchstens 640 Pixel Kantenlänge. Er verändert weder Originale noch Versuche oder Produktionsstatus. Die Ressourcenbegrenzung gilt ebenfalls. Fertige Vorschauen liegen getrennt unter VORSCHAU; Browserbedienung folgt im Auftragslistenpaket.
 
 Gemeinsamer Stand nach A01–A04: lokal 160 Tests ohne Überspringer auf Quellcommit 5d481c9a9bf88ef7307c6de1ad4ebcb514d2b35d erfolgreich. Dieser lokale Commit ist nicht mit dem späteren GitHub-Commit gleichzusetzen.
+
+### Songs und nächste Schritte
+Unter den Arbeitsbereichen erscheint eine kompakte Songliste. Titel, Zustand, Format und Bilderzahl sind sofort sichtbar. Song aufklappen: Ursache/Handlung, „Vorschau erzeugen“ und gegebenenfalls „Nach Prüfung erneut freigeben“. Die Vorschau ist dort direkt abspielbar. Sie zeigt den echten Anfang des geplanten Videos, maximal zehn Sekunden; spätere Bilder und die Gesamtqualität sind dadurch nicht vollständig beurteilt.
+
+Die Einzel-Freigabe setzt Versuche nur nach bewusster Aktion und Prüfung unveränderter Quellen zurück. Bei bereits bestätigtem Video wird ausschließlich die Archivierung wieder freigegeben. Geänderte oder fehlende Originale bleiben gesperrt. Laufende oder fremde Verarbeitung sperrt beide Einzelaktionen. „Sicher stoppen“ beendet auch die eigene Vorschauerzeugung. Alle Meldungen bleiben im Protokoll; die letzte Einzelmeldung erscheint zusätzlich direkt.
+
+Statusabfragen erhalten offene Songdetails, Tastaturfokus und laufende Videowiedergabe. Songtitel werden ausschließlich als Text eingefügt. Vorschauabrufe verlangen dasselbe lokale Token und die Host-Prüfung wie die übrige Oberfläche; freie Dateipfade sind nicht erlaubt. Vorschauen sammeln sich im getrennten Ordner VORSCHAU und werden nicht automatisch als fertige Produkte gezählt.

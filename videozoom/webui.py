@@ -94,6 +94,11 @@ small{color:var(--muted)}
 .technical-details summary::marker{color:var(--accent)}
 .technical-details[open] summary{margin-bottom:8px}
 .technical-details pre{margin:6px 0}
+#auftraege-karte{grid-column:1/-1}
+.job-card{margin:12px 0;overflow-wrap:anywhere}
+.job-card summary{display:block;min-height:44px;padding:8px 0;cursor:pointer;font-weight:700}
+.job-card video{display:block;width:100%;max-width:640px;max-height:360px;margin:12px 0;background:#000}
+.job-card button{white-space:normal;overflow-wrap:anywhere}
 .card-subtitle{color:var(--muted);margin:0 0 8px}
 .progress-label{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .progress-label output{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
@@ -196,6 +201,10 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <p class="card-subtitle">Fehler und Aufträge bleiben erhalten. Einzelheiten bei Bedarf öffnen.</p>
 <details class="technical-details"><summary>Auftragszahlen ansehen</summary><pre id="jobs">Noch keine Aufträge.</pre></details>
 <details class="technical-details"><summary>Meldungen ansehen</summary><pre id="log">Bereit.</pre></details>
+</article>
+<article id="auftraege-karte"><h2>Songs und nächste Schritte</h2>
+<p class="card-subtitle">Song aufklappen. Die Vorschau zeigt die ersten bis zu zehn Sekunden; Originale und Produktionsstatus bleiben erhalten.</p>
+<div id="auftragsliste"><p>Noch keine vorbereiteten Songs.</p></div>
 </article></div>
 <script>
 const token=new URL(location.href).searchParams.get('token');
@@ -278,6 +287,48 @@ function diagnoseText(bericht){
 }
 async function diagnose(){try{el('diagnose').textContent=diagnoseText(await api('/diagnose',undefined,60000));}
 catch(e){el('diagnose').textContent=e.message;}}
+const jobNodes=new Map();
+const STATUSWORTE={BEREIT:'Bereit',WARTET:'Wartet',LAEUFT:'Video läuft',PRUEFEN:'Prüfung nötig',PAUSIERT:'Pausiert',FERTIG:'Video geprüft – Archiv offen',ARCHIV_WARTET:'Archivierung wartet',ARCHIVIERT:'Archiviert'};
+async function auftragAktion(id,aktion){
+ try{el('hinweis').textContent=(await api('/auftrag',{auftrag:id,aktion})).meldung;}
+ catch(e){el('hinweis').textContent=e.message;}
+}
+function auftraegeAnzeigen(rows,gesperrt=false){
+ const container=el('auftragsliste');
+ if(!rows.length){container.textContent='Noch keine vorbereiteten Songs.';jobNodes.clear();return;}
+ if(jobNodes.size===0)container.textContent='';
+ const ids=new Set(rows.map(row=>row.id));
+ for(const [id,node] of jobNodes){if(!ids.has(id)){node.box.remove();jobNodes.delete(id);}}
+ for(const row of rows){
+  let node=jobNodes.get(row.id);
+  if(!node){
+   const box=document.createElement('details');box.className='job-card technical-details';
+   const title=document.createElement('summary'),hint=document.createElement('p');
+   const previewButton=document.createElement('button'),releaseButton=document.createElement('button');
+   previewButton.type=releaseButton.type='button';
+   previewButton.textContent='Vorschau erzeugen · ⓘ';previewButton.title='Erste bis zu zehn Sekunden, ohne Archivierung.';
+   releaseButton.textContent='Nach Prüfung erneut freigeben · ⓘ';releaseButton.title='Unveränderte Quellen prüfen und automatische Versuche bewusst zurücksetzen.';
+   previewButton.addEventListener('click',()=>auftragAktion(row.id,'vorschau'));
+   releaseButton.addEventListener('click',()=>auftragAktion(row.id,'freigeben'));
+   const preview=document.createElement('video');preview.controls=true;preview.preload='none';preview.hidden=true;
+   preview.setAttribute('aria-label','Kurze Vorschau abspielen');
+   box.append(title,hint,previewButton,releaseButton,preview);container.append(box);
+   node={box,title,hint,previewButton,releaseButton,preview,source:''};jobNodes.set(row.id,node);
+  }
+  node.title.textContent=row.titel+' · '+(STATUSWORTE[row.status]||row.status)+' · '+row.format+' · '+row.bilder+' Bilder';
+  node.hint.textContent=row.hinweis||'Vorschau ansehen oder den bereitstehenden Song im Stapel verarbeiten.';
+  node.previewButton.disabled=gesperrt||!['BEREIT','PAUSIERT','PRUEFEN'].includes(row.status)||row.bilder<1;
+  node.releaseButton.hidden=!['PAUSIERT','PRUEFEN'].includes(row.status);
+  node.releaseButton.disabled=gesperrt;
+  node.preview.hidden=!row.vorschau;
+  const source=row.vorschau?'/vorschau?token='+encodeURIComponent(token)+'&auftrag='+encodeURIComponent(row.id)+'&version='+encodeURIComponent(row.vorschau_id):'';
+  if(source!==node.source){
+   if(source)node.preview.src=source;else node.preview.removeAttribute('src');
+   node.source=source;
+  }
+ }
+}
+let letzteEinzelmeldung="";
 let statusLaeuft=false;
 async function status(){
  if(statusLaeuft)return;
@@ -287,7 +338,9 @@ async function status(){
  fortschrittAnzeigen('vorbereitungsbar','vorbereitung-wert',r.vorbereitung);
  fortschrittAnzeigen('stapelbar','stapel-wert',r.stapel);
  fortschrittAnzeigen('videobar','video-wert',r.video);
+ if(r.einzelmeldung&&r.einzelmeldung.id!==letzteEinzelmeldung){el("hinweis").textContent=r.einzelmeldung.text;letzteEinzelmeldung=r.einzelmeldung.id;}
  auftragszahlen(r.jobs);
+ auftraegeAnzeigen(r.liste||[],Boolean(r.active||r.andere_instanz));
  el('phase').textContent=(r.event.phase||'Bereit')+' · '+(r.event.titel||'');
  el('jobs').textContent=JSON.stringify(r.jobs,null,2);el('log').textContent=(r.messages||[]).join('\n');
  el('sensoren').textContent=JSON.stringify(r.sensoren||{},null,2);
@@ -321,6 +374,7 @@ class Bedienung:
         self.stapel = {"prozent": None}
         self.video = {"prozent": None}
         self.lock = threading.RLock()
+        self.einzelmeldung = None
 
     def _meldung(self, msg):
         with self.lock:
@@ -370,12 +424,12 @@ class Bedienung:
                 fehler = "Auftrags-/Sperrstand nicht lesbar; Original bleibt erhalten: " + str(exc)
             unbekannt = {"prozent": None}
             event = {"phase": "Verarbeitung im anderen Fenster", "prozent": None} if andere else self.event
-            return {"cfg": self.cfg, "jobs": info["auftraege"], "event": event, "fehler": fehler,
+            return {"cfg": self.cfg, "jobs": info["auftraege"], "liste": info.get("liste", []), "event": event, "fehler": fehler,
                     "vorbereitung": unbekannt if andere else self.vorbereitung,
                     "stapel": unbekannt if andere else self.stapel,
                     "video": unbekannt if andere else self.video,
                     "messages": list(self.messages), "sensoren": info.get("sensoren", {}),
-                    "active": aktiv, "andere_instanz": andere}
+                    "active": aktiv, "andere_instanz": andere, "einzelmeldung": self.einzelmeldung}
 
     def _gespeicherter_status(self):
         """Aktuellen Journalstand lesen, ohne Workflow/Ordner/Dateien anzulegen."""
@@ -391,7 +445,8 @@ class Bedienung:
                 raise RuntimeError("Ungültiger gespeicherter Auftrag.")
             key = job["status"]
             counts[key] = counts.get(key, 0) + 1
-        return {"auftraege": counts}
+        from .auftraege import uebersicht
+        return {"auftraege": counts, "liste": uebersicht(journal["auftraege"], self.cfg)}
 
     def einstellungen(self, data):
         with self.lock:
@@ -420,6 +475,56 @@ class Bedienung:
                 raise ValueError("Unbekannte Rücksetzaktion.")
             self.cfg = cfg
             return {"cfg": {k:cfg[k] for k in ("theme","format","kategorie")}, "meldung": meldung}
+
+    def auftrag(self, key, aktion):
+        if not isinstance(key, str) or not 1 <= len(key) <= 128:
+            raise ValueError("Ungültiger Auftrag.")
+        if aktion not in {"vorschau", "freigeben"}:
+            raise ValueError("Unbekannte Einzelaktion.")
+        with self.lock:
+            if (self.thread and self.thread.is_alive()) or self._anderer_schreiber():
+                raise RuntimeError("Verarbeitung läuft. Zuerst im aktiven Fenster sicher stoppen.")
+            self.service = Workflow(self.cfg, self._meldung, self._fortschritt)
+            service = self.service
+            if key not in service.zustand["auftraege"]:
+                raise ValueError("Auftrag nicht gefunden.")
+            self.einzelmeldung = None
+            def arbeit():
+                meldung = "Einzelaktion erfolgreich beendet."
+                try:
+                    service.sperren()
+                    try:
+                        if aktion == "vorschau":
+                            from .vorschau import erzeugen
+                            erzeugen(service, key)
+                        else:
+                            from .auftraege import freigeben
+                            freigeben(service, key)
+                    finally:
+                        service.freigeben()
+                except Exception as exc:
+                    meldung = "Einzelauftrag: " + str(exc)
+                finally:
+                    with self.lock:
+                        self.einzelmeldung = {"id": secrets.token_hex(8), "text": meldung}
+                    self._meldung(meldung)
+            self.thread = threading.Thread(target=arbeit, daemon=True)
+            self.thread.start()
+            return "Vorschau wird erzeugt." if aktion == "vorschau" else "Bewusste Einzelprüfung gestartet."
+
+    def vorschau_datei(self, key):
+        from .vorschau import datei
+        with self.lock:
+            pfad = Path(self.cfg["arbeitsordner"]).expanduser().absolute() / "PROTOKOLLE" / "auftraege.json"
+            if any(p.is_symlink() for p in (pfad, *pfad.parents)):
+                raise RuntimeError("Unsicherer Journalpfad.")
+            journal = lesen(pfad, {"schema": 1, "auftraege": {}})
+            if journal.get("schema") != 1 or not isinstance(journal.get("auftraege"), dict):
+                raise RuntimeError("Unbekanntes Auftragsjournal.")
+            job = journal["auftraege"].get(key)
+            if not isinstance(job, dict):
+                raise ValueError("Auftrag nicht gefunden.")
+            return datei(Path(self.cfg["arbeitsordner"]).expanduser().absolute(), job)
 
     def aktion(self, mode):
         with self.lock:
@@ -494,6 +599,13 @@ def starten(cfg, config_path, port=0, browser=True, bereit=None):
                 self.send_header("Content-Length",str(len(body)))
                 self.end_headers()
                 self.wfile.write(body)
+            elif path=="/vorschau":
+                try:
+                    from .vorschau import senden
+                    key = parse_qs(urlsplit(self.path).query).get("auftrag", [""])[0]
+                    senden(self, bedienung.vorschau_datei(key))
+                except (OSError, RuntimeError, ValueError, KeyError, TypeError) as exc:
+                    self.antwort({"fehler": str(exc)}, 400)
             elif path=="/status": self.antwort(bedienung.status())
             elif path=="/diagnose": self.antwort(pruefen(cfg=bedienung.cfg))
             else: self.antwort({"fehler":"Seite nicht gefunden"},404)
@@ -510,6 +622,7 @@ def starten(cfg, config_path, port=0, browser=True, bereit=None):
                 if not isinstance(data,dict): raise ValueError("Ungültige Daten.")
                 path=urlsplit(self.path).path
                 if path=="/aktion": value={"meldung":bedienung.aktion(data.get("mode"))}
+                elif path=="/auftrag": value={"meldung":bedienung.auftrag(data.get("auftrag"), data.get("aktion"))}
                 elif path=="/ordnerwahl":
                     feld = data.get("feld")
                     if feld not in {"downloads", "arbeitsordner"}:

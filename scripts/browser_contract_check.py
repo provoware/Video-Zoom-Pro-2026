@@ -58,6 +58,13 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  assert(el('hinweis').textContent==='Erst stoppen'&&el('theme').value==='cyan','Rücksetzfehler erhält Anzeige');tests++;
  timers.clear();globalThis.fetch=async()=>({ok:true,json:async()=>({...data,andere_instanz:true})});
  await status();assert(el('status').textContent==='Arbeitet im anderen Fenster','Fremde Verarbeitung sichtbar');tests++;
+ const rows=[{id:'song',titel:'<img src=x onerror=alert(1)>',status:'PRUEFEN',format:'BREI',bilder:3,hinweis:'Quelle prüfen',vorschau:true,vorschau_id:'abc'}];
+ auftraegeAnzeigen(rows,false);let row=jobNodes.get('song');
+ assert(row.title.textContent.includes('<img src=x'),'Titel als reiner Text');assert(!row.releaseButton.hidden,'Freigabe sichtbar');tests++;
+ row.box.open=true;const oldVideo=row.preview;const oldSource=row.source;
+ auftraegeAnzeigen(rows,false);assert(jobNodes.get('song')===row&&row.preview===oldVideo&&row.source===oldSource&&row.box.open,'Polling erhält Fokus/Video/Details');tests++;
+ auftraegeAnzeigen(rows,true);assert(row.previewButton.disabled&&row.releaseButton.disabled,'Aktiver fremder Schreiber sperrt Einzelaktionen');
+ auftraegeAnzeigen([{...rows[0],status:'ARCHIVIERT'}],false);assert(row.previewButton.disabled&&row.releaseButton.hidden,'Archivierte Quellen nicht neu berechnen');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);
@@ -74,7 +81,7 @@ def pruefen(node=False):
     with tempfile.TemporaryDirectory(prefix='videozoom-js-') as tmp:
         root=Path(tmp)
         if node:
-            prefix = """const document={body:{dataset:{}},getElementById:id=>elements[id]||(elements[id]={dataset:{},value:'',textContent:'',innerHTML:'',removeAttribute:function(name){delete this[name];}})};const elements={};const location={href:'http://127.0.0.1/?token=test'};\n"""
+            prefix = """const mk=tag=>({tagName:tag.toUpperCase(),dataset:{},children:[],value:'',textContent:'',innerHTML:'',append:function(...nodes){this.children.push(...nodes);},remove:function(){},addEventListener:function(){},setAttribute:function(name,value){this[name]=value;},removeAttribute:function(name){delete this[name];}});const document={body:{dataset:{}},createElement:mk,getElementById:id=>elements[id]||(elements[id]=mk('div'))};const elements={};const location={href:'http://127.0.0.1/?token=test'};\n"""
             target=root/'contract.cjs';target.write_text(prefix+script+HARNESS)
             result=subprocess.run(['node',str(target)],capture_output=True,text=True,timeout=30,check=True)
             report=json.loads(result.stdout)
@@ -87,7 +94,7 @@ def pruefen(node=False):
             if not match:raise RuntimeError('Kein JavaScript-Nachweis aus Chromium')
             report=json.loads(html.unescape(match.group(1)))
             report['engine']='Chromium'
-        if not report.get('bestanden') or report.get('tests')!=13:
+        if not report.get('bestanden') or report.get('tests')!=16:
             raise RuntimeError(str(report))
         report['commit']=os.environ.get('GITHUB_SHA')
         return report

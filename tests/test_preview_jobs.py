@@ -80,3 +80,54 @@ class PreviewJobs(unittest.TestCase):
         self.assertEqual(rows[0]["bilder"], 1)
         self.assertNotIn("dateien", rows[0])
         self.assertEqual(self.w.status()["liste"], rows)
+
+    def test_http_videobereich_token_und_einzelfreigabe(self):
+        import json
+        import threading
+        from urllib.request import Request, urlopen
+        from urllib.error import HTTPError
+        from videozoom.webui import Bedienung, starten
+        target = erzeugen(self.w, self.key)
+        self.job.update(status="PRUEFEN", versuche=3)
+        self.w.speichern()
+        ui = Bedienung(self.w.cfg, self.root/"settings.json")
+        refs = {}; ready = threading.Event()
+        def callback(server, url):
+            refs.update(server=server, url=url); ready.set()
+        with patch("videozoom.webui.Bedienung", return_value=ui):
+            thread = threading.Thread(target=starten, args=(self.w.cfg, self.root/"settings.json"),
+                                      kwargs={"browser": False, "bereit": callback}, daemon=True)
+            thread.start()
+            self.assertTrue(ready.wait(5))
+        root, token = refs["url"].split('/?')
+        url = root+'/vorschau?'+token+'&auftrag='+self.key
+        try:
+            with urlopen(Request(url, headers={"Range":"bytes=0-31"}), timeout=5) as response:
+                self.assertEqual(response.status, 206)
+                self.assertEqual(response.read(), target.read_bytes()[:32])
+                self.assertTrue(response.headers["Content-Range"].startswith("bytes 0-31/"))
+            for link, headers, expected in ((root+'/vorschau?auftrag='+self.key, {},403),
+                                             (url, {"Range":"bytes=9999999999-"},416),
+                                             (url, {"Host":"fremd.example"},403)):
+                with self.assertRaises(HTTPError) as exc:
+                    urlopen(Request(link, headers=headers), timeout=5)
+                self.assertEqual(exc.exception.code, expected)
+            req = Request(root+'/auftrag?'+token, method='POST',
+                          headers={"Content-Type":"application/json"},
+                          data=json.dumps({"auftrag":self.key,"aktion":"freigeben"}).encode())
+            with urlopen(req, timeout=5) as response:
+                self.assertEqual(response.status, 200)
+            ui.thread.join(5)
+            self.assertFalse(ui.thread.is_alive())
+            self.assertEqual(ui.status()["liste"][0]["status"], "BEREIT")
+            self.assertEqual(ui.status()["liste"][0]["versuche"], 0)
+            self.assertIn("erfolgreich", ui.einzelmeldung["text"])
+            self.w.sperren()
+            try:
+                with self.assertRaisesRegex(RuntimeError, "Verarbeitung"):
+                    ui.auftrag(self.key, "vorschau")
+            finally:
+                self.w.freigeben()
+        finally:
+            refs["server"].shutdown(); thread.join(5)
+        self.assertTrue(all(p.exists() for p in self.paths))
