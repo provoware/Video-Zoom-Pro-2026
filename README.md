@@ -146,3 +146,8 @@ Prüfbedürftige Aufträge bleiben auch nach erneuter Vorbereitung gesperrt. Dir
 Neue vollständige WAV-Inhalte am bereits archivierten Dateipfad erhalten eine eigene Inhaltsrevision; der alte Auftrag bleibt erhalten. Eine identische Datei am selben Pfad wird nicht doppelt produziert. Unvollständige neue Kopien verändern keine Historie. Diese Revision übernimmt keine fremden Bilder automatisch.
 
 Die Videoprüfung vergleicht jetzt erwartete Auflösung, 25 Bilder pro Sekunde und die einzelnen Bild-/Tonspurdauern. Anschließend werden Bild und Ton vollständig gelesen; auch diese Prüfung hält im normalen Betrieb die CPU-/RAM-Begrenzung ein und bleibt stoppbar. Der beim Renderstart gespeicherte Parametersatz gilt auch bei Wiederaufnahme. Bestehende Aufträge ohne diesen Satz werden mit der aktuellen Einstellung geprüft; bei Abweichung bleiben Originale geschützt.
+
+### Echte kurze Vorschau – Entwicklung
+Der Vorschaukern erstellt die ersten bis zu zehn Sekunden mit derselben Bildreihenfolge, Bewegung und Übergangsplanung in höchstens 640 Pixel Kantenlänge. Er verändert weder Originale noch Versuche oder Produktionsstatus. Die Ressourcenbegrenzung gilt ebenfalls. Fertige Vorschauen liegen getrennt unter VORSCHAU; Browserbedienung folgt im Auftragslistenpaket.
+
+Gemeinsamer Stand nach A01–A04: lokal 160 Tests ohne Überspringer auf Quellcommit 5d481c9a9bf88ef7307c6de1ad4ebcb514d2b35d erfolgreich. Dieser lokale Commit ist nicht mit dem späteren GitHub-Commit gleichzusetzen.

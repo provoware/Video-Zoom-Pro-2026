@@ -200,8 +200,11 @@ def zeitplan(sekunden: float, bilder: int, fps: int = 25, uebergang: float = 0.4
 
 
 def ffmpeg_befehl(audio: Path, bilder: list[Path], ziel: Path, laenge: float,
-                  cfg: dict, weich: bool = False) -> list[str]:
+                  cfg: dict, weich: bool = False, *, vorschau: bool = False) -> list[str]:
     breite, hoehe = FORMATE[cfg["format"]]
+    if vorschau:
+        faktor = min(1, 640 / max(breite, hoehe))
+        breite, hoehe = max(2, 2 * int(breite*faktor/2)), max(2, 2 * int(hoehe*faktor/2))
     fps = cfg["fps"]
     schnell, langsam, blend = zeitplan(laenge, len(bilder), fps, cfg["uebergang"])
     befehl = ["ffmpeg", "-hide_banner", "-nostdin", "-loglevel", "error", "-n"]
@@ -248,7 +251,7 @@ def ffmpeg_befehl(audio: Path, bilder: list[Path], ziel: Path, laenge: float,
     return befehl + [
         "-filter_complex", ";".join(graph), "-map", "[video]", "-map", f"{len(bilder)}:a:0",
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k", "-t", f"{laenge:.6f}",
+        "-c:a", "aac", "-b:a", "192k", "-t", f"{min(10, laenge) if vorschau else laenge:.6f}",
         "-movflags", "+faststart", "-threads", "2", "-progress", "pipe:1",
         "-nostats", str(ziel),
     ]
@@ -421,7 +424,8 @@ class Workflow:
         for job in self.zustand["auftraege"].values():
             key = job["status"]
             stats[key] = stats.get(key, 0) + 1
-        return {"zeit_utc": zeit(), "auftraege": stats, "aktueller_vorgang": self.ereignis,
+        from .auftraege import uebersicht
+        return {"zeit_utc": zeit(), "auftraege": stats, "liste": uebersicht(self.zustand["auftraege"], self.cfg), "aktueller_vorgang": self.ereignis,
                 "sensoren": self.sensoren.lesen(self.ordner),
                 "cpu_ziel_prozent": self.cfg["cpu_prozent"]}
 
