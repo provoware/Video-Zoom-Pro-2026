@@ -158,6 +158,14 @@ def pruefen(ziel):
                     if hover['fehler']:raise RuntimeError('Hover-Kontrast: '+json.dumps(hover))
                     measured.update(theme=theme,breite=width,hoehe=height,cssZoom=zoom,tabStopps=count,
                                     minDeaktiviert=disabled['minText'],minHover=hover['minText'])
+                    if theme == 'cyan':
+                        cdp.js("document.querySelector('#auftragsliste details').scrollIntoView({block:'start',behavior:'instant'})")
+                        cdp.js("new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(true))))")
+                        screenshot = cdp.call('Page.captureScreenshot', {'format':'png','fromSurface':True,'captureBeyondViewport':False})
+                        pixels = base64.b64decode(screenshot['data'])
+                        if len(pixels) < 10000:
+                            raise RuntimeError('Songlistenaufnahme leer oder unvollständig; kein Bildnachweis.')
+                        (ziel/f'videozoom_auftraege_{width}x{height}_{zoom}prozent.png').write_bytes(pixels)
                     results.append(measured)
             report={'schema':1,'commit':os.environ.get('GITHUB_SHA'),'bestanden':True,'faelle':len(results),'werte':results,
                     'methode':'Echte CDP-Tab-/Leertasten; berechnete Text-/Fokusfarben mit Alpha-Hintergründen. CSS-Zoomsimulation, kein echter KDE-Zoom.',
