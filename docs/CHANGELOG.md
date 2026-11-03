@@ -83,3 +83,13 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - #34–#40 mit getrennten Quell-/Test-Merge-/Main-Nachweisen dokumentiert.
 - TODO trennt erledigte automatisierte Tastatur-/Kontrastprüfungen von offener Pixel-/Zielsystemfreigabe.
 - Gemeinsamer geprüfter Produktumfang: 151 Python-/Medientests, 13 Chromium-Verträge sowie je 20 Tastatur-/Kontrast- und Layoutfälle.
+
+## 0.9.0-dev · 03.11.2026 – NI-20261103-01
+- A01: nach erfolgreicher Schreibsperre aktuelles Journal laden; fehlerhaften Stand nicht ersetzen.
+- A02: manuelle Prüfsperre durch Vorbereitung erhalten, Versuchsgrenze vor jedem Start prüfen.
+- A03: neue vollständige Audioinhalte am archivierten Dateipfad als eigene Revision aufnehmen; Historie und identische Inhalte erhalten.
+- A04: Auflösung, Bildrate, beide Spurdauern und vollständiges Decodieren prüfen; Originalschutz und Ressourcenhülle erhalten.
+- Kurze echte Vorschau mit unverändertem Produktionsstatus und Quellbestand; sichere lokale Teilabrufe.
+- Kompakte Songliste mit Einzel-Freigabe, verständlicher Rückmeldung und Erhalt von Details/Fokus/Wiedergabe beim Polling.
+- Reproduzierbare Entwickler-Vergleichsmessung, einschließlich getrenntem Phasenprototyp; keine ungeprüfte Umschaltung des Produktpfads.
+- Gemeinsame finale SHA-/CI-/Browser-/ZIP-Nachweise stehen im PR; echte Kubuntu-Abnahme bleibt zuletzt offen.

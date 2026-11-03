@@ -33,6 +33,15 @@ def html_fixture(theme: str, zoom: int) -> str:
     base = HTML.split("<script>", 1)[0]
     if not base.endswith("</div>\n"):
         raise RuntimeError("Oberfläche hat eine neue Struktur; Fixture aktualisieren.")
+    # Repräsentativer offener Song mit langen Texten und neuen Primäraktionen.
+    base = base.replace('<div id="auftragsliste"><p>Noch keine vorbereiteten Songs.</p></div>',
+        '<div id="auftragsliste"><details open class="job-card technical-details">'
+        '<summary>Ein sehr langer Songtitel zur reproduzierbaren Prüfung · Prüfung nötig · BREI · 40 Bilder</summary>'
+        '<p>Quelle wurde verändert. Original prüfen; andere Songs bleiben verfügbar.</p>'
+        '<button title="Kurze Vorschau ohne Archivierung">Vorschau erzeugen · (i)</button>'
+        '<button title="Bewusste Einzelprüfung">Nach Prüfung erneut freigeben · (i)</button>'
+        '<video controls preload="none" aria-label="Kurze Vorschau abspielen"></video>'
+        '</details></div>')
     # Der Screenshot enthält nur statisches HTML. Es werden KEINE lokalen
     # Web-API-Aufrufe oder Daten aus einem echten Songprojekt ausgeführt.
     fixture = r"""<script>

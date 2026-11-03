@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import fcntl
+from fractions import Fraction
 import hashlib
 import json
 import math
@@ -168,7 +169,7 @@ def konfigurieren(cfg: dict) -> dict:
 def medieninfo(pfad: Path) -> dict:
     p = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries",
-         "format=duration:stream=codec_type,width,height", "-of", "json", str(pfad)],
+         "format=duration:stream=codec_type,width,height,avg_frame_rate,duration", "-of", "json", str(pfad)],
         capture_output=True, text=True, timeout=30, check=True,
     )
     return json.loads(p.stdout)
@@ -199,8 +200,11 @@ def zeitplan(sekunden: float, bilder: int, fps: int = 25, uebergang: float = 0.4
 
 
 def ffmpeg_befehl(audio: Path, bilder: list[Path], ziel: Path, laenge: float,
-                  cfg: dict, weich: bool = False) -> list[str]:
+                  cfg: dict, weich: bool = False, *, vorschau: bool = False) -> list[str]:
     breite, hoehe = FORMATE[cfg["format"]]
+    if vorschau:
+        faktor = min(1, 640 / max(breite, hoehe))
+        breite, hoehe = max(2, 2 * int(breite*faktor/2)), max(2, 2 * int(hoehe*faktor/2))
     fps = cfg["fps"]
     schnell, langsam, blend = zeitplan(laenge, len(bilder), fps, cfg["uebergang"])
     befehl = ["ffmpeg", "-hide_banner", "-nostdin", "-loglevel", "error", "-n"]
@@ -247,7 +251,7 @@ def ffmpeg_befehl(audio: Path, bilder: list[Path], ziel: Path, laenge: float,
     return befehl + [
         "-filter_complex", ";".join(graph), "-map", "[video]", "-map", f"{len(bilder)}:a:0",
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k", "-t", f"{laenge:.6f}",
+        "-c:a", "aac", "-b:a", "192k", "-t", f"{min(10, laenge) if vorschau else laenge:.6f}",
         "-movflags", "+faststart", "-threads", "2", "-progress", "pipe:1",
         "-nostats", str(ziel),
     ]
@@ -326,13 +330,48 @@ def teil_sichern(pfad: Path) -> Path | None:
     raise RuntimeError("Kein freier Name für die unterbrochene Videodatei.")
 
 
-def video_gueltig(pfad: Path, laenge: float) -> bool:
-    if not regulaer(pfad):
+def video_gueltig(pfad: Path, laenge: float, cfg: dict, *, stop=None,
+                   testmodus: bool = False) -> bool:
+    """Erwartete Parameter, beide Spurdauern und alle Bild-/Tonpakete prüfen."""
+    if not regulaer(pfad) or not math.isfinite(laenge):
         return False
-    info = medieninfo(pfad)
-    spuren = {s.get("codec_type") for s in info.get("streams", [])}
-    videodauer = float(info.get("format", {}).get("duration", 0))
-    return {"video", "audio"}.issubset(spuren) and abs(videodauer - laenge) <= max(1.2, laenge * .015)
+    try:
+        info = medieninfo(pfad)
+        videos = [s for s in info.get("streams", []) if s.get("codec_type") == "video"]
+        audios = [s for s in info.get("streams", []) if s.get("codec_type") == "audio"]
+        if len(videos) != 1 or len(audios) != 1:
+            return False
+        video = videos[0]
+        if (int(video["width"]), int(video["height"])) != FORMATE[cfg["format"]]:
+            return False
+        if abs(float(Fraction(video["avg_frame_rate"])) - cfg["fps"]) > .01:
+            return False
+        toleranz = max(.25, 2 / cfg["fps"])
+        for duration in (info["format"]["duration"], video["duration"], audios[0]["duration"]):
+            wert = float(duration)
+            if not math.isfinite(wert) or abs(wert - laenge) > toleranz:
+                return False
+        command = ["ffmpeg", "-hide_banner", "-nostdin", "-v", "error", "-xerror",
+                   "-err_detect", "explode", "-threads", "2", "-i", str(pfad), "-map", "0:v:0",
+                   "-map", "0:a:0", "-threads", "2", "-f", "null", "-progress",
+                   "pipe:1", "-nostats", "-"]
+        if not testmodus:
+            from .diagnose import scope_verfuegbar
+            if not scope_verfuegbar(cfg):
+                raise RuntimeError("CPU-/RAM-Begrenzung für Videoprüfung nicht verfügbar.")
+            command = quota_befehl(command, cfg)
+        try:
+            rendern(command, stop or threading.Event(), lambda _: None, lambda _: None)
+        except ProduktionGestoppt:
+            raise
+        except RuntimeError as exc:
+            if str(exc).startswith("FFmpeg Exitcode"):
+                return False  # Lesbarer Datenfehler, bei Wiederaufnahme dauerhaft PRUEFEN.
+            raise  # Stillstand/Ressourcenausfall bleiben technische Wartebedingungen.
+        return True
+    except (ValueError, KeyError, TypeError, ZeroDivisionError, OSError,
+            subprocess.SubprocessError):
+        return False
 
 
 class Workflow:
@@ -361,6 +400,8 @@ class Workflow:
         self.sensoren = Sensoren()
 
     def sperren(self):
+        if self.lock_file is not None:
+            raise RuntimeError("Diese Verarbeitung hält bereits die Schreibsperre.")
         pfad = self.ordner / "PROTOKOLLE" / "dienst.lock"
         self.lock_file = pfad.open("a+")
         try:
@@ -369,6 +410,15 @@ class Workflow:
             self.lock_file.close()
             self.lock_file = None
             raise RuntimeError("Bereits eine Verarbeitung aktiv.") from exc
+        try:
+            # Ein vorab erzeugtes Objekt darf keinen neueren Stand überschreiben.
+            aktuell = lesen(self.journal, {"schema": 1, "auftraege": {}})
+            if aktuell.get("schema") != 1 or not isinstance(aktuell.get("auftraege"), dict):
+                raise RuntimeError("Unbekanntes Auftragsjournal – keine automatische Ersetzung.")
+            self.zustand = aktuell
+        except Exception:
+            self.freigeben()
+            raise
 
     def freigeben(self):
         if self.lock_file is not None:
@@ -381,7 +431,8 @@ class Workflow:
         for job in self.zustand["auftraege"].values():
             key = job["status"]
             stats[key] = stats.get(key, 0) + 1
-        return {"zeit_utc": zeit(), "auftraege": stats, "aktueller_vorgang": self.ereignis,
+        from .auftraege import uebersicht
+        return {"zeit_utc": zeit(), "auftraege": stats, "liste": uebersicht(self.zustand["auftraege"], self.cfg), "aktueller_vorgang": self.ereignis,
                 "sensoren": self.sensoren.lesen(self.ordner),
                 "cpu_ziel_prozent": self.cfg["cpu_prozent"]}
 
@@ -454,7 +505,20 @@ class Workflow:
                             if p.suffix.lower() in BILDTYPEN and stabil(p))
             key = hashlib.sha256(str(pfad).encode()).hexdigest()[:24]
             old = self.zustand["auftraege"].get(key, {})
-            if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG", "LAEUFT"):
+            if old.get("status") == "ARCHIVIERT":
+                try:
+                    vollstaendig(pfad)
+                    digest = pruefsumme(pfad)
+                except (DownloadWartet, OSError, ValueError) as exc:
+                    self.melden(name + ": neue Datei wartet auf Prüfung: " + str(exc))
+                    wartet += 1
+                    continue
+                quellen = old.get("dateien", [])
+                if quellen and quellen[0].get("sha256") == digest:
+                    continue  # Identischer Inhalt am selben Pfad, kein Doppelauftrag.
+                key = hashlib.sha256((str(pfad) + "\0" + digest).encode()).hexdigest()[:24]
+                old = self.zustand["auftraege"].get(key, {})
+            if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG", "LAEUFT", "PRUEFEN"):
                 continue
             if old.get("status") == "PAUSIERT" and old.get("render_hash"):
                 continue  # Das verifizierte Video erst im Stapel sicher wiederaufnehmen.
@@ -521,12 +585,14 @@ class Workflow:
                 if ziel.exists() or ziel.is_symlink():
                     if not erwartet or not regulaer(ziel) or pruefsumme(ziel) != erwartet:
                         raise RuntimeError("Datenfehler: Video nicht eindeutig zuordenbar.")
-                    if not video_gueltig(ziel, job["laenge"]):
+                    if not video_gueltig(ziel, job["laenge"], job.get("render_cfg", self.cfg),
+                                         stop=self.stop, testmodus=self.testmodus):
                         raise RuntimeError("Datenfehler: Wiedergefundenes Video ungültig.")
                 elif erwartet:
                     if not regulaer(teil) or pruefsumme(teil) != erwartet:
                         raise RuntimeError("Datenfehler: Bestätigte Videodatei fehlt oder wurde verändert.")
-                    if not video_gueltig(teil, job["laenge"]):
+                    if not video_gueltig(teil, job["laenge"], job.get("render_cfg", self.cfg),
+                                         stop=self.stop, testmodus=self.testmodus):
                         raise RuntimeError("Datenfehler: Fertiger Videoteil beschädigt.")
                     os.link(teil, ziel, follow_symlinks=False)
                     teil.unlink()
@@ -629,6 +695,7 @@ class Workflow:
                      for i in range(10000) if not (zielordner / (zielbasis + ("" if i == 0 else "_" + str(i)) + ".mp4")).exists()), None)
         if ziel is None:
             raise RuntimeError("Kein sicherer Ausgabename mehr verfügbar.")
+        job["render_cfg"] = dict(self.cfg)
         job["video_ziel"] = str(ziel)
         self.speichern()  # Vor dem Rendern: Wiederaufnahme kennt den vorgesehenen Zielpfad.
         teil = ziel.with_name(ziel.stem + ".teil.mp4")
@@ -656,7 +723,8 @@ class Workflow:
                 self.melden("Übergang inkompatibel, sichere Standardblende gewählt.")
                 starten(weich=True)
             self.fortschreiben("video_pruefen", 92, titel=job["titel"])
-            if not video_gueltig(teil, job["laenge"]):
+            if not video_gueltig(teil, job["laenge"], job.get("render_cfg", self.cfg),
+                                         stop=self.stop, testmodus=self.testmodus):
                 raise RuntimeError("Ergebnis enthält nicht Bild und Ton in passender Länge.")
             job["render_hash"] = pruefsumme(teil)
             self.speichern()  # Verifizierte Datei vor ihrer Veröffentlichung beweissicher markieren.
@@ -710,6 +778,11 @@ class Workflow:
         for index, (key, job) in enumerate(ready[:self.cfg["stapelgroesse"]],1):
             if self.stop.is_set():
                 break
+            if int(job.get("versuche", 0)) >= MAX_AUTO_VERSUCHE:
+                job["status"] = "PRUEFEN"
+                job["hinweis"] = "Automatische Versuche erschoepft; Auftrag bewusst prüfen und freigeben."
+                self.speichern()
+                continue
             job["status"] = "LAEUFT"
             job["versuche"] = job.get("versuche", 0) + 1
             self.fortschreiben("video_start", 0, titel=job["titel"])

@@ -4,7 +4,13 @@
 
 Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus WAV-Dateien und Bildern. **VideoBatch bleibt ein anderes Projekt.** Die Oberfläche läuft ausschließlich lokal im Browser, ohne Tk und ohne Cloud.
 
-## Aktueller Entwicklungsstand (02.11.2026)
+## Entwicklung 0.9.0-dev · 03.11.2026
+
+Vier reproduzierte Auditfehler sind auf dem Entwicklungszweig einzeln korrigiert. Neu: echte kurze Vorschau, kompakte Songliste und bewusste Einzel-Freigabe. Umfang und Grenzen stehen unten sowie in der führenden TODO NI-20261103-01. Abschließende Commit-/CI-Nachweise werden im zugehörigen PR getrennt vom bisherigen Hauptzweigstand geführt. Kein Stable-Release.
+
+Für den nächsten größeren Renderumbau ist die Zweiphasenberechnung anhand von 36 echten Vergleichsläufen ausgewählt: im 1920×1080-Test mit zehn Bildern rund 71,5 % weniger Spitzen-RAM bei rund 13,8 % längerer Renderzeit. Das ist ein isolierter synthetischer Vergleich, keine Kubuntu-/HDD-Prognose. Der Messprototyp ist nicht produktiv aktiviert. Einzelwerte und Vorgehen: [Rendervergleich](docs/RENDER_VERGLEICH_2026-11-03.md).
+
+## Vorgängernachweise (02.11.2026)
 
 Die Folgepakete #34 → #35 → #36 → #37 wurden geordnet mit jeweils erfolgreicher Hauptzweigprüfung integriert. Anschließend folgten sichere Einstellungsrücksetzung/Farbwahl (#38), echte Tastatur-/Kontrastprüfung (#39) und der Nur-Lese-Schutz für zweite Fenster (#40).
 
@@ -137,3 +143,33 @@ Zusätzlich zur Layoutmatrix führt `python3 scripts/browser_bedienung.py --ziel
 
 ## Zweites Fenster desselben Arbeitsordners
 Wenn ein anderes Fenster bereits verarbeitet, zeigt diese Oberfläche „Arbeitet im anderen Fenster“. Sie liest den aktuellen Journalstand; fremde Fortschrittswerte werden nicht erfunden. Starten, Stoppen, Einstellungsänderung und Rücksetzen werden hier abgewiesen: Den aktiven Auftrag im ursprünglichen Fenster steuern. Die bestehende Kern-Sperre wird nur geprüft, niemals wegen ihres Alters gelöscht. Sobald sie freigegeben ist, erkennt die nächste Statusabfrage den freien Ordner. Unlesbare oder verknüpfte Sperrpfade melden einen Fehler und erlauben keine Verarbeitung.
+
+## Auditkorrekturen 03.11.2026
+Der Entwicklungszweig lädt das Auftragsjournal nach Übernahme der Schreibsperre erneut. Vorab geöffnete Instanzen können dadurch keinen neueren Auftragsstand überschreiben. Zwei neue Gegenproben und sechs bestehende Fremdfensterfälle lokal bestanden; gemeinsamer Commit-/CI-Nachweis folgt separat. Weitere beauftragte Pakete: siehe führende TODO NI-20261103-01.
+
+Prüfbedürftige Aufträge bleiben auch nach erneuter Vorbereitung gesperrt. Direkt vor jedem Renderstart wird zusätzlich die Drei-Versuche-Grenze kontrolliert. Zwei neue Gegenproben einschließlich acht Automatikrunden bestanden lokal; eine bewusste Einzel-Freigabe folgt im Auftragslistenpaket.
+
+Neue vollständige WAV-Inhalte am bereits archivierten Dateipfad erhalten eine eigene Inhaltsrevision; der alte Auftrag bleibt erhalten. Eine identische Datei am selben Pfad wird nicht doppelt produziert. Unvollständige neue Kopien verändern keine Historie. Diese Revision übernimmt keine fremden Bilder automatisch.
+
+Die Videoprüfung vergleicht jetzt erwartete Auflösung, 25 Bilder pro Sekunde und die einzelnen Bild-/Tonspurdauern. Anschließend werden Bild und Ton vollständig gelesen; auch diese Prüfung hält im normalen Betrieb die CPU-/RAM-Begrenzung ein und bleibt stoppbar. Der beim Renderstart gespeicherte Parametersatz gilt auch bei Wiederaufnahme. Bestehende Aufträge ohne diesen Satz werden mit der aktuellen Einstellung geprüft; bei Abweichung bleiben Originale geschützt.
+
+### Echte kurze Vorschau – Entwicklung
+Der Vorschaukern erstellt die ersten bis zu zehn Sekunden mit derselben Bildreihenfolge, Bewegung und Übergangsplanung in höchstens 640 Pixel Kantenlänge. Er verändert weder Originale noch Versuche oder Produktionsstatus. Die Ressourcenbegrenzung gilt ebenfalls. Fertige Vorschauen liegen getrennt unter VORSCHAU; Browserbedienung folgt im Auftragslistenpaket.
+
+Gemeinsamer Stand nach A01–A04: lokal 160 Tests ohne Überspringer auf Quellcommit 5d481c9a9bf88ef7307c6de1ad4ebcb514d2b35d erfolgreich. Dieser lokale Commit ist nicht mit dem späteren GitHub-Commit gleichzusetzen.
+
+### Songs und nächste Schritte
+Unter den Arbeitsbereichen erscheint eine kompakte Songliste. Titel, Zustand, Format und Bilderzahl sind sofort sichtbar. Song aufklappen: Ursache/Handlung, „Vorschau erzeugen“ und gegebenenfalls „Nach Prüfung erneut freigeben“. Die Vorschau ist dort direkt abspielbar. Sie zeigt den echten Anfang des geplanten Videos, maximal zehn Sekunden; spätere Bilder und die Gesamtqualität sind dadurch nicht vollständig beurteilt.
+
+Die Einzel-Freigabe setzt Versuche nur nach bewusster Aktion und Prüfung unveränderter Quellen zurück. Bei bereits bestätigtem Video wird ausschließlich die Archivierung wieder freigegeben. Geänderte oder fehlende Originale bleiben gesperrt. Laufende oder fremde Verarbeitung sperrt beide Einzelaktionen. „Sicher stoppen“ beendet auch die eigene Vorschauerzeugung. Alle Meldungen bleiben im Protokoll; die letzte Einzelmeldung erscheint zusätzlich direkt.
+
+Statusabfragen erhalten offene Songdetails, Tastaturfokus und laufende Videowiedergabe. Songtitel werden ausschließlich als Text eingefügt. Vorschauabrufe verlangen dasselbe lokale Token und die Host-Prüfung wie die übrige Oberfläche; freie Dateipfade sind nicht erlaubt. Vorschauen sammeln sich im getrennten Ordner VORSCHAU und werden nicht automatisch als fertige Produkte gezählt.
+
+### Gemeinsamer GitHub-Nachweis
+PR #42, Produkt-HEAD 5ace6977: GitHub-Lauf #41732961907 auf Test-Merge c0798a20 erfolgreich mit 169 Python-/Medientests ohne Überspringer, 16 Chromium-Verträgen sowie je 20 Tastatur-/Kontrast- und Layoutfällen. Gezielte zusätzliche Songlisten-Screenshots werden im abschließenden Prüf-Nachtrag ergänzt; dessen eigener Commit-/CI-Nachweis steht im PR. Noch keine Übernahme in main oder Stable-Freigabe.
+
+Ein bestätigter MP4-Lesefehler wird bei der Wiederaufnahme als Datenfehler dauerhaft auf „Prüfen“ gesetzt. Benutzer-Stopp und technische Stillstands-/Ressourcenausfälle bleiben davon getrennt. Eine echte Paketkorruptionsprobe mit erhaltenen Metadaten prüft diesen Übergang.
+
+Die gezielte Entwickleraufnahme der offenen Songliste erfolgt über dieselbe direkte Browsersteuerung wie die Tastaturprüfung. Eine leere oder unvollständige Aufnahme verhindert einen erfolgreichen Bildnachweis. Diese Entwickleraufnahme ersetzt keine persönliche Kubuntu-Endabnahme.
+
+Die Browserprüfung kontrolliert auch die tatsächliche Ausblendung: Ohne fertige Vorschau erscheint kein leerer Videoplayer; bei archivierten Songs bleibt die Einzel-Freigabe verborgen. Infohinweise verwenden ein systemschriftunabhängiges „(i)“.

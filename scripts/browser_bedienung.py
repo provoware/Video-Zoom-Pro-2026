@@ -124,6 +124,9 @@ def pruefen(ziel):
                 if time.monotonic()-start>15:raise RuntimeError('Testseite nicht bereit')
                 time.sleep(.05)
             cdp.js("document.getElementById('status').textContent='Arbeitet im anderen Fenster'")
+            cdp.js("auftraegeAnzeigen([{id:'synthetisch',titel:'Ein sehr langer Songtitel für die Tastaturprüfung',status:'PRUEFEN',format:'BREI',bilder:40,hinweis:'Quelle prüfen; Originale geschützt.',vorschau:false}],false);document.querySelector('#auftragsliste details').open=true")
+            if not cdp.js("getComputedStyle(document.querySelector('#auftragsliste video')).display==='none'"):
+                raise RuntimeError('Nicht erzeugte Vorschau wird trotz hidden angezeigt')
             for width,height,zoom in ((800,600,100),(800,600,125),(800,600,150),(800,600,200),(1280,720,100)):
                 cdp.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':False})
                 for theme in ('cyan','violett','gruen','orange'):
@@ -157,6 +160,14 @@ def pruefen(ziel):
                     if hover['fehler']:raise RuntimeError('Hover-Kontrast: '+json.dumps(hover))
                     measured.update(theme=theme,breite=width,hoehe=height,cssZoom=zoom,tabStopps=count,
                                     minDeaktiviert=disabled['minText'],minHover=hover['minText'])
+                    if theme == 'cyan':
+                        cdp.js("document.querySelector('#auftragsliste details').scrollIntoView({block:'start',behavior:'instant'})")
+                        cdp.js("new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(true))))")
+                        screenshot = cdp.call('Page.captureScreenshot', {'format':'png','fromSurface':True,'captureBeyondViewport':False})
+                        pixels = base64.b64decode(screenshot['data'])
+                        if len(pixels) < 10000:
+                            raise RuntimeError('Songlistenaufnahme leer oder unvollständig; kein Bildnachweis.')
+                        (ziel/f'videozoom_auftraege_{width}x{height}_{zoom}prozent.png').write_bytes(pixels)
                     results.append(measured)
             report={'schema':1,'commit':os.environ.get('GITHUB_SHA'),'bestanden':True,'faelle':len(results),'werte':results,
                     'methode':'Echte CDP-Tab-/Leertasten; berechnete Text-/Fokusfarben mit Alpha-Hintergründen. CSS-Zoomsimulation, kein echter KDE-Zoom.',
