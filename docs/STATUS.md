@@ -1,3 +1,20 @@
+# Scanwahl, Ordner und sicherer Abschluss · 0.10.0-dev
+
+Nutzerauftrag NI-20261104-01 umgesetzt auf eigenem Zweig `feat/scan-reset-safe-exit`, ein Schreiber. Geprüfter Produktstand: `cfcf75ea56127b11cca56b51123993bae446da07`. PR #43 bleibt für die Vorabprüfung ein Entwurf; kein Codex-Review angefordert.
+
+CI #41743045748 erfolgreich auf Test-Merge `f879895eb24926838912963b22c738abf3e59014`: 192 Python-/Medientests ohne Auslassung, 20 echte Chromium-Verträge, je 20 Tastatur-/Kontrast- und Layoutfälle. 37 natürliche Tab-Stopps, Mindesttextkontrast 7,127:1, kein horizontaler/Textüberlauf. CI-Artefakt 13282042811 ausgewertet; Hauptoberfläche/Desktop und offene Songliste bei 200 % visuell geprüft. CSS-Zoomsimulation ersetzt keine KDE-Endabnahme.
+
+Implementiert: gesicherter Fundlisten-Neuaufbau ohne Verlust bearbeiteter Aufträge, getrennte Auto-/Manuell-Schalter, native Medienauswahl mit Originalschutz, wahrheitsgemäßer Ordnerstatus und bewusstes Anlegen fehlender sicherer Pfade. Hauptaktionen stehen oben; vier Schritte und nächste Handlung erleichtern den Ablauf. Keine feststehende Leiste verdeckt Felder bei starker Vergrößerung.
+
+Kooperativer Abschluss sichert den eigenen Worker unter Schreibsperre und beendet eigene Dialoge/Server bei bewusster Schließung, letztem Fenster und SIGINT/SIGTERM/SIGHUP. Neuladen und Hintergrundtimer haben Schonfristen; alte Fenster überschreiben keine neueren Einstellungen. Ein echter Speicherfehler hält den Server offen. Stromausfall/SIGKILL erlauben keinen Abschluss; atomare Journale erhalten den letzten bestätigten Stand.
+
+Ressourcenentscheidung und gemessener Scanvergleich: `SCAN_VERGLEICH_2026-11-04.md`. Vollständige Quellprüfung vor Render bleibt Pflicht. Neue Abhängigkeiten: keine. Der abschließende Klartextnachtrag vermeidet eine unbestätigte Erfolgsaussage bei Verbindungsverlust; 20 lokale JavaScript-Verträge erneut bestanden. Kontrollierte Main-Vorwärtsintegration und vollständige CI auf dem tatsächlichen Main-Abschlusscommit werden separat nachgeprüft und in der Abschlussmeldung genannt.
+
+Recovery-Key: Basis main `eb1c1ba0713d9c7bb6bb0462e56fc630f4ae218f`, Produktstand/CI oben, nächster Schritt Main-CI und Paketabschluss. Große Renderumstellung, Rechte-/Lizenzentscheidung und echte Kubuntu-/Nutzer-Endabnahme bleiben separat offen. Stable: NEIN.
+
+---
+## Historie
+
 # Main-Integration abgeschlossen · 0.9.1-dev
 
 **Produktstand in main:** 771891f062ef11b84c2355bdac96b4cbe12bdf2c. **Main-CI #41736344529 erfolgreich** auf genau diesem SHA: 173 Python-/Medientests ohne Überspringer, 16 echte Chromium-Verträge und je 20 Tastatur-/Kontrast-/Layoutfälle. Die zunächst integrierte Fassung 2f8155cf wurde ebenfalls eigenständig durch Main-CI #41735606838 bestätigt.

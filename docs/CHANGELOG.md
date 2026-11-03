@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0-dev - 04.11.2026
+- Gesicherter Fundlisten-Reset und Neuscan; Audio/Bilder getrennt automatisch oder manuell mit geprüften Arbeitskopien.
+- Explizite Ordnerprüfung und sichere Anlage fehlender konfigurierter Verzeichnisse; Dateien/Verknüpfungen blockieren.
+- Zentrale Hauptaktionen, vier Arbeitsschritte und verständlicher nächster Schritt.
+- Autosave und eigener Serverabschluss bei Schließen, Fensterverlust und abfangbaren Signalen; Speicherfehler sichtbar statt Scheinerfolg.
+- Sparsamer Scan-/Sensor-/Statusbetrieb, volle Quellprüfung vor Render unverändert. 192 Medien-/Funktionstests und echte Chromium-Matrix vor Integration bestanden.
+- Entwicklungsstand; kein Stable und keine vorgezogene Kubuntu-Endabnahme.
+
 ## 0.8.0-dev – 01.11.2026
 - Neues unabhängiges Repository und Tk-freie lokale Bedienoberfläche.
 - WAV-Vorbereitung getrennt von Stapel, zweistufige Bildregie, Quotenbegrenzung.

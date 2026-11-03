@@ -495,7 +495,7 @@ async function status(){
  }
  el('status').textContent=r.schliesst?'Wird gesichert und beendet':r.andere_instanz?'Arbeitet im anderen Fenster':r.active?'In Arbeit':'Bereit / pausiert';
 }catch(e){
- if(endeAngefordert){el('status').textContent='Server beendet';el('hinweis').textContent='Verbindung beendet. Beim nächsten Start wird der gesicherte Stand geladen.';weiter=false;}
+ if(endeAngefordert){el('status').textContent='Verbindung geschlossen';el('hinweis').textContent='Beenden wurde angefordert. Server ist nicht mehr erreichbar. Beim nächsten Start den gespeicherten Stand kontrollieren.';weiter=false;}
  else{el('status').textContent='Anzeige veraltet: '+e.message;pause=15000;}
  }
  finally{statusLaeuft=false;if(weiter)setTimeout(status,pause);}}
