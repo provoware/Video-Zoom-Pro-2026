@@ -57,15 +57,18 @@ def main(argv=None):
         starten(cfg,SETTINGS)
         return 0
     service = Workflow(cfg,print)
-    if args.beobachten:
-        service.beobachten()
-    else:
-        service.sperren()
-        try:
-            if args.vorbereiten or args.einmal: print("Bereit/Wartend:",service.vorbereiten())
-            if args.stapel or args.einmal: print("Fertig/Offen:",service.stapel())
-        finally:
-            service.freigeben()
+    from .lebenszyklus import abbruchsignale
+    with abbruchsignale(service.stop):
+        if args.beobachten:
+            service.beobachten()
+        else:
+            service.sperren()
+            try:
+                if args.vorbereiten or args.einmal: print("Bereit/Wartend:",service.vorbereiten())
+                if args.stapel or args.einmal: print("Fertig/Offen:",service.stapel())
+            finally:
+                try:service.speichern()
+                finally:service.freigeben()
     return 0
 
 
