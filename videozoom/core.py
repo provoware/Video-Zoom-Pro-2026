@@ -361,6 +361,8 @@ class Workflow:
         self.sensoren = Sensoren()
 
     def sperren(self):
+        if self.lock_file is not None:
+            raise RuntimeError("Diese Verarbeitung hält bereits die Schreibsperre.")
         pfad = self.ordner / "PROTOKOLLE" / "dienst.lock"
         self.lock_file = pfad.open("a+")
         try:
@@ -369,6 +371,15 @@ class Workflow:
             self.lock_file.close()
             self.lock_file = None
             raise RuntimeError("Bereits eine Verarbeitung aktiv.") from exc
+        try:
+            # Ein vorab erzeugtes Objekt darf keinen neueren Stand überschreiben.
+            aktuell = lesen(self.journal, {"schema": 1, "auftraege": {}})
+            if aktuell.get("schema") != 1 or not isinstance(aktuell.get("auftraege"), dict):
+                raise RuntimeError("Unbekanntes Auftragsjournal – keine automatische Ersetzung.")
+            self.zustand = aktuell
+        except Exception:
+            self.freigeben()
+            raise
 
     def freigeben(self):
         if self.lock_file is not None:

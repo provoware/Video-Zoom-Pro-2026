@@ -3,6 +3,17 @@
 Stand 02.11.2026. Hauptzweig bei Arbeitsbeginn: `b200d1769de889d779c28481d39e27abbc2bb2a9`. Kein Stable. Historie: `HISTORIE_TODO_2026-11-02.md`, ausschließlich diese Liste ist operativ.
 Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md` (Auditnummern unten). Arbeitsstrategie: `ENTWICKLUNGSSTRATEGIE.md`.
 
+## NI-20261103-01 · Vier Auditkorrekturen, danach Vorschau/Aufträge/Messung
+Quelle: ausdrücklicher Nutzerauftrag 03.11.2026. Basis main d8798d35. Ein Arbeitszweig, getrennte Korrektur-Commits, eine gemeinsame abschließende Prüfung und ein PR. Keine parallelen Schreiber.
+- [x] 2026-11-03 | A01 | Journal nach erfolgreicher Sperrübernahme neu laden; bei defektem Stand Sperre freigeben | geprüft: zwei neue Gegenproben + sechs Fremdfensterfälle lokal erfolgreich | fertig wenn: neuere Aufträge bleiben erhalten; Main/CI separat.
+- [ ] 2026-11-03 | A02 | PRUEFEN dauerhaft und Versuchslimit unmittelbar vor Renderstart | prüfen: mehrere Automatikrunden, andere Songs | fertig wenn: kein vierter Versuch ohne bewusste Freigabe.
+- [ ] 2026-11-03 | A03 | neue WAV am gleichen Pfad als Revision erkennen | prüfen: gleicher Inhalt/anderer Inhalt und Altauftrag | fertig wenn: neue Musik erkannt, keine Doppelproduktion.
+- [ ] 2026-11-03 | A04 | Auflösung/Bildrate/Spurdauer und vollständige Lesbarkeit prüfen | prüfen: echte korrekte/falsche/beschädigte MP4 | fertig wenn: falsches Ergebnis nie veröffentlicht.
+- [ ] 2026-11-03 | UX-PREVIEW | echte kurze Vorschau ohne Originalarchivierung | prüfen: Quellschutz, Stopp, Ressourcenbegrenzung, Zugriffsschutz | fertig wenn: sicher abspielbar, kein Produktionsabschluss vorgetäuscht.
+- [ ] 2026-11-03 | UX-JOBS | verständliche Auftragsliste und sichere Einzel-Freigabe | prüfen: Tastatur, kleine Fenster, fremder Schreiber, geänderte Quellen | fertig wenn: Handlung pro Song nachvollziehbar.
+- [ ] 2026-11-03 | PERF | Laufzeit/Spitzen-RAM vergleichen und größere Änderung auswählen | prüfen: gleiche synthetische Medien und Ausgabeparameter, begrenzte Läufe | fertig wenn: Entscheidung anhand Messdaten; keine ungeprüfte Großänderung.
+Prognose: A01 verhindert Journalverlust; A02 begrenzt Fehlerschleifen; A03 erkennt neue Musik; A04 verhindert Scheinerfolg. Vorschau vermeidet teure Fehlproduktionen; Liste erleichtert Korrektur. Risiko: Wiederanlauf und Originalschutz müssen bei jeder Medienänderung voll mitgeprüft werden. Neue Abhängigkeiten: keine geplant.
+
 ## 1 · Implementiert und gezielt geprüft, Integration getrennt
 - [x] 2026-11-02 | R31 · Audit 1/5 | nichtblockierende FFmpeg-Überwachung, CPU-Stillstandsprüfung und Benutzer-Stopp ohne technischen Versuch | prüfen: Branch `fix/issue-31-render-watchdog`, HEAD `dffacf22c0f9d23d39615c5d1c92e352ed317632`, lokal 117/117; PR #32 CI #41373964285 mit 117 Tests und 20 Layoutfällen auf Test-Merge `fff828d1044adebabbe5ea63de928fd25bc34a0b` | fertig wenn: Implementierung reproduzierbar geprüft; Main-Integration bleibt separat.
 - [x] 2026-11-02 | BS · Audit 2/3/4/10 | Browserbudget, Einzelabfrage, veraltete Anzeige, Doctor-Exitcode, Journal-Nur-Lesen | prüfen: Branch `fix/browser-start-after-31`, PR #33, Code `ef6d7a645117e9aeb853005fe51d32440b1801a1`; lokale Vorprüfung 122/122 und acht JavaScript-Verträge; inzwischen Main-Integration `709b6876d708f7a15c70f668485ba997ae5c1adc`, Main-CI #41375074616 erfolgreich | fertig wenn: Code/Negative vorhanden; integrierter Browser-/Startstand erfolgreich; weitere Änderungen separat prüfen.

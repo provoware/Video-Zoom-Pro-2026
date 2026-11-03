@@ -137,3 +137,6 @@ Zusätzlich zur Layoutmatrix führt `python3 scripts/browser_bedienung.py --ziel
 
 ## Zweites Fenster desselben Arbeitsordners
 Wenn ein anderes Fenster bereits verarbeitet, zeigt diese Oberfläche „Arbeitet im anderen Fenster“. Sie liest den aktuellen Journalstand; fremde Fortschrittswerte werden nicht erfunden. Starten, Stoppen, Einstellungsänderung und Rücksetzen werden hier abgewiesen: Den aktiven Auftrag im ursprünglichen Fenster steuern. Die bestehende Kern-Sperre wird nur geprüft, niemals wegen ihres Alters gelöscht. Sobald sie freigegeben ist, erkennt die nächste Statusabfrage den freien Ordner. Unlesbare oder verknüpfte Sperrpfade melden einen Fehler und erlauben keine Verarbeitung.
+
+## Auditkorrekturen 03.11.2026
+Der Entwicklungszweig lädt das Auftragsjournal nach Übernahme der Schreibsperre erneut. Vorab geöffnete Instanzen können dadurch keinen neueren Auftragsstand überschreiben. Zwei neue Gegenproben und sechs bestehende Fremdfensterfälle lokal bestanden; gemeinsamer Commit-/CI-Nachweis folgt separat. Weitere beauftragte Pakete: siehe führende TODO NI-20261103-01.
