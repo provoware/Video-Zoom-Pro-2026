@@ -144,3 +144,5 @@ Der Entwicklungszweig lädt das Auftragsjournal nach Übernahme der Schreibsperr
 Prüfbedürftige Aufträge bleiben auch nach erneuter Vorbereitung gesperrt. Direkt vor jedem Renderstart wird zusätzlich die Drei-Versuche-Grenze kontrolliert. Zwei neue Gegenproben einschließlich acht Automatikrunden bestanden lokal; eine bewusste Einzel-Freigabe folgt im Auftragslistenpaket.
 
 Neue vollständige WAV-Inhalte am bereits archivierten Dateipfad erhalten eine eigene Inhaltsrevision; der alte Auftrag bleibt erhalten. Eine identische Datei am selben Pfad wird nicht doppelt produziert. Unvollständige neue Kopien verändern keine Historie. Diese Revision übernimmt keine fremden Bilder automatisch.
+
+Die Videoprüfung vergleicht jetzt erwartete Auflösung, 25 Bilder pro Sekunde und die einzelnen Bild-/Tonspurdauern. Anschließend werden Bild und Ton vollständig gelesen; auch diese Prüfung hält im normalen Betrieb die CPU-/RAM-Begrenzung ein und bleibt stoppbar. Der beim Renderstart gespeicherte Parametersatz gilt auch bei Wiederaufnahme. Bestehende Aufträge ohne diesen Satz werden mit der aktuellen Einstellung geprüft; bei Abweichung bleiben Originale geschützt.

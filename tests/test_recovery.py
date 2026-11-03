@@ -47,7 +47,7 @@ class Wiederanlauf(unittest.TestCase):
         self.workflow.speichern()
         return job
 
-    @patch("videozoom.core.medieninfo", side_effect=probe)
+    @patch("videozoom.core.video_gueltig", return_value=True)  # Zustandsprobe; echte Medien separat
     def test_absturz_nach_veroeffentlichung_verhindert_doppelrender(self, _):
         self.final.write_bytes(b"geprueftes-video")
         job = self.laufender_auftrag(pruefsumme(self.final))
@@ -57,7 +57,7 @@ class Wiederanlauf(unittest.TestCase):
         self.assertEqual(job["status"], "ARCHIVIERT")
         self.assertEqual(list(self.final.parent.glob("*.mp4")), [self.final])
 
-    @patch("videozoom.core.medieninfo", side_effect=probe)
+    @patch("videozoom.core.video_gueltig", return_value=True)  # Zustandsprobe; echte Medien separat
     def test_absturz_vor_veroeffentlichung_nutzt_validierten_teil(self, _):
         self.part.write_bytes(b"vollstaendiges-video")
         job = self.laufender_auftrag(pruefsumme(self.part))
@@ -78,7 +78,7 @@ class Wiederanlauf(unittest.TestCase):
             b"noch-nicht-fertig",
         )
 
-    @patch("videozoom.core.medieninfo", side_effect=probe)
+    @patch("videozoom.core.video_gueltig", return_value=True)  # Zustandsprobe; echte Medien separat
     def test_pausiertes_video_trotz_nicht_abgelaufener_wartezeit_wiederfinden(self, _):
         self.final.write_bytes(b"bereits-publiziert")
         job = self.laufender_auftrag(pruefsumme(self.final))
@@ -102,7 +102,7 @@ class Wiederanlauf(unittest.TestCase):
         self.workflow._recover_inflight()
         self.assertEqual(self.workflow.zustand["auftraege"]["alt"]["status"], "PRUEFEN")
 
-    @patch("videozoom.core.medieninfo", side_effect=probe)
+    @patch("videozoom.core.video_gueltig", return_value=True)  # Zustandsprobe; echte Medien separat
     def test_falscher_hash_keine_fremde_mp4_uebernehmen(self, _):
         self.final.write_bytes(b"fremde-datei")
         job = self.laufender_auftrag(hashlib.sha256(b"richtig").hexdigest())

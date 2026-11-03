@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import fcntl
+from fractions import Fraction
 import hashlib
 import json
 import math
@@ -168,7 +169,7 @@ def konfigurieren(cfg: dict) -> dict:
 def medieninfo(pfad: Path) -> dict:
     p = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries",
-         "format=duration:stream=codec_type,width,height", "-of", "json", str(pfad)],
+         "format=duration:stream=codec_type,width,height,avg_frame_rate,duration", "-of", "json", str(pfad)],
         capture_output=True, text=True, timeout=30, check=True,
     )
     return json.loads(p.stdout)
@@ -326,13 +327,41 @@ def teil_sichern(pfad: Path) -> Path | None:
     raise RuntimeError("Kein freier Name für die unterbrochene Videodatei.")
 
 
-def video_gueltig(pfad: Path, laenge: float) -> bool:
-    if not regulaer(pfad):
+def video_gueltig(pfad: Path, laenge: float, cfg: dict, *, stop=None,
+                   testmodus: bool = False) -> bool:
+    """Erwartete Parameter, beide Spurdauern und alle Bild-/Tonpakete prüfen."""
+    if not regulaer(pfad) or not math.isfinite(laenge):
         return False
-    info = medieninfo(pfad)
-    spuren = {s.get("codec_type") for s in info.get("streams", [])}
-    videodauer = float(info.get("format", {}).get("duration", 0))
-    return {"video", "audio"}.issubset(spuren) and abs(videodauer - laenge) <= max(1.2, laenge * .015)
+    try:
+        info = medieninfo(pfad)
+        videos = [s for s in info.get("streams", []) if s.get("codec_type") == "video"]
+        audios = [s for s in info.get("streams", []) if s.get("codec_type") == "audio"]
+        if len(videos) != 1 or len(audios) != 1:
+            return False
+        video = videos[0]
+        if (int(video["width"]), int(video["height"])) != FORMATE[cfg["format"]]:
+            return False
+        if abs(float(Fraction(video["avg_frame_rate"])) - cfg["fps"]) > .01:
+            return False
+        toleranz = max(.25, 2 / cfg["fps"])
+        for duration in (info["format"]["duration"], video["duration"], audios[0]["duration"]):
+            wert = float(duration)
+            if not math.isfinite(wert) or abs(wert - laenge) > toleranz:
+                return False
+        command = ["ffmpeg", "-hide_banner", "-nostdin", "-v", "error", "-xerror",
+                   "-err_detect", "explode", "-i", str(pfad), "-map", "0:v:0",
+                   "-map", "0:a:0", "-threads", "2", "-f", "null", "-progress",
+                   "pipe:1", "-nostats", "-"]
+        if not testmodus:
+            from .diagnose import scope_verfuegbar
+            if not scope_verfuegbar(cfg):
+                raise RuntimeError("CPU-/RAM-Begrenzung für Videoprüfung nicht verfügbar.")
+            command = quota_befehl(command, cfg)
+        rendern(command, stop or threading.Event(), lambda _: None, lambda _: None)
+        return True
+    except (ValueError, KeyError, TypeError, ZeroDivisionError, OSError,
+            subprocess.SubprocessError):
+        return False
 
 
 class Workflow:
@@ -545,12 +574,14 @@ class Workflow:
                 if ziel.exists() or ziel.is_symlink():
                     if not erwartet or not regulaer(ziel) or pruefsumme(ziel) != erwartet:
                         raise RuntimeError("Datenfehler: Video nicht eindeutig zuordenbar.")
-                    if not video_gueltig(ziel, job["laenge"]):
+                    if not video_gueltig(ziel, job["laenge"], job.get("render_cfg", self.cfg),
+                                         stop=self.stop, testmodus=self.testmodus):
                         raise RuntimeError("Datenfehler: Wiedergefundenes Video ungültig.")
                 elif erwartet:
                     if not regulaer(teil) or pruefsumme(teil) != erwartet:
                         raise RuntimeError("Datenfehler: Bestätigte Videodatei fehlt oder wurde verändert.")
-                    if not video_gueltig(teil, job["laenge"]):
+                    if not video_gueltig(teil, job["laenge"], job.get("render_cfg", self.cfg),
+                                         stop=self.stop, testmodus=self.testmodus):
                         raise RuntimeError("Datenfehler: Fertiger Videoteil beschädigt.")
                     os.link(teil, ziel, follow_symlinks=False)
                     teil.unlink()
@@ -653,6 +684,7 @@ class Workflow:
                      for i in range(10000) if not (zielordner / (zielbasis + ("" if i == 0 else "_" + str(i)) + ".mp4")).exists()), None)
         if ziel is None:
             raise RuntimeError("Kein sicherer Ausgabename mehr verfügbar.")
+        job["render_cfg"] = dict(self.cfg)
         job["video_ziel"] = str(ziel)
         self.speichern()  # Vor dem Rendern: Wiederaufnahme kennt den vorgesehenen Zielpfad.
         teil = ziel.with_name(ziel.stem + ".teil.mp4")
@@ -680,7 +712,8 @@ class Workflow:
                 self.melden("Übergang inkompatibel, sichere Standardblende gewählt.")
                 starten(weich=True)
             self.fortschreiben("video_pruefen", 92, titel=job["titel"])
-            if not video_gueltig(teil, job["laenge"]):
+            if not video_gueltig(teil, job["laenge"], job.get("render_cfg", self.cfg),
+                                         stop=self.stop, testmodus=self.testmodus):
                 raise RuntimeError("Ergebnis enthält nicht Bild und Ton in passender Länge.")
             job["render_hash"] = pruefsumme(teil)
             self.speichern()  # Verifizierte Datei vor ihrer Veröffentlichung beweissicher markieren.

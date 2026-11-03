@@ -1,4 +1,5 @@
 """Dauerhafte Gegenproben zu NI-20261103-01, ausschließlich isolierte Testdaten."""
+import subprocess
 import os
 import time
 import tempfile
@@ -7,7 +8,7 @@ from tests.fixtures.generieren import wav, png
 from pathlib import Path
 import unittest
 
-from videozoom.core import Workflow, lesen
+from videozoom.core import Workflow, lesen, video_gueltig, konfigurieren, FORMATE
 
 
 class AuditFixes(unittest.TestCase):
@@ -107,3 +108,36 @@ class AuditFixes(unittest.TestCase):
         w.vorbereiten()
         self.assertEqual(len(w.zustand["auftraege"]), 1)
         self.assertEqual(old["status"], "ARCHIVIERT")
+
+    def mp4(self, name, size="800x600", fps=25, ton=2):
+        target = self.root / (name + ".mp4")
+        subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i",
+                        "color=c=blue:s="+size+":r="+str(fps)+":d=2",
+                        "-f", "lavfi", "-i", "sine=frequency=220:duration="+str(ton),
+                        "-c:v", "libx264", "-threads", "1", "-c:a", "aac",
+                        "-pix_fmt", "yuv420p", str(target)], check=True, timeout=30)
+        return target
+
+    def test_a04_echte_mp4_falsches_format_bildrate_oder_ton(self):
+        cfg = konfigurieren(self.cfg)
+        self.assertTrue(video_gueltig(self.mp4("gut"), 2, cfg, testmodus=True))
+        for name, kwargs in (("klein", {"size": "128x96"}),
+                             ("fps", {"fps": 15}), ("ton", {"ton": 1})):
+            with self.subTest(name=name):
+                self.assertFalse(video_gueltig(self.mp4(name, **kwargs), 2, cfg, testmodus=True))
+
+    def test_a04_vollstaendiger_lesefehler_wird_nicht_freigegeben(self):
+        target = self.mp4("dekodierung")
+        cfg = konfigurieren(self.cfg)
+        with patch("videozoom.core.rendern", side_effect=RuntimeError("defektes Paket")):
+            with self.assertRaisesRegex(RuntimeError, "defektes Paket"):
+                video_gueltig(target, 2, cfg, testmodus=True)
+        target.write_bytes(target.read_bytes()[:100])
+        self.assertFalse(video_gueltig(target, 2, cfg, testmodus=True))
+
+    def test_a04_alle_fuenf_erwarteten_abmessungen(self):
+        for name, (width, height) in FORMATE.items():
+            with self.subTest(format=name):
+                cfg = konfigurieren({**self.cfg, "format": name})
+                target = self.mp4(name, size=f"{width}x{height}")
+                self.assertTrue(video_gueltig(target, 2, cfg, testmodus=True))
