@@ -78,6 +78,18 @@ class Lifecycle(unittest.TestCase):
         finally:
             self.life.fertig.set();self.life.thread.join(2)
 
+    def test_beenden_schliesst_eigenen_ordnerdialog(self):
+        from videozoom.webui import ordner_waehlen
+        self.life.anfordern()
+        proc=Mock();proc.poll.return_value=None
+        with patch.dict(os.environ,{'DISPLAY':':0'}), \
+             patch('videozoom.webui.shutil.which',return_value='/usr/bin/kdialog'), \
+             patch('videozoom.webui.subprocess.Popen') as popen:
+            popen.return_value.__enter__.return_value=proc
+            self.assertIsNone(ordner_waehlen('downloads',str(self.root),self.ui.dialog_stop))
+            proc.terminate.assert_called_once()
+            proc.communicate.assert_not_called()
+
     def test_http_beenden_stoppt_eigene_automatik_und_sichert(self):
         journal=self.root/'Work/PROTOKOLLE/auftraege.json'
         json_sicher(journal,{'schema':1,'auftraege':{'alt':{'status':'WARTET','titel':'Alter Song'}}})

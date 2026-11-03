@@ -64,6 +64,7 @@ class Lebenszyklus:
         with self.ui.lock:
             self.ui.beenden_fehler=None
             self.ui.schliesst=True
+            self.ui.dialog_stop.set()
             if self.ui.service:self.ui.service.stop.set()
         self.angefordert.set()
 
@@ -107,6 +108,7 @@ class Lebenszyklus:
                 self.ui._meldung('Speichern fehlgeschlagen; Server bleibt geöffnet: '+str(exc))
                 with self.ui.lock:
                     self.ui.schliesst=False
+                    self.ui.dialog_stop.clear()
                     self.ui.beenden_fehler=str(exc)
                 self.angefordert.clear()
                 # Keine automatische Fehlerschleife nach einem Speicherausfall.

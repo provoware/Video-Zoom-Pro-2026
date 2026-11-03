@@ -8,6 +8,7 @@ import secrets
 import shutil
 import subprocess
 import threading
+import time
 import webbrowser
 from collections import deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -19,7 +20,7 @@ from .diagnose import pruefen
 from .einstellungen_sicher import zuruecksetzen, wiederherstellen
 
 
-def ordner_waehlen(feld: str, startwert: str) -> str | None:
+def ordner_waehlen(feld: str, startwert: str, stop=None) -> str | None:
     """Native Ordnerauswahl: kein Tk, keine freie Befehlsausführung."""
     if feld not in {"downloads", "arbeitsordner"}:
         raise ValueError("Nur Downloads- und Arbeitsordner dürfen ausgewählt werden.")
@@ -38,8 +39,25 @@ def ordner_waehlen(feld: str, startwert: str) -> str | None:
     else:
         raise RuntimeError("KDE-Ordnerdialog nicht verfügbar. Ordner im Textfeld eingeben.")
     try:
-        ergebnis = subprocess.run(befehl, capture_output=True, text=True,
-                                 check=False, timeout=120)
+        if stop is None:
+            ergebnis = subprocess.run(befehl, capture_output=True, text=True,
+                                     check=False, timeout=120)
+        else:
+            with subprocess.Popen(befehl,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True) as proc:
+                deadline=time.monotonic()+120
+                try:
+                    while True:
+                        if stop.is_set() or time.monotonic()>=deadline:return None
+                        try:
+                            out,err=proc.communicate(timeout=.2)
+                            ergebnis=subprocess.CompletedProcess(befehl,proc.returncode,out,err)
+                            break
+                        except subprocess.TimeoutExpired:continue
+                finally:
+                    if proc.poll() is None:
+                        proc.terminate()
+                        try:proc.wait(timeout=3)
+                        except subprocess.TimeoutExpired:proc.kill();proc.wait(timeout=3)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise RuntimeError("Ordnerauswahl fehlgeschlagen: " + str(exc)) from exc
     if ergebnis.returncode:
@@ -69,7 +87,7 @@ body[data-theme="gruen"]{--accent:#7deaaf;--accent-rgb:125,234,175;--accent-ink:
 body[data-theme="orange"]{--accent:#ffd082;--accent-rgb:255,208,130;--accent-ink:#382308;--line:#a18c63}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-.main-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px;position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0}
+.main-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px;position:relative;background:var(--bg);padding:8px 0}
 .main-actions button{margin:0;font-size:.94rem}
 article{scroll-margin-top:10rem}
 .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:8px;margin:12px 0}
@@ -506,6 +524,7 @@ class Bedienung:
         self.einzelmeldung = None
         self.schliesst = False
         self.beenden_fehler = None
+        self.dialog_stop = threading.Event()
         self.lebenszyklus = None
         self._status_cache = None
 
@@ -809,7 +828,7 @@ def starten(cfg, config_path, port=0, browser=True, bereit=None):
                     feld = data.get("feld")
                     if feld not in {"downloads", "arbeitsordner"}:
                         raise ValueError("Unbekannter Ordnerbereich.")
-                    ziel = ordner_waehlen(feld, bedienung.cfg[feld])
+                    ziel = ordner_waehlen(feld, bedienung.cfg[feld],bedienung.dialog_stop)
                     value = {"pfad": ziel, "meldung": (
                         "Ordner übernommen; Einstellungen bitte speichern." if ziel
                         else "Auswahl abgebrochen, Einstellungen unverändert.")}
