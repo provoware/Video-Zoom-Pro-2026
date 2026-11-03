@@ -1,0 +1,565 @@
+{
+  "schema": 1,
+  "status": "ABGESCHLOSSEN",
+  "testdaten": "synthetische WAV 8s / eigene farbige PNG 512x384",
+  "grenzen": "4 zugängliche CPU-Kerne, 2 GiB residente Prozessbaumgrenze (100-ms-Abfrage), 60 s pro Renderlauf; Entwicklerlauf ohne Produktivdaten",
+  "scope": "KLAS/BREI, 1/5/10 Bilder, je 2 Varianten; kein 4K-, Langsong- oder Kubuntu-Nachweis",
+  "zusammenfassung": [
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "bestand": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.1312,
+        "median_ram_kib": 239872.0
+      },
+      "filter_1": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.1728,
+        "median_ram_kib": 237890.0
+      },
+      "zweiphasig": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.37485,
+        "median_ram_kib": 109170.0
+      },
+      "identische_decodierte_bildfolge": true
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "bestand": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.7327,
+        "median_ram_kib": 328686.0
+      },
+      "filter_1": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.4753500000000002,
+        "median_ram_kib": 314264.0
+      },
+      "zweiphasig": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 2.09215,
+        "median_ram_kib": 111094.0
+      },
+      "identische_decodierte_bildfolge": true
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "bestand": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.73515,
+        "median_ram_kib": 399846.0
+      },
+      "filter_1": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 1.8227499999999999,
+        "median_ram_kib": 371298.0
+      },
+      "zweiphasig": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 2.22185,
+        "median_ram_kib": 166076.0
+      },
+      "identische_decodierte_bildfolge": true
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "bestand": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 2.8353,
+        "median_ram_kib": 849168.0
+      },
+      "filter_1": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 3.04915,
+        "median_ram_kib": 846570.0
+      },
+      "zweiphasig": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 3.5593500000000002,
+        "median_ram_kib": 288744.0
+      },
+      "identische_decodierte_bildfolge": true
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "bestand": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 4.83735,
+        "median_ram_kib": 1115944.0
+      },
+      "filter_1": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 5.3208,
+        "median_ram_kib": 1095668.0
+      },
+      "zweiphasig": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 5.5417000000000005,
+        "median_ram_kib": 292886.0
+      },
+      "identische_decodierte_bildfolge": true
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "bestand": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 5.10275,
+        "median_ram_kib": 1296790.0
+      },
+      "filter_1": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 5.47635,
+        "median_ram_kib": 1257440.0
+      },
+      "zweiphasig": {
+        "gueltige_laeufe": 2,
+        "median_sekunden": 5.80735,
+        "median_ram_kib": 369504.0
+      },
+      "identische_decodierte_bildfolge": true
+    }
+  ],
+  "messungen": [
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "lauf": 1,
+      "variante": "bestand",
+      "sekunden": 1.0584,
+      "spitzen_ram_kib": 239944,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "512dbb56799c10423b932594093334f501220ec48493ed5ed3c223ca9e8531a6"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "lauf": 1,
+      "variante": "filter_1",
+      "sekunden": 1.4261,
+      "spitzen_ram_kib": 237808,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "512dbb56799c10423b932594093334f501220ec48493ed5ed3c223ca9e8531a6"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "lauf": 1,
+      "variante": "zweiphasig",
+      "sekunden": 1.377,
+      "spitzen_ram_kib": 109288,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "512dbb56799c10423b932594093334f501220ec48493ed5ed3c223ca9e8531a6"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "lauf": 2,
+      "variante": "zweiphasig",
+      "sekunden": 1.3727,
+      "spitzen_ram_kib": 109052,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "512dbb56799c10423b932594093334f501220ec48493ed5ed3c223ca9e8531a6"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "lauf": 2,
+      "variante": "filter_1",
+      "sekunden": 0.9195,
+      "spitzen_ram_kib": 237972,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "512dbb56799c10423b932594093334f501220ec48493ed5ed3c223ca9e8531a6"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 1,
+      "lauf": 2,
+      "variante": "bestand",
+      "sekunden": 1.204,
+      "spitzen_ram_kib": 239800,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "512dbb56799c10423b932594093334f501220ec48493ed5ed3c223ca9e8531a6"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "lauf": 1,
+      "variante": "bestand",
+      "sekunden": 1.7732,
+      "spitzen_ram_kib": 328420,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "a8eae76d9adc6bdeb4fac15a7fbfcab0d0b3bb77d81efdebd039a8a7978990c2"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "lauf": 1,
+      "variante": "filter_1",
+      "sekunden": 1.6644,
+      "spitzen_ram_kib": 314400,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "a8eae76d9adc6bdeb4fac15a7fbfcab0d0b3bb77d81efdebd039a8a7978990c2"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "lauf": 1,
+      "variante": "zweiphasig",
+      "sekunden": 2.0407,
+      "spitzen_ram_kib": 110800,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "a8eae76d9adc6bdeb4fac15a7fbfcab0d0b3bb77d81efdebd039a8a7978990c2"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "lauf": 2,
+      "variante": "zweiphasig",
+      "sekunden": 2.1436,
+      "spitzen_ram_kib": 111388,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "a8eae76d9adc6bdeb4fac15a7fbfcab0d0b3bb77d81efdebd039a8a7978990c2"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "lauf": 2,
+      "variante": "filter_1",
+      "sekunden": 1.2863,
+      "spitzen_ram_kib": 314128,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "a8eae76d9adc6bdeb4fac15a7fbfcab0d0b3bb77d81efdebd039a8a7978990c2"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 5,
+      "lauf": 2,
+      "variante": "bestand",
+      "sekunden": 1.6922,
+      "spitzen_ram_kib": 328952,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "a8eae76d9adc6bdeb4fac15a7fbfcab0d0b3bb77d81efdebd039a8a7978990c2"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "lauf": 1,
+      "variante": "bestand",
+      "sekunden": 1.7444,
+      "spitzen_ram_kib": 399712,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "677972825017ad6ceacabe52aca9a57e96bc472f915f2cfd05c5009fef8756aa"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "lauf": 1,
+      "variante": "filter_1",
+      "sekunden": 1.412,
+      "spitzen_ram_kib": 371232,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "677972825017ad6ceacabe52aca9a57e96bc472f915f2cfd05c5009fef8756aa"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "lauf": 1,
+      "variante": "zweiphasig",
+      "sekunden": 2.1598,
+      "spitzen_ram_kib": 166136,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "677972825017ad6ceacabe52aca9a57e96bc472f915f2cfd05c5009fef8756aa"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "lauf": 2,
+      "variante": "zweiphasig",
+      "sekunden": 2.2839,
+      "spitzen_ram_kib": 166016,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "677972825017ad6ceacabe52aca9a57e96bc472f915f2cfd05c5009fef8756aa"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "lauf": 2,
+      "variante": "filter_1",
+      "sekunden": 2.2335,
+      "spitzen_ram_kib": 371364,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "677972825017ad6ceacabe52aca9a57e96bc472f915f2cfd05c5009fef8756aa"
+    },
+    {
+      "format": "KLAS",
+      "bilder": 10,
+      "lauf": 2,
+      "variante": "bestand",
+      "sekunden": 1.7259,
+      "spitzen_ram_kib": 399980,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "677972825017ad6ceacabe52aca9a57e96bc472f915f2cfd05c5009fef8756aa"
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "lauf": 1,
+      "variante": "bestand",
+      "sekunden": 3.0125,
+      "spitzen_ram_kib": 849076,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "6492572542bc668121b4a869192838c65d013f04112b16d85ca477f8d1d4afc5"
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "lauf": 1,
+      "variante": "filter_1",
+      "sekunden": 2.8562,
+      "spitzen_ram_kib": 846588,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "6492572542bc668121b4a869192838c65d013f04112b16d85ca477f8d1d4afc5"
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "lauf": 1,
+      "variante": "zweiphasig",
+      "sekunden": 3.5713,
+      "spitzen_ram_kib": 288672,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "6492572542bc668121b4a869192838c65d013f04112b16d85ca477f8d1d4afc5"
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "lauf": 2,
+      "variante": "zweiphasig",
+      "sekunden": 3.5474,
+      "spitzen_ram_kib": 288816,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "6492572542bc668121b4a869192838c65d013f04112b16d85ca477f8d1d4afc5"
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "lauf": 2,
+      "variante": "filter_1",
+      "sekunden": 3.2421,
+      "spitzen_ram_kib": 846552,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "6492572542bc668121b4a869192838c65d013f04112b16d85ca477f8d1d4afc5"
+    },
+    {
+      "format": "BREI",
+      "bilder": 1,
+      "lauf": 2,
+      "variante": "bestand",
+      "sekunden": 2.6581,
+      "spitzen_ram_kib": 849260,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "6492572542bc668121b4a869192838c65d013f04112b16d85ca477f8d1d4afc5"
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "lauf": 1,
+      "variante": "bestand",
+      "sekunden": 5.0306,
+      "spitzen_ram_kib": 1116008,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "05c5d6edbd8a7a5bf1fc3a936615573099a2842c6c32eb15abb143b65dfb3d43"
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "lauf": 1,
+      "variante": "filter_1",
+      "sekunden": 5.7752,
+      "spitzen_ram_kib": 1095744,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "05c5d6edbd8a7a5bf1fc3a936615573099a2842c6c32eb15abb143b65dfb3d43"
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "lauf": 1,
+      "variante": "zweiphasig",
+      "sekunden": 5.6937,
+      "spitzen_ram_kib": 292952,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "05c5d6edbd8a7a5bf1fc3a936615573099a2842c6c32eb15abb143b65dfb3d43"
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "lauf": 2,
+      "variante": "zweiphasig",
+      "sekunden": 5.3897,
+      "spitzen_ram_kib": 292820,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "05c5d6edbd8a7a5bf1fc3a936615573099a2842c6c32eb15abb143b65dfb3d43"
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "lauf": 2,
+      "variante": "filter_1",
+      "sekunden": 4.8664,
+      "spitzen_ram_kib": 1095592,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "05c5d6edbd8a7a5bf1fc3a936615573099a2842c6c32eb15abb143b65dfb3d43"
+    },
+    {
+      "format": "BREI",
+      "bilder": 5,
+      "lauf": 2,
+      "variante": "bestand",
+      "sekunden": 4.6441,
+      "spitzen_ram_kib": 1115880,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "05c5d6edbd8a7a5bf1fc3a936615573099a2842c6c32eb15abb143b65dfb3d43"
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "lauf": 1,
+      "variante": "bestand",
+      "sekunden": 4.7937,
+      "spitzen_ram_kib": 1296716,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "cbfad2cfd2a96f477b528da11f968e85e3f2f9a30a5b42a7b7a9b6c46bc5fdc6"
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "lauf": 1,
+      "variante": "filter_1",
+      "sekunden": 4.9439,
+      "spitzen_ram_kib": 1257380,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "cbfad2cfd2a96f477b528da11f968e85e3f2f9a30a5b42a7b7a9b6c46bc5fdc6"
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "lauf": 1,
+      "variante": "zweiphasig",
+      "sekunden": 5.5766,
+      "spitzen_ram_kib": 369480,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "cbfad2cfd2a96f477b528da11f968e85e3f2f9a30a5b42a7b7a9b6c46bc5fdc6"
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "lauf": 2,
+      "variante": "zweiphasig",
+      "sekunden": 6.0381,
+      "spitzen_ram_kib": 369528,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "cbfad2cfd2a96f477b528da11f968e85e3f2f9a30a5b42a7b7a9b6c46bc5fdc6"
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "lauf": 2,
+      "variante": "filter_1",
+      "sekunden": 6.0088,
+      "spitzen_ram_kib": 1257500,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "cbfad2cfd2a96f477b528da11f968e85e3f2f9a30a5b42a7b7a9b6c46bc5fdc6"
+    },
+    {
+      "format": "BREI",
+      "bilder": 10,
+      "lauf": 2,
+      "variante": "bestand",
+      "sekunden": 5.4118,
+      "spitzen_ram_kib": 1296864,
+      "exitcode": 0,
+      "fehler": "",
+      "gueltig": true,
+      "bildfolge_sha256": "cbfad2cfd2a96f477b528da11f968e85e3f2f9a30a5b42a7b7a9b6c46bc5fdc6"
+    }
+  ],
+  "basis_quellcommit": "b89cf69e4abeaac6c360d3cc675ac51b5b678baa",
+  "messstand": "Explorative Arbeitskopie auf der genannten Basis; kein Testnachweis für den Basiscommit. Abschließende gezielte Commitmessung separat im PR."
+}

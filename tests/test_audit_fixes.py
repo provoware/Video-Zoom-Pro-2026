@@ -141,3 +141,18 @@ class AuditFixes(unittest.TestCase):
                 cfg = konfigurieren({**self.cfg, "format": name})
                 target = self.mp4(name, size=f"{width}x{height}")
                 self.assertTrue(video_gueltig(target, 2, cfg, testmodus=True))
+
+    def test_a04_defekte_pakete_trotz_erhaltener_mp4_metadaten(self):
+        from videozoom.core import medieninfo
+        target = self.mp4("paketfehler")
+        data = bytearray(target.read_bytes())
+        at = data.index(b'mdat')
+        size = int.from_bytes(data[at-4:at], 'big')
+        data[at+4:at-4+size] = bytes(size-8)
+        target.write_bytes(data)
+        self.assertAlmostEqual(float(medieninfo(target)["format"]["duration"]), 2, places=1)
+        try:
+            accepted = video_gueltig(target, 2, konfigurieren(self.cfg), testmodus=True)
+        except RuntimeError:
+            accepted = False
+        self.assertFalse(accepted)

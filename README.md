@@ -4,7 +4,13 @@
 
 Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus WAV-Dateien und Bildern. **VideoBatch bleibt ein anderes Projekt.** Die Oberfläche läuft ausschließlich lokal im Browser, ohne Tk und ohne Cloud.
 
-## Aktueller Entwicklungsstand (02.11.2026)
+## Entwicklung 0.9.0-dev · 03.11.2026
+
+Vier reproduzierte Auditfehler sind auf dem Entwicklungszweig einzeln korrigiert. Neu: echte kurze Vorschau, kompakte Songliste und bewusste Einzel-Freigabe. Umfang und Grenzen stehen unten sowie in der führenden TODO NI-20261103-01. Abschließende Commit-/CI-Nachweise werden im zugehörigen PR getrennt vom bisherigen Hauptzweigstand geführt. Kein Stable-Release.
+
+Für den nächsten größeren Renderumbau ist die Zweiphasenberechnung anhand von 36 echten Vergleichsläufen ausgewählt: im 1920×1080-Test mit zehn Bildern rund 71,5 % weniger Spitzen-RAM bei rund 13,8 % längerer Renderzeit. Das ist ein isolierter synthetischer Vergleich, keine Kubuntu-/HDD-Prognose. Der Messprototyp ist nicht produktiv aktiviert. Einzelwerte und Vorgehen: [Rendervergleich](docs/RENDER_VERGLEICH_2026-11-03.md).
+
+## Vorgängernachweise (02.11.2026)
 
 Die Folgepakete #34 → #35 → #36 → #37 wurden geordnet mit jeweils erfolgreicher Hauptzweigprüfung integriert. Anschließend folgten sichere Einstellungsrücksetzung/Farbwahl (#38), echte Tastatur-/Kontrastprüfung (#39) und der Nur-Lese-Schutz für zweite Fenster (#40).
 

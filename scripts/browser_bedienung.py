@@ -124,6 +124,7 @@ def pruefen(ziel):
                 if time.monotonic()-start>15:raise RuntimeError('Testseite nicht bereit')
                 time.sleep(.05)
             cdp.js("document.getElementById('status').textContent='Arbeitet im anderen Fenster'")
+            cdp.js("auftraegeAnzeigen([{id:'synthetisch',titel:'Ein sehr langer Songtitel für die Tastaturprüfung',status:'PRUEFEN',format:'BREI',bilder:40,hinweis:'Quelle prüfen; Originale geschützt.',vorschau:false}],false);document.querySelector('#auftragsliste details').open=true")
             for width,height,zoom in ((800,600,100),(800,600,125),(800,600,150),(800,600,200),(1280,720,100)):
                 cdp.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':False})
                 for theme in ('cyan','violett','gruen','orange'):

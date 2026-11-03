@@ -6,7 +6,7 @@ import secrets
 
 from .auftraege import quellen
 from .core import (ffmpeg_befehl, quota_befehl, speicher_pruefen, regulaer,
-                   pruefsumme, medieninfo, ProduktionGestoppt)
+                   pruefsumme, medieninfo)
 from .render_watchdog import rendern
 
 
@@ -38,7 +38,7 @@ def erzeugen(workflow, key):
             raise RuntimeError("Vorschau hat eine falsche Dauer.")
         # Die kurze Datei vollständig lesen; dieselbe Ressourcenhülle wie beim Rendern.
         check = ["ffmpeg", "-v", "error", "-nostdin", "-xerror", "-err_detect", "explode",
-                 "-i", str(part), "-threads", "2", "-f", "null", "-progress", "pipe:1", "-"]
+                 "-threads", "2", "-i", str(part), "-threads", "2", "-f", "null", "-progress", "pipe:1", "-"]
         if not workflow.testmodus:
             check = quota_befehl(check, workflow.cfg)
         rendern(check, workflow.stop, lambda _: None, workflow.melden)

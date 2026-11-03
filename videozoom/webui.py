@@ -203,7 +203,7 @@ pre{font:.82rem/1.4 monospace;white-space:pre-wrap;overflow:auto;word-break:brea
 <details class="technical-details"><summary>Meldungen ansehen</summary><pre id="log">Bereit.</pre></details>
 </article>
 <article id="auftraege-karte"><h2>Songs und nächste Schritte</h2>
-<p class="card-subtitle">Song aufklappen. Die Vorschau zeigt die ersten bis zu zehn Sekunden; Originale und Produktionsstatus bleiben erhalten.</p>
+<p class="card-subtitle">Song aufklappen. Die Vorschau zeigt die ersten bis zu zehn Sekunden; Originale und Produktionsstatus bleiben erhalten. Nach Medien- oder Formatänderungen die gespeicherte Vorschau neu erzeugen.</p>
 <div id="auftragsliste"><p>Noch keine vorbereiteten Songs.</p></div>
 </article></div>
 <script>

@@ -1,3 +1,16 @@
+# Arbeitsstand NI-20261103-01 · 03.11.2026
+
+Basis main: d8798d35cdfe3406317d1124966f9b9834dff41c. Arbeitszweig: feat/audit-preview-jobs-20261103. Einzelne Korrekturen auf GitHub: A01 f403c56b307c9e5e75978b52b4408fcce7074a3a, A02 b19fd1a8cc10b40c89648ed3fa39b8f08772e1ed, A03 e328f1de65c3191453460db0a4ccc57d58cc9464, A04 0e4785181d0f505ef2f4c67f917b108d70160cbb. Vorschaukern c4c6869367974dbcaa2923aa0777c77870c57891, Auftragsoberfläche 95e08aadb72f09a46914b0633e8553b0b7f3ec58. Noch nicht in main; abschließender PR-/CI-Nachweis separat.
+
+Vier Fehler einzeln behoben und gezielt geprüft. Gemeinsame lokale Gesamtprüfung nach A04: 160/160, keine Überspringer, lokaler Quellcommit 5d481c9a9bf88ef7307c6de1ad4ebcb514d2b35d. Lokale und GitHub-SHAs sind verschiedene Commitobjekte; der lokale Nachweis ist kein GitHub-CI-Nachweis. Neue Vorschau-/Auftragsproben und 16 ausgeführte JavaScript-Verträge lokal erfolgreich. Abschließende Gesamtprüfung und echte Chromium-Matrix folgen auf dem eingefrorenen gemeinsamen Stand.
+
+Produkt 0.9.0-dev: kurze Vorschau, kompakte ausklappbare Songliste, bewusste Einzel-Freigabe. Originale/Archivzustände werden durch Vorschau nicht verändert. Kein neues Produktpaket. Größere Renderoptimierung wird ausschließlich anhand isolierter Messungen ausgewählt; Messprototyp ist kein produktiver Renderer. Siehe RENDER_VERGLEICH_2026-11-03.md.
+
+Recovery-Key: Zweig oben; Ziel A01–A04 + Vorschau/Liste + Messentscheidung; letzter Befund lokale Kern-/HTTP-/JavaScript-Prüfungen bestanden; nächster Schritt gemeinsame Commitprüfung, Chromium und ZIP am endgültigen Stand. Verbleibende Altaufgaben ARCH-01/SEC-01/UX-04b und Rechteentscheidung nicht durch diesen Auftrag erledigt. Finale echte Kubuntu-/Nutzer-Endabnahme bleibt zuletzt OFFEN. Stable: NEIN.
+
+---
+## Vorheriger Nachweisstand (historisch)
+
 # Status und Wiederaufnahme – 02.11.2026
 
 ## Integration vollständig durchgeführt

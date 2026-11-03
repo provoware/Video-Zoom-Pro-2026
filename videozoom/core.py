@@ -352,7 +352,7 @@ def video_gueltig(pfad: Path, laenge: float, cfg: dict, *, stop=None,
             if not math.isfinite(wert) or abs(wert - laenge) > toleranz:
                 return False
         command = ["ffmpeg", "-hide_banner", "-nostdin", "-v", "error", "-xerror",
-                   "-err_detect", "explode", "-i", str(pfad), "-map", "0:v:0",
+                   "-err_detect", "explode", "-threads", "2", "-i", str(pfad), "-map", "0:v:0",
                    "-map", "0:a:0", "-threads", "2", "-f", "null", "-progress",
                    "pipe:1", "-nostats", "-"]
         if not testmodus:

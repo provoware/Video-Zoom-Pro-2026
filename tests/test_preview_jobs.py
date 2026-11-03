@@ -131,3 +131,20 @@ class PreviewJobs(unittest.TestCase):
         finally:
             refs["server"].shutdown(); thread.join(5)
         self.assertTrue(all(p.exists() for p in self.paths))
+
+    def test_archiv_einzelfreigabe_berechnet_video_nicht_erneut(self):
+        self.w.stapel()
+        self.assertEqual(self.job["status"], "ARCHIVIERT")
+        self.job.update(status="PRUEFEN", archiv_versuche=3)
+        freigeben(self.w, self.key)
+        self.assertEqual(self.job["status"], "ARCHIV_WARTET")
+        with patch.object(self.w, "_render", side_effect=AssertionError("Doppelrender")):
+            self.w.stapel()
+        self.assertEqual(self.job["status"], "ARCHIVIERT")
+        self.assertEqual(len(list((self.w.ordner/"FERTIG").glob('*.mp4'))), 1)
+
+    def test_manipulierte_veroeffentlichte_vorschau_nicht_ausliefern(self):
+        target = erzeugen(self.w, self.key)
+        target.write_bytes(b'ersetzte Vorschau')
+        with self.assertRaisesRegex(RuntimeError, "verändert"):
+            datei(self.w.ordner, self.job)
