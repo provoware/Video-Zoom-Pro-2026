@@ -360,7 +360,14 @@ def video_gueltig(pfad: Path, laenge: float, cfg: dict, *, stop=None,
             if not scope_verfuegbar(cfg):
                 raise RuntimeError("CPU-/RAM-Begrenzung für Videoprüfung nicht verfügbar.")
             command = quota_befehl(command, cfg)
-        rendern(command, stop or threading.Event(), lambda _: None, lambda _: None)
+        try:
+            rendern(command, stop or threading.Event(), lambda _: None, lambda _: None)
+        except ProduktionGestoppt:
+            raise
+        except RuntimeError as exc:
+            if str(exc).startswith("FFmpeg Exitcode"):
+                return False  # Lesbarer Datenfehler, bei Wiederaufnahme dauerhaft PRUEFEN.
+            raise  # Stillstand/Ressourcenausfall bleiben technische Wartebedingungen.
         return True
     except (ValueError, KeyError, TypeError, ZeroDivisionError, OSError,
             subprocess.SubprocessError):

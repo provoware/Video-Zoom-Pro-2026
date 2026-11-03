@@ -156,3 +156,17 @@ class AuditFixes(unittest.TestCase):
         except RuntimeError:
             accepted = False
         self.assertFalse(accepted)
+        # Auch ein alter schwacher Prüfnachweis darf keinen Endlos-Wiederanlauf auslösen.
+        from videozoom.core import pruefsumme
+        w = Workflow(self.cfg, testmodus=True)
+        final = w.ordner / "FERTIG" / "song_KLAS.mp4"
+        target.rename(final)
+        job = {"status": "LAEUFT", "titel": "Song", "dateien": [], "laenge": 2,
+               "video_ziel": str(final), "render_hash": pruefsumme(final)}
+        w.zustand["auftraege"]["alt"] = job
+        w._recover_inflight()
+        self.assertEqual(job["status"], "PRUEFEN")
+        with patch("videozoom.core.rendern", side_effect=AssertionError("Endlosprüfung")):
+            w.stapel()
+        self.assertEqual(job["status"], "PRUEFEN")
+        self.assertTrue(final.exists())
