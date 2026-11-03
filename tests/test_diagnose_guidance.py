@@ -19,7 +19,7 @@ class Einrichtungsfuehrung(unittest.TestCase):
             checks=self.checks(cfg)
             self.assertFalse(checks['Downloads']['ok'])
             self.assertIn('Ordner wählen',checks['Downloads']['handlung'])
-            self.assertTrue(checks['Arbeitsordner']['ok'])
+            self.assertFalse(checks['Arbeitsordner']['ok'])
             self.assertEqual(list(root.iterdir()),[])
 
     def test_arbeitsordner_im_eingang_und_symlink_blockieren(self):

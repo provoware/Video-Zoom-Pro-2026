@@ -55,9 +55,9 @@ class BedienungUndStatus(unittest.TestCase):
             self.assertIn(value + ":", HTML)
 
     def test_technische_details_ueber_native_elemente_zugaenglich(self):
-        self.assertEqual(len(self.page.details), 4)
-        self.assertEqual(self.page.summary_count, 4)
-        self.assertTrue(all("open" not in d for d in self.page.details))
+        self.assertEqual(len(self.page.details), 5)
+        self.assertEqual(self.page.summary_count, 5)
+        self.assertTrue(all("open" not in d for d in self.page.details if d.get("id") != "einrichtung"))
         for element in ("diagnose", "sensoren", "jobs", "log"):
             self.assertIn(element, self.page.ids)
 

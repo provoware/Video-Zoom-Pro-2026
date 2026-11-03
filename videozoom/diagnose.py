@@ -50,11 +50,13 @@ def pruefen(real_scope=True, cfg: dict | None = None):
         return not any(x.is_symlink() for x in (p,*p.parents))
     add("Downloads",downloads.is_dir() and sicher(downloads) and os.access(downloads,os.R_OK|os.W_OK|os.X_OK),
         "Eingangsordner muss vorhanden, lesbar und beschreibbar sein.")
-    ancestor = next((p for p in (arbeit,*arbeit.parents) if p.exists()),None)
-    arbeits_ok = (sicher(arbeit) and arbeit!=downloads and downloads not in arbeit.parents
-                  and not (arbeit.exists() and not arbeit.is_dir()) and ancestor is not None
-                  and ancestor.is_dir() and os.access(ancestor,os.R_OK|os.W_OK|os.X_OK))
-    add("Arbeitsordner",arbeits_ok,"Eigener beschreibbarer Ordner außerhalb des Eingangs; Anlage erst beim Arbeitsstart.")
+    try:
+        from .eingang import ordner_pruefen
+        folders=ordner_pruefen(config)
+        arbeits_ok=next(p['ok'] for p in folders['ordner'] if p['name']=='Arbeitsordner')
+    except (ValueError,RuntimeError,OSError):
+        arbeits_ok=False
+    add("Arbeitsordner",arbeits_ok,"Eigener vorhandener Arbeitsordner außerhalb des Eingangs; über Ordner prüfen & anlegen einrichten.")
     add("Python",sys.version_info >= (3,11),"Mindestens Python 3.11.")
     for name in ("ffmpeg","ffprobe"):
         vorhanden = bool(shutil.which(name))

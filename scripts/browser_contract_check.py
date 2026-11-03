@@ -36,14 +36,14 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  globalThis.fetch=async()=>({ok:false,json:async()=>({fehler:'Abgelehnt'})});
  try{await api('/aktion',{});throw Error('HTTP-Fehler verschluckt');}catch(e){assert(e.message==='Abgelehnt','HTTP-Fehlertext');}
  assert(timers.size===0,'Timer nach HTTP-Fehler');tests++;
- const data={jobs:{BEREIT:2},event:{phase:'bereit'},cfg:{downloads:'/tmp/d',arbeitsordner:'/tmp/a',theme:'cyan',format:'KLAS',kategorie:'THEMA'}};
+ const data={active:true,jobs:{BEREIT:2},event:{phase:'bereit'},cfg:{downloads:'/tmp/d',arbeitsordner:'/tmp/a',theme:'cyan',format:'KLAS',kategorie:'THEMA'}};
  let calls=0,release;
  globalThis.fetch=()=>{calls++;return new Promise(resolve=>{release=()=>resolve({ok:true,json:async()=>data});});};
  p=status();for(let i=0;i<10;i++)await status();assert(calls===1,'Status parallel');release();await p;
  assert(timers.size===1&&timer(1500),'Genau eine Folgeabfrage');assert(el('kpi-bereit').textContent==2,'Auftragszahl');tests++;
  timers.clear();blockFetch();p=status();fire(10000);await p;
  assert(el('status').textContent.startsWith('Anzeige veraltet:'),'Veraltete Anzeige fehlt');
- assert(timer(1500),'Wiederanlauf fehlt');tests++;
+ assert(timer(15000),'Wiederanlauf nach Verbindungsfehler fehlt');tests++;
  timers.clear();globalThis.fetch=async()=>({ok:true,json:async()=>data});await status();
  assert(!el('status').textContent.includes('veraltet'),'Keine Erholung');tests++;
  timers.clear();blockFetch();p=ordnerwahl('downloads');assert(timer(125000),'Manueller Dialog zu kurz');fire(125000);await p;tests++;
@@ -66,6 +66,14 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  auftraegeAnzeigen(rows,true);assert(row.previewButton.disabled&&row.releaseButton.disabled,'Aktiver fremder Schreiber sperrt Einzelaktionen');
  auftraegeAnzeigen([{...rows[0],status:'ARCHIVIERT'}],false);assert(row.previewButton.disabled&&row.releaseButton.hidden,'Archivierte Quellen nicht neu berechnen');
  if(typeof getComputedStyle!=='undefined')assert(getComputedStyle(row.releaseButton).display==='none','Freigabeknopf tatsächlich unsichtbar');tests++;
+ timers.clear();globalThis.fetch=async()=>({ok:true,json:async()=>({...data,active:false})});await status();
+ assert(timer(5000)&&!timer(1500),'Sparsame Leerlaufabfrage');tests++;
+ assert(abfragePause(true)===1500&&abfragePause(false)===5000,'Getrennte Aktiv-/Leerlaufbudgets');tests++;
+ rows[0].status='WARTET';el('bilder_auto').checked=false;auftraegeAnzeigen(rows,false);
+ assert(!jobNodes.get('song').imagesButton.hidden,'Manuelle Bilderauswahl für wartenden Song');
+ el('bilder_auto').checked=true;auftraegeAnzeigen(rows,false);assert(jobNodes.get('song').imagesButton.hidden,'Autoscan zeigt keine manuelle Auswahl');tests++;
+ arbeitsablauf({...data,active:false,jobs:{WARTET:1},ordner:{bereit:false}});
+ assert(el('naechster-schritt').textContent.includes('Ordner prüfen & anlegen'),'Ordnerproblem führt zur nächsten sicheren Aktion');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);
@@ -95,7 +103,7 @@ def pruefen(node=False):
             if not match:raise RuntimeError('Kein JavaScript-Nachweis aus Chromium')
             report=json.loads(html.unescape(match.group(1)))
             report['engine']='Chromium'
-        if not report.get('bestanden') or report.get('tests')!=16:
+        if not report.get('bestanden') or report.get('tests')!=20:
             raise RuntimeError(str(report))
         report['commit']=os.environ.get('GITHUB_SHA')
         return report
