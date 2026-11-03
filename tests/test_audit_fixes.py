@@ -75,3 +75,35 @@ class AuditFixes(unittest.TestCase):
             w.stapel()
             render.assert_not_called()
         self.assertEqual(job["status"], "PRUEFEN")
+
+    def test_a03_neuer_inhalt_gleicher_pfad_bewahrt_historie(self):
+        audio, _ = self.medien()
+        w = Workflow(self.cfg, testmodus=True)
+        w.vorbereiten()
+        key, old = next(iter(w.zustand["auftraege"].items()))
+        old["status"] = "ARCHIVIERT"
+        w.vorbereiten()
+        self.assertEqual(len(w.zustand["auftraege"]), 1)
+        wav(audio, sekunden=6)
+        os.utime(audio, (time.time()-20,)*2)
+        w.vorbereiten()
+        self.assertEqual(len(w.zustand["auftraege"]), 2)
+        self.assertIs(w.zustand["auftraege"][key], old)
+        self.assertEqual(old["status"], "ARCHIVIERT")
+        newkey = next(k for k in w.zustand["auftraege"] if k != key)
+        self.assertEqual(w.zustand["auftraege"][newkey]["status"], "BEREIT")
+        w.zustand["auftraege"][newkey]["status"] = "ARCHIVIERT"
+        w.vorbereiten()
+        self.assertEqual(len(w.zustand["auftraege"]), 2)
+
+    def test_a03_unvollstaendige_revision_ersetzt_keine_historie(self):
+        audio, _ = self.medien()
+        w = Workflow(self.cfg, testmodus=True)
+        w.vorbereiten()
+        old = next(iter(w.zustand["auftraege"].values()))
+        old["status"] = "ARCHIVIERT"
+        audio.write_bytes(audio.read_bytes()[:-100])
+        os.utime(audio, (time.time()-20,)*2)
+        w.vorbereiten()
+        self.assertEqual(len(w.zustand["auftraege"]), 1)
+        self.assertEqual(old["status"], "ARCHIVIERT")

@@ -465,6 +465,19 @@ class Workflow:
                             if p.suffix.lower() in BILDTYPEN and stabil(p))
             key = hashlib.sha256(str(pfad).encode()).hexdigest()[:24]
             old = self.zustand["auftraege"].get(key, {})
+            if old.get("status") == "ARCHIVIERT":
+                try:
+                    vollstaendig(pfad)
+                    digest = pruefsumme(pfad)
+                except (DownloadWartet, OSError, ValueError) as exc:
+                    self.melden(name + ": neue Datei wartet auf Prüfung: " + str(exc))
+                    wartet += 1
+                    continue
+                quellen = old.get("dateien", [])
+                if quellen and quellen[0].get("sha256") == digest:
+                    continue  # Identischer Inhalt am selben Pfad, kein Doppelauftrag.
+                key = hashlib.sha256((str(pfad) + "\0" + digest).encode()).hexdigest()[:24]
+                old = self.zustand["auftraege"].get(key, {})
             if old.get("status") in ("ARCHIVIERT", "ARCHIV_WARTET", "FERTIG", "LAEUFT", "PRUEFEN"):
                 continue
             if old.get("status") == "PAUSIERT" and old.get("render_hash"):

@@ -142,3 +142,5 @@ Wenn ein anderes Fenster bereits verarbeitet, zeigt diese Oberfläche „Arbeite
 Der Entwicklungszweig lädt das Auftragsjournal nach Übernahme der Schreibsperre erneut. Vorab geöffnete Instanzen können dadurch keinen neueren Auftragsstand überschreiben. Zwei neue Gegenproben und sechs bestehende Fremdfensterfälle lokal bestanden; gemeinsamer Commit-/CI-Nachweis folgt separat. Weitere beauftragte Pakete: siehe führende TODO NI-20261103-01.
 
 Prüfbedürftige Aufträge bleiben auch nach erneuter Vorbereitung gesperrt. Direkt vor jedem Renderstart wird zusätzlich die Drei-Versuche-Grenze kontrolliert. Zwei neue Gegenproben einschließlich acht Automatikrunden bestanden lokal; eine bewusste Einzel-Freigabe folgt im Auftragslistenpaket.
+
+Neue vollständige WAV-Inhalte am bereits archivierten Dateipfad erhalten eine eigene Inhaltsrevision; der alte Auftrag bleibt erhalten. Eine identische Datei am selben Pfad wird nicht doppelt produziert. Unvollständige neue Kopien verändern keine Historie. Diese Revision übernimmt keine fremden Bilder automatisch.
