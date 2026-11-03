@@ -54,3 +54,5 @@ Produkt-HEAD 5ace6977, Test-Merge c0798a20, CI #41732961907 erfolgreich: 169 Pyt
 A04-Abschlussnegative: korruptes MP4 mit erhaltenem Kopf und altem passendem Hash darf bei Wiederaufnahme keine erneute Decodierschleife auslösen. FFmpeg-Lesefehler liefern ungültig; Wiederaufnahme setzt PRUEFEN, weitere Stapelläufe starten keinen Decoder. Stopp/technische Timeouts werden nicht als Datenfehler umgedeutet.
 
 Bildnachweis-Korrektur: Datei-Anker-Aufnahmen waren leer und wurden bei der Sichtprüfung ausdrücklich verworfen. Die Aufnahme erfolgt stattdessen nach bestätigtem Scrollen und zwei Browser-Bildzyklen direkt über CDP; Mindestgröße verhindert leere Aufnahmen. Erst die tatsächliche Sichtprüfung des neuen Artefakts bestätigt den Entwickler-Bildnachweis.
+
+Sichtprüfung Songliste: CSS-Ausblendung durch [hidden] ausdrücklich gesichert und mit berechnetem Browserstil geprüft. Nicht vorhandene Vorschau und nicht erlaubte Einzel-Freigabe dürfen keine leeren/irreführenden Bedienelemente zeigen. Infozeichen ohne zusätzliche Schriftabhängigkeit.

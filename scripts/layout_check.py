@@ -38,8 +38,8 @@ def html_fixture(theme: str, zoom: int) -> str:
         '<div id="auftragsliste"><details open class="job-card technical-details">'
         '<summary>Ein sehr langer Songtitel zur reproduzierbaren Prüfung · Prüfung nötig · BREI · 40 Bilder</summary>'
         '<p>Quelle wurde verändert. Original prüfen; andere Songs bleiben verfügbar.</p>'
-        '<button title="Kurze Vorschau ohne Archivierung">Vorschau erzeugen · ⓘ</button>'
-        '<button title="Bewusste Einzelprüfung">Nach Prüfung erneut freigeben · ⓘ</button>'
+        '<button title="Kurze Vorschau ohne Archivierung">Vorschau erzeugen · (i)</button>'
+        '<button title="Bewusste Einzelprüfung">Nach Prüfung erneut freigeben · (i)</button>'
         '<video controls preload="none" aria-label="Kurze Vorschau abspielen"></video>'
         '</details></div>')
     # Der Screenshot enthält nur statisches HTML. Es werden KEINE lokalen

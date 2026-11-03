@@ -68,6 +68,7 @@ body[data-theme="violett"]{--accent:#baa6ff;--accent-rgb:186,166,255;--accent-in
 body[data-theme="gruen"]{--accent:#7deaaf;--accent-rgb:125,234,175;--accent-ink:#0a3723;--line:#568b74}
 body[data-theme="orange"]{--accent:#ffd082;--accent-rgb:255,208,130;--accent-ink:#382308;--line:#a18c63}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{max-width:1190px;min-width:0;margin:auto;padding:clamp(12px,2vw,24px);overflow-x:hidden;background:var(--bg);color:var(--text)}
 h1{margin:0;font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.2}
@@ -306,8 +307,8 @@ function auftraegeAnzeigen(rows,gesperrt=false){
    const title=document.createElement('summary'),hint=document.createElement('p');
    const previewButton=document.createElement('button'),releaseButton=document.createElement('button');
    previewButton.type=releaseButton.type='button';
-   previewButton.textContent='Vorschau erzeugen · ⓘ';previewButton.title='Erste bis zu zehn Sekunden, ohne Archivierung.';
-   releaseButton.textContent='Nach Prüfung erneut freigeben · ⓘ';releaseButton.title='Unveränderte Quellen prüfen und automatische Versuche bewusst zurücksetzen.';
+   previewButton.textContent='Vorschau erzeugen · (i)';previewButton.title='Erste bis zu zehn Sekunden, ohne Archivierung.';
+   releaseButton.textContent='Nach Prüfung erneut freigeben · (i)';releaseButton.title='Unveränderte Quellen prüfen und automatische Versuche bewusst zurücksetzen.';
    previewButton.addEventListener('click',()=>auftragAktion(row.id,'vorschau'));
    releaseButton.addEventListener('click',()=>auftragAktion(row.id,'freigeben'));
    const preview=document.createElement('video');preview.controls=true;preview.preload='none';preview.hidden=true;

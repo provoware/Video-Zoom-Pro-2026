@@ -64,7 +64,8 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  row.box.open=true;const oldVideo=row.preview;const oldSource=row.source;
  auftraegeAnzeigen(rows,false);assert(jobNodes.get('song')===row&&row.preview===oldVideo&&row.source===oldSource&&row.box.open,'Polling erhält Fokus/Video/Details');tests++;
  auftraegeAnzeigen(rows,true);assert(row.previewButton.disabled&&row.releaseButton.disabled,'Aktiver fremder Schreiber sperrt Einzelaktionen');
- auftraegeAnzeigen([{...rows[0],status:'ARCHIVIERT'}],false);assert(row.previewButton.disabled&&row.releaseButton.hidden,'Archivierte Quellen nicht neu berechnen');tests++;
+ auftraegeAnzeigen([{...rows[0],status:'ARCHIVIERT'}],false);assert(row.previewButton.disabled&&row.releaseButton.hidden,'Archivierte Quellen nicht neu berechnen');
+ if(typeof getComputedStyle!=='undefined')assert(getComputedStyle(row.releaseButton).display==='none','Freigabeknopf tatsächlich unsichtbar');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);

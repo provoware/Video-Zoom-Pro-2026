@@ -171,3 +171,5 @@ PR #42, Produkt-HEAD 5ace6977: GitHub-Lauf #41732961907 auf Test-Merge c0798a20 
 Ein bestätigter MP4-Lesefehler wird bei der Wiederaufnahme als Datenfehler dauerhaft auf „Prüfen“ gesetzt. Benutzer-Stopp und technische Stillstands-/Ressourcenausfälle bleiben davon getrennt. Eine echte Paketkorruptionsprobe mit erhaltenen Metadaten prüft diesen Übergang.
 
 Die gezielte Entwickleraufnahme der offenen Songliste erfolgt über dieselbe direkte Browsersteuerung wie die Tastaturprüfung. Eine leere oder unvollständige Aufnahme verhindert einen erfolgreichen Bildnachweis. Diese Entwickleraufnahme ersetzt keine persönliche Kubuntu-Endabnahme.
+
+Die Browserprüfung kontrolliert auch die tatsächliche Ausblendung: Ohne fertige Vorschau erscheint kein leerer Videoplayer; bei archivierten Songs bleibt die Einzel-Freigabe verborgen. Infohinweise verwenden ein systemschriftunabhängiges „(i)“.
