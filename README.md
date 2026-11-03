@@ -6,7 +6,7 @@ Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus 
 
 ## Entwicklung 0.9.1-dev · Main-Integration
 
-PR #42 mit Fehlerkorrekturen, Kurzvorschau und Songliste ist regulär in main übernommen (Integrationscommit 2f8155cf). Die Nachprüfung ergänzt drei Abschlusskorrekturen: Vor Archivfreigabe wird das Video erneut vollständig geprüft; fehlgeschlagene Erstvorbereitung ohne Medienliste ist über die bewusste Einzel-Freigabe wiederholbar; unveränderte Songs behalten ihre gespeicherte Vorschau, geänderte Quellen invalidieren sie. Vollständige Prüf-/Integrationsnachweise: STATUS und Abschlussmeldung. Kein Stable-Release.
+PR #42 mit Fehlerkorrekturen, Kurzvorschau und Songliste ist regulär in main übernommen (Integrationscommit 2f8155cf). Die drei Abschlusskorrekturen sind ebenfalls in main 771891f integriert und durch Main-CI #41736344529 mit 173 Medientests, 16 Chromium-Verträgen sowie je 20 Tastatur-/Kontrast- und Layoutfällen bestätigt: Vor Archivfreigabe wird das Video erneut vollständig geprüft; fehlgeschlagene Erstvorbereitung ohne Medienliste ist über die bewusste Einzel-Freigabe wiederholbar; unveränderte Songs behalten ihre gespeicherte Vorschau, geänderte Quellen invalidieren sie. Vollständige Prüf-/Integrationsnachweise: STATUS und Abschlussmeldung. Kein Stable-Release.
 
 ## Vorgängerentwicklung 0.9.0-dev · 03.11.2026
 

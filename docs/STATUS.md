@@ -1,3 +1,16 @@
+# Main-Integration abgeschlossen · 0.9.1-dev
+
+**Produktstand in main:** 771891f062ef11b84c2355bdac96b4cbe12bdf2c. **Main-CI #41736344529 erfolgreich** auf genau diesem SHA: 173 Python-/Medientests ohne Überspringer, 16 echte Chromium-Verträge und je 20 Tastatur-/Kontrast-/Layoutfälle. Die zunächst integrierte Fassung 2f8155cf wurde ebenfalls eigenständig durch Main-CI #41735606838 bestätigt.
+
+PR #42 ist regulär zusammengeführt. Drei zusätzliche bestätigte Befunde wurden auf eigenem Abschlusszweig korrigiert, lokal mit 173 Tests geprüft, alle 76 Quelldateien per Git-Blob-Fingerabdruck mit dem veröffentlichten Commit abgeglichen und anschließend mit SHA-geschützter Vorwärtsübernahme ohne Force-Push integriert. Keine neue PR und kein zusätzliches Codex-Review beauftragt. Alle vier vorhandenen Reviewhinweise sind nach Fehlerkorrektur und Prüfnachweis aufgelöst.
+
+Korrigiert: erneute vollständige MP4-Prüfung vor Archivfreigabe, bewusste gezielte Erstvorbereitung ohne vorhandenes Manifest, Vorschauerhalt bei identischem Medienbestand und Invalidierung bei Änderung. Der vorab korrigierte hidden-Stil bleibt abgesichert. Version 0.9.1-dev, keine neue Produktabhängigkeit, kein neuer Renderumbau.
+
+Recovery-Key: Hauptzweig; letzter geprüfter Produkt-SHA und Main-CI oben. Dieser abschließende Dokumentationsnachtrag verändert keine Produktdatei und wird separat nachgeprüft; seine tatsächliche Main-SHA steht in der Abschlussmeldung. Nächster zulässiger Entwicklungsschritt bleibt die separat geplante Phasenberechnung mit sicherem Zwischenzustand. Rechte-/Lizenzentscheidung, restliche QA und finale echte Kubuntu-/Nutzer-Endabnahme bleiben zuletzt OFFEN. Stable: NEIN.
+
+---
+## Historie der Integrationsarbeiten
+
 # Main-Integration und Abschlusskorrekturen · 03.11.2026
 
 PR #42 regulär integriert: main 2f8155cf4ae71f71f0b79aba79490565888e24c2. Der geprüfte PR-HEAD war 3a948f1257c40787588c069117289ca2ca337b6d, PR-CI #41734655588 erfolgreich mit 169 Python-/Medientests, 16 Chromium-Verträgen und je 20 Tastatur-/Kontrast-/Layoutfällen auf Test-Merge 0f28153b1b67fcab02d325ad78f3e8a1d15c5a3c. Main-Nachkontrolle #41735606838 getrennt.

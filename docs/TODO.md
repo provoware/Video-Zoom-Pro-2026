@@ -1,6 +1,6 @@
 # Führende Aufgabenliste – Video Zoom Pro
 
-Stand 02.11.2026. Hauptzweig bei Arbeitsbeginn: `b200d1769de889d779c28481d39e27abbc2bb2a9`. Kein Stable. Historie: `HISTORIE_TODO_2026-11-02.md`, ausschließlich diese Liste ist operativ.
+Stand nach Main-Integration: 03.11.2026. Letzter gemeinsam geprüfter Produktstand: `771891f062ef11b84c2355bdac96b4cbe12bdf2c`, Main-CI #41736344529 erfolgreich. Kein Stable. Historie: `HISTORIE_TODO_2026-11-02.md`, ausschließlich diese Liste ist operativ.
 Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md` (Auditnummern unten). Arbeitsstrategie: `ENTWICKLUNGSSTRATEGIE.md`.
 
 ## NI-20261103-01 · Vier Auditkorrekturen, danach Vorschau/Aufträge/Messung
@@ -62,4 +62,4 @@ Quelle: ausdrücklicher Auftrag „sauber in main umsetzen“. PR #42 regulär i
 - [x] 2026-11-03 | INT-VIDEO | erneute MP4-Vollprüfung vor bewusster Archivfreigabe | prüfen: alter passender Hash bei falscher Auflösung bleibt PRUEFEN, keine Quelle bewegen | fertig wenn: Hash allein erlaubt keine ungültige Archivierung; gezielt geprüft.
 - [x] 2026-11-03 | INT-PREP | gezielte bewusste Wiederholung einer Erstvorbereitung ohne Manifest | prüfen: temporärer FFprobe-Fehler, fehlendes Bild, kein automatisches Aufheben von PRUEFEN | fertig wenn: unveränderter Dateiname ohne Journal-Handeingriff wieder verwendbar ist; gezielt geprüft.
 - [x] 2026-11-03 | INT-PREVIEW | Vorschau bei gleicher Pfad-/Inhaltsidentität erhalten; bei Änderung invalidieren | prüfen: zweimal vorbereiten und anschließend geändertes Bild | fertig wenn: gleiche Medien behalten Playerquelle; neue Medien verwenden keine alte Vorschau; gezielt geprüft.
-- [ ] 2026-11-03 | INT-MAIN | Abschlusskorrekturen vollständig gemeinsam prüfen, eigenen Zweig ohne Force-Push vorwärts übernehmen und Main-CI kontrollieren | prüfen: exakte SHA und alle Medien-/Browserbelege | fertig wenn: tatsächlicher Hauptzweig vollständig bestätigt. Keine Erweiterung des Renderumfangs, keine Stable-Freigabe.
+- [x] 2026-11-03 | INT-MAIN | Abschlusskorrekturen vollständig gemeinsam prüfen, eigenen Zweig ohne Force-Push vorwärts übernehmen und Main-CI kontrollieren | prüfen: exakte SHA und alle Medien-/Browserbelege | fertig wenn: tatsächlicher Hauptzweig vollständig bestätigt. Erfüllt: main 771891f, Main-CI #41736344529, 173 Python-/Medientests ohne Überspringer und vollständige Browsermatrix erfolgreich. Vier bestehende Reviewhinweise gelöst. Dokumentationsabschluss separat geprüft. Keine Erweiterung des Renderumfangs, keine Stable-Freigabe.

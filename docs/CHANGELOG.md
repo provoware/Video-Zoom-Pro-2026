@@ -100,3 +100,5 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Bewusste Einzelvorbereitung rettet anfänglich fehlgeschlagene Aufträge ohne Manifest; kein automatisches Umgehen der Prüfsperre.
 - Unveränderte Quellen behalten ihre Vorschauzuordnung; geänderte Medien invalidieren sie ohne ungeprüftes Löschen alter Vorschauen.
 - Vier dauerhafte Integrationsproben, Main-Nachkontrolle separat; kein Stable-Release.
+
+Integrationsnachweis 0.9.1-dev: Produkt-main 771891f, Main-CI #41736344529 vollständig erfolgreich (173 Python-/Medientests, 16 Chromium-Verträge, je 20 Tastatur-/Kontrast- und Layoutfälle). Alle vier vorhandenen Reviewhinweise aufgelöst. Abschließender Dokumentationsnachtrag ohne Produktänderung wird separat nachgeprüft.
