@@ -546,6 +546,10 @@ class Workflow:
                     self.zustand["auftraege"][key] = {"titel": name, "status": "BEREIT",
                                                       "dateien": manifest, "laenge": length,
                                                       "versuche": old.get("versuche", 0)}
+                    # Unveränderte Quellen behalten ihre ausdrücklich erzeugte Vorschau.
+                    identitaet = lambda items: [(item.get("pfad"), item.get("sha256")) for item in items]
+                    if old.get("vorschau") and identitaet(old.get("dateien", [])) == identitaet(manifest):
+                        self.zustand["auftraege"][key]["vorschau"] = old["vorschau"]
                     bereit += 1
                 except DownloadWartet as exc:
                     self.zustand["auftraege"][key] = {"titel": name, "status": "WARTET",

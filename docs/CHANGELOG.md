@@ -93,3 +93,10 @@ Fünf Live-Statuskacheln, kleine Formatübersicht, einklappbare Diagnose/Protoko
 - Kompakte Songliste mit Einzel-Freigabe, verständlicher Rückmeldung und Erhalt von Details/Fokus/Wiedergabe beim Polling.
 - Reproduzierbare Entwickler-Vergleichsmessung, einschließlich getrenntem Phasenprototyp; keine ungeprüfte Umschaltung des Produktpfads.
 - Gemeinsame finale SHA-/CI-/Browser-/ZIP-Nachweise stehen im PR; echte Kubuntu-Abnahme bleibt zuletzt offen.
+
+## 0.9.1-dev · Integrationsabschluss
+- PR #42 regulär in main übernommen.
+- Vollständige erneute Videoprüfung vor manueller Freigabe einer Archivierung; alte Hashnachweise ersetzen keine gültige MP4.
+- Bewusste Einzelvorbereitung rettet anfänglich fehlgeschlagene Aufträge ohne Manifest; kein automatisches Umgehen der Prüfsperre.
+- Unveränderte Quellen behalten ihre Vorschauzuordnung; geänderte Medien invalidieren sie ohne ungeprüftes Löschen alter Vorschauen.
+- Vier dauerhafte Integrationsproben, Main-Nachkontrolle separat; kein Stable-Release.

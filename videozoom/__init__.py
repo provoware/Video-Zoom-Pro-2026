@@ -1,2 +1,2 @@
 """PROVOWARE Video Zoom Pro – eigenständiger Linux-Workflow."""
-__version__ = "0.9.0-dev"
+__version__ = "0.9.1-dev"

@@ -4,7 +4,11 @@
 
 Eigenständige Linux-Anwendung zur automatischen Erstellung von Musikvideos aus WAV-Dateien und Bildern. **VideoBatch bleibt ein anderes Projekt.** Die Oberfläche läuft ausschließlich lokal im Browser, ohne Tk und ohne Cloud.
 
-## Entwicklung 0.9.0-dev · 03.11.2026
+## Entwicklung 0.9.1-dev · Main-Integration
+
+PR #42 mit Fehlerkorrekturen, Kurzvorschau und Songliste ist regulär in main übernommen (Integrationscommit 2f8155cf). Die Nachprüfung ergänzt drei Abschlusskorrekturen: Vor Archivfreigabe wird das Video erneut vollständig geprüft; fehlgeschlagene Erstvorbereitung ohne Medienliste ist über die bewusste Einzel-Freigabe wiederholbar; unveränderte Songs behalten ihre gespeicherte Vorschau, geänderte Quellen invalidieren sie. Vollständige Prüf-/Integrationsnachweise: STATUS und Abschlussmeldung. Kein Stable-Release.
+
+## Vorgängerentwicklung 0.9.0-dev · 03.11.2026
 
 Vier reproduzierte Auditfehler sind auf dem Entwicklungszweig einzeln korrigiert. Neu: echte kurze Vorschau, kompakte Songliste und bewusste Einzel-Freigabe. Umfang und Grenzen stehen unten sowie in der führenden TODO NI-20261103-01. Abschließende Commit-/CI-Nachweise werden im zugehörigen PR getrennt vom bisherigen Hauptzweigstand geführt. Kein Stable-Release.
 
@@ -166,7 +170,7 @@ Die Einzel-Freigabe setzt Versuche nur nach bewusster Aktion und Prüfung unver�
 Statusabfragen erhalten offene Songdetails, Tastaturfokus und laufende Videowiedergabe. Songtitel werden ausschließlich als Text eingefügt. Vorschauabrufe verlangen dasselbe lokale Token und die Host-Prüfung wie die übrige Oberfläche; freie Dateipfade sind nicht erlaubt. Vorschauen sammeln sich im getrennten Ordner VORSCHAU und werden nicht automatisch als fertige Produkte gezählt.
 
 ### Gemeinsamer GitHub-Nachweis
-PR #42, Produkt-HEAD 5ace6977: GitHub-Lauf #41732961907 auf Test-Merge c0798a20 erfolgreich mit 169 Python-/Medientests ohne Überspringer, 16 Chromium-Verträgen sowie je 20 Tastatur-/Kontrast- und Layoutfällen. Gezielte zusätzliche Songlisten-Screenshots werden im abschließenden Prüf-Nachtrag ergänzt; dessen eigener Commit-/CI-Nachweis steht im PR. Noch keine Übernahme in main oder Stable-Freigabe.
+PR #42, Produkt-HEAD 5ace6977: GitHub-Lauf #41732961907 auf Test-Merge c0798a20 erfolgreich mit 169 Python-/Medientests ohne Überspringer, 16 Chromium-Verträgen sowie je 20 Tastatur-/Kontrast- und Layoutfällen. Gezielte zusätzliche Songlisten-Screenshots werden im abschließenden Prüf-Nachtrag ergänzt; dessen eigener Commit-/CI-Nachweis steht im PR. PR #42 inzwischen regulär in main übernommen; historische Quell-/Testnachweise bleiben erhalten. Keine Stable-Freigabe.
 
 Ein bestätigter MP4-Lesefehler wird bei der Wiederaufnahme als Datenfehler dauerhaft auf „Prüfen“ gesetzt. Benutzer-Stopp und technische Stillstands-/Ressourcenausfälle bleiben davon getrennt. Eine echte Paketkorruptionsprobe mit erhaltenen Metadaten prüft diesen Übergang.
 

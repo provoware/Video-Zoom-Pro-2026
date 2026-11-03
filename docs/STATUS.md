@@ -1,3 +1,16 @@
+# Main-Integration und Abschlusskorrekturen · 03.11.2026
+
+PR #42 regulär integriert: main 2f8155cf4ae71f71f0b79aba79490565888e24c2. Der geprüfte PR-HEAD war 3a948f1257c40787588c069117289ca2ca337b6d, PR-CI #41734655588 erfolgreich mit 169 Python-/Medientests, 16 Chromium-Verträgen und je 20 Tastatur-/Kontrast-/Layoutfällen auf Test-Merge 0f28153b1b67fcab02d325ad78f3e8a1d15c5a3c. Main-Nachkontrolle #41735606838 getrennt.
+
+Integrationskontrolle bestätigt drei zusätzliche offene Befunde aus den vorhandenen Reviewhinweisen: ungültige Altvideos dürfen nicht durch Hashvergleich allein zur Archivierung freigegeben werden; Erstvorbereitungsfehler ohne Manifest brauchen einen bewussten, auf genau diesen Auftrag beschränkten Wiederweg; unveränderte Quellen müssen ihre Vorschauzuordnung behalten. Der bereits vorher korrigierte hidden-Stil ist unverändert abgesichert.
+
+Abschlusszweig fix/main-integration-closeout, Version 0.9.1-dev: erneute vollständige Videoprüfung vor Archivfreigabe; explizite Einzelvorbereitung ohne fremde Aufträge/Dateien zu bewegen; Erhalt gespeicherter Vorschauen nur bei gleicher Pfad-/Inhaltsidentität, sonst explizite Invalidierung. Vier neue Negative/Positive; gezielte Erstprüfung mit zwölf Fällen bestanden. Vollständiger Commitnachweis und Main-CI werden separat abschließend geprüft. Kein neuer Renderumbau, kein Stable-Release.
+
+Recovery-Key: Basis main 2f8155cf; eigener Abschlusszweig oben; Ziel drei bestätigte Lücken schließen und regulär vorwärts integrieren; letzter Befund gezielte Tests bestanden; nächster Schritt vollständige gemeinsame Prüfung, SHA-geschützte Vorwärtsübernahme und Main-Nachkontrolle. Aktuelle Main-SHA und Prüflauf stehen zusätzlich in der Abschlussmeldung. Rechteentscheidung, restliche QA und echte Kubuntu-/Nutzer-Endabnahme bleiben zuletzt offen.
+
+---
+## Historischer Entwicklungsstand vor Main-Integration
+
 # Arbeitsstand NI-20261103-01 · 03.11.2026
 
 Basis main: d8798d35cdfe3406317d1124966f9b9834dff41c. Arbeitszweig: feat/audit-preview-jobs-20261103. Einzelne Korrekturen auf GitHub: A01 f403c56b307c9e5e75978b52b4408fcce7074a3a, A02 b19fd1a8cc10b40c89648ed3fa39b8f08772e1ed, A03 e328f1de65c3191453460db0a4ccc57d58cc9464, A04 0e4785181d0f505ef2f4c67f917b108d70160cbb. Vorschaukern c4c6869367974dbcaa2923aa0777c77870c57891, Auftragsoberfläche 95e08aadb72f09a46914b0633e8553b0b7f3ec58. PR #42: https://github.com/provoware/Video-Zoom-Pro-2026/pull/42. Noch nicht in main.

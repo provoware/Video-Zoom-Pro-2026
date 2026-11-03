@@ -52,3 +52,6 @@ Wiederholbare Renderfehler werden maximal dreimal automatisch versucht. Fehlgesc
 
 ## NI-20261103-01
 `test_audit_fixes.py`: veralteter Schreiber, defektes Journal nach Sperre, dauerhafte Prüfsperre, Startlimit, WAV-Revision und unvollständige Revision, echte MP4 in fünf Formaten, falsche Auflösung/Bildrate/Tonlänge und Lesefehler. `test_preview_jobs.py`: echte Vorschau ohne Quell-/Status-/Versuchsänderung, fehlende Quote, Stopp, fremde Pfade/geänderte Quellen, bewusste Einzel-Freigabe, echte HTTP-Teilabrufe/Token/Host und Fremdschreiber. Wiederanlauf-Unitproben simulieren gültige MP4-Prüfung ausdrücklich; die tatsächliche Prüfung wird separat mit echten Medien getestet. Browservertragsprüfung ergänzt sicheres Text-Einfügen, Erhalt von Details/Videoknoten beim Polling und Sperren der Einzelaktionen. Layout-/Tastaturmatrix enthält einen offenen langen Songeintrag samt Vorschau- und Freigabeknopf.
+
+## Integrationsabschluss 0.9.1-dev
+`test_integration_closeout.py` kontrolliert echte falsche MP4 trotz passendem Althash (keine Archivierung), bewusst erneut vorbereitbaren Erstfehler ohne Manifest, weiterhin blockierenden fehlenden Bildbestand und Vorschauerhalt über zwei unveränderte Vorbereitungen mit anschließender Inhaltsinvalidierung. Alle Testdaten synthetisch und isoliert.

@@ -56,3 +56,10 @@ A04-Abschlussnegative: korruptes MP4 mit erhaltenem Kopf und altem passendem Has
 Bildnachweis-Korrektur: Datei-Anker-Aufnahmen waren leer und wurden bei der Sichtprüfung ausdrücklich verworfen. Die Aufnahme erfolgt stattdessen nach bestätigtem Scrollen und zwei Browser-Bildzyklen direkt über CDP; Mindestgröße verhindert leere Aufnahmen. Erst die tatsächliche Sichtprüfung des neuen Artefakts bestätigt den Entwickler-Bildnachweis.
 
 Sichtprüfung Songliste: CSS-Ausblendung durch [hidden] ausdrücklich gesichert und mit berechnetem Browserstil geprüft. Nicht vorhandene Vorschau und nicht erlaubte Einzel-Freigabe dürfen keine leeren/irreführenden Bedienelemente zeigen. Infozeichen ohne zusätzliche Schriftabhängigkeit.
+
+## NI-20261103-02 · Saubere Main-Integration
+Quelle: ausdrücklicher Auftrag „sauber in main umsetzen“. PR #42 regulär in main 2f8155cf integriert; Main-Prüfung separat.
+- [x] 2026-11-03 | INT-VIDEO | erneute MP4-Vollprüfung vor bewusster Archivfreigabe | prüfen: alter passender Hash bei falscher Auflösung bleibt PRUEFEN, keine Quelle bewegen | fertig wenn: Hash allein erlaubt keine ungültige Archivierung; gezielt geprüft.
+- [x] 2026-11-03 | INT-PREP | gezielte bewusste Wiederholung einer Erstvorbereitung ohne Manifest | prüfen: temporärer FFprobe-Fehler, fehlendes Bild, kein automatisches Aufheben von PRUEFEN | fertig wenn: unveränderter Dateiname ohne Journal-Handeingriff wieder verwendbar ist; gezielt geprüft.
+- [x] 2026-11-03 | INT-PREVIEW | Vorschau bei gleicher Pfad-/Inhaltsidentität erhalten; bei Änderung invalidieren | prüfen: zweimal vorbereiten und anschließend geändertes Bild | fertig wenn: gleiche Medien behalten Playerquelle; neue Medien verwenden keine alte Vorschau; gezielt geprüft.
+- [ ] 2026-11-03 | INT-MAIN | Abschlusskorrekturen vollständig gemeinsam prüfen, eigenen Zweig ohne Force-Push vorwärts übernehmen und Main-CI kontrollieren | prüfen: exakte SHA und alle Medien-/Browserbelege | fertig wenn: tatsächlicher Hauptzweig vollständig bestätigt. Keine Erweiterung des Renderumfangs, keine Stable-Freigabe.
