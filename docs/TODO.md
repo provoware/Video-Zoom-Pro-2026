@@ -47,3 +47,6 @@ Prognose: A01 verhindert Journalverlust; A02 begrenzt Fehlerschleifen; A03 erken
 Produkt-HEAD `f82e377f23c5d7991bc1af066e44707681aa06a6`: lokal 151/151 ohne Überspringer. PR #40 CI #41379032590 auf Test-Merge `2876ec0016e23a79ddb83460e242290bc44ebf67`: 151 Python-/Medientests, 13 Chromium-Verträge, 20 echte Tastatur-/Kontrastfälle und 20 Layoutfälle erfolgreich. Reguläre Integration #40: main `2eec90242b9477c2f41e0af690e0a35f5e287620`; Main-CI #41379321415 erfolgreich.
 
 Die angenommenen Bedienfunktionen UX-01a/b, UX-02, UX-03 und UX-05 sind implementiert. UX-04a ist automatisiert geprüft; UX-04b bleibt ausdrücklich offen. Danach die dokumentierten Architektur-/Sicherheitsbewertungen und QA-FINAL, Rechte-/RC-Entscheidungen und zuletzt echte Kubuntu-Endabnahme. Keine vorweggenommene Gesamtfreigabe.
+
+## Gemeinsamer Entwicklungsnachweis NI-20261103-01
+Produkt-HEAD 5ace6977, Test-Merge c0798a20, CI #41732961907 erfolgreich: 169 Python-/Medientests, 16 echte Chromium-Verträge und je 20 Tastatur-/Kontrast-/Layoutfälle. Keine Python-Überspringer, kein horizontaler/Textüberlauf. Gezielter Bildnachtrag für die offene neue Songliste folgt mit eigener CI. Alle sieben beauftragten Bereiche A01–A04/UX-PREVIEW/UX-JOBS/PERF implementiert bzw. gemessen ausgewählt; Main-Integration und die bestehenden Abschluss-/Rechte-/Kubuntu-Aufgaben bleiben getrennt offen.

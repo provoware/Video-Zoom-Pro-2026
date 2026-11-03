@@ -164,3 +164,6 @@ Unter den Arbeitsbereichen erscheint eine kompakte Songliste. Titel, Zustand, Fo
 Die Einzel-Freigabe setzt Versuche nur nach bewusster Aktion und Prüfung unveränderter Quellen zurück. Bei bereits bestätigtem Video wird ausschließlich die Archivierung wieder freigegeben. Geänderte oder fehlende Originale bleiben gesperrt. Laufende oder fremde Verarbeitung sperrt beide Einzelaktionen. „Sicher stoppen“ beendet auch die eigene Vorschauerzeugung. Alle Meldungen bleiben im Protokoll; die letzte Einzelmeldung erscheint zusätzlich direkt.
 
 Statusabfragen erhalten offene Songdetails, Tastaturfokus und laufende Videowiedergabe. Songtitel werden ausschließlich als Text eingefügt. Vorschauabrufe verlangen dasselbe lokale Token und die Host-Prüfung wie die übrige Oberfläche; freie Dateipfade sind nicht erlaubt. Vorschauen sammeln sich im getrennten Ordner VORSCHAU und werden nicht automatisch als fertige Produkte gezählt.
+
+### Gemeinsamer GitHub-Nachweis
+PR #42, Produkt-HEAD 5ace6977: GitHub-Lauf #41732961907 auf Test-Merge c0798a20 erfolgreich mit 169 Python-/Medientests ohne Überspringer, 16 Chromium-Verträgen sowie je 20 Tastatur-/Kontrast- und Layoutfällen. Gezielte zusätzliche Songlisten-Screenshots werden im abschließenden Prüf-Nachtrag ergänzt; dessen eigener Commit-/CI-Nachweis steht im PR. Noch keine Übernahme in main oder Stable-Freigabe.

@@ -165,6 +165,12 @@ def pruefen(ziel: Path) -> dict:
                                    (width, height), screenshot=shot)
                     if not shot.is_file() or shot.stat().st_size < 1000:
                         raise RuntimeError("Screenshot wurde nicht erzeugt: " + str(shot))
+                    # Neue Songliste nicht nur unterhalb des sichtbaren Fensters messen.
+                    songshot = ziel / f"videozoom_auftraege_{width}x{height}_{zoom}prozent.png"
+                    browser_aufruf(browser, url + "#auftraege-karte",
+                                   root / f"songshot_{width}_{zoom}", (width, height), screenshot=songshot)
+                    if not songshot.is_file() or songshot.stat().st_size < 1000:
+                        raise RuntimeError("Songlisten-Screenshot fehlt: " + str(songshot))
     report = {"schema": 1, "commit": os.environ.get("GITHUB_SHA"), "browser": Path(browser).name,
               "pruefungen": len(messungen), "werte": messungen,
               "visuelle_nutzerabnahme": "OFFEN", "stable": False}
