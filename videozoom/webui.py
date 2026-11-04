@@ -373,7 +373,8 @@ function scanHinweise(gesperrt=false){
  if(typeof document.querySelectorAll==='function')for(const button of document.querySelectorAll('[data-ruhe]'))button.disabled=gesperrt;
 }
 async function scanModus(){
- scanSpeichert=true;
+ if(scanSpeichert)return;
+ scanSpeichert=true;scanHinweise();
  try{
   const r=await api('/scanmodus',{audio_auto:Boolean(el('audio_auto').checked),bilder_auto:Boolean(el('bilder_auto').checked)});
   serverCfg=r.cfg;el('hinweis').textContent=r.meldung;

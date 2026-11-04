@@ -74,6 +74,11 @@ function blockFetch(){globalThis.fetch=(url,options)=>new Promise((resolve,rejec
  el('bilder_auto').checked=true;auftraegeAnzeigen(rows,false);assert(jobNodes.get('song').imagesButton.hidden,'Autoscan zeigt keine manuelle Auswahl');tests++;
  arbeitsablauf({...data,active:false,jobs:{WARTET:1},ordner:{bereit:false}});
  assert(el('naechster-schritt').textContent.includes('Ordner prüfen & anlegen'),'Ordnerproblem führt zur nächsten sicheren Aktion');tests++;
+ timers.clear();calls=0;
+ globalThis.fetch=()=>{calls++;return new Promise(resolve=>{release=()=>resolve({ok:true,json:async()=>({cfg:{audio_auto:false,bilder_auto:false},meldung:'Gespeichert'})});});};
+ p=scanModus();assert(el('audio_auto').disabled&&el('bilder_auto').disabled,'Scanwahl während Speicherung sperren');
+ await scanModus();assert(calls===1,'Keine überholende doppelte Scanspeicherung');release();await p;
+ assert(!scanSpeichert&&!el('audio_auto').disabled,'Scanwahl nach Speicherung freigeben');tests++;
  const report={bestanden:true,tests};
  if(typeof process!=='undefined')console.log(JSON.stringify(report));
  else document.getElementById('contract-check').textContent=JSON.stringify(report);
@@ -103,7 +108,7 @@ def pruefen(node=False):
             if not match:raise RuntimeError('Kein JavaScript-Nachweis aus Chromium')
             report=json.loads(html.unescape(match.group(1)))
             report['engine']='Chromium'
-        if not report.get('bestanden') or report.get('tests')!=20:
+        if not report.get('bestanden') or report.get('tests')!=21:
             raise RuntimeError(str(report))
         report['commit']=os.environ.get('GITHUB_SHA')
         return report

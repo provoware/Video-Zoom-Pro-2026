@@ -1,3 +1,7 @@
+# Scanwahl abschließend gegen doppelte Speicherung gesichert
+
+Zwei schnelle Schalteränderungen dürfen keine überholenden Speicheranfragen erzeugen. Während der Scanwahl-Speicherung sind beide Schalter synchron gesperrt; ein zweiter Aufruf startet keine weitere Anfrage. Ein zusätzlicher ausgeführter JavaScript-Vertrag prüft dies. Neuer Vertragsumfang: 21. Der tatsächliche finale Main-SHA und dessen vollständige CI werden im Abschlussbericht genannt. Historische Nachweise unten behalten ihre damaligen Zählstände.
+
 # Main-Integration abgeschlossen · 0.10.0-dev
 
 Main `e911159d86050d3e230791a1924c2ab0a073bbd9`, Main-CI #41743438515 erfolgreich: vollständige Funktions-/Medienregression und Chromium-Prüfung. PR #43 ist geschlossen und als integriert erfasst, ohne Bereitschaltung und ohne Codex-Review-Auftrag. Paketprobe mit 20 Programmdateien erfolgreich; keine Benutzermedien im ZIP.
