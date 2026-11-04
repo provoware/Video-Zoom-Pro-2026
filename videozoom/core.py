@@ -165,6 +165,8 @@ def konfigurieren(cfg: dict) -> dict:
     for key in ("downloads", "arbeitsordner"):
         if not isinstance(data[key], str) or not data[key].strip() or any(c in data[key] for c in "\0\n\r"):
             raise ValueError("Ordnerpfad fehlt oder enthält ungültige Zeichen.")
+        if ".." in Path(data[key]).parts:
+            raise ValueError("Ordnerpfad darf keine übergeordneten ..-Schritte enthalten. Bitte den vollständigen Zielpfad wählen.")
         if not Path(data[key]).expanduser().is_absolute():
             raise ValueError("Vollständigen Ordnerpfad wählen, beginnend mit /.")
     for key in ("audio_auto", "bilder_auto"):

@@ -143,3 +143,12 @@ class ScanControl(unittest.TestCase):
         self.assertLessEqual(max(pauses),max(60,self.w.cfg['intervall']))
         self.assertGreater(pauses[2],self.w.cfg['intervall'])
         self.assertEqual(pauses[-1],self.w.cfg['intervall'])
+
+    def test_uebergeordnete_pfadschritte_umgehen_keine_ordnergrenze(self):
+        (self.root/'Anderer').mkdir()
+        path=str(self.root/'Anderer/../Downloads/Arbeit')
+        with self.assertRaisesRegex(ValueError,'Zielpfad'):
+            ordner_pruefen({**self.cfg,'arbeitsordner':path},True)
+        with self.assertRaisesRegex(ValueError,'Zielpfad'):
+            konfigurieren({**self.cfg,'arbeitsordner':path})
+        self.assertFalse((self.root/'Downloads/Arbeit').exists())

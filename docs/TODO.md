@@ -1,6 +1,6 @@
 # Führende Aufgabenliste – Video Zoom Pro
 
-Stand 04.11.2026: aktueller Auftrag NI-20261104-01 unten. Geprüfter Produktstand `cfcf75ea56127b11cca56b51123993bae446da07`, erfolgreiche Entwurfs-CI #41743045748. Main-Abschluss wird separat geprüft. Kein Stable. Historie bleibt erhalten, ausschließlich diese Liste ist operativ.
+Stand 04.11.2026: aktueller Auftrag NI-20261104-01 unten. Geprüfter Produktstand `cfcf75ea56127b11cca56b51123993bae446da07`, erfolgreiche Entwurfs-CI #41743045748. Main-Integration e911159d und Main-CI #41743438515 erfolgreich; letzter Pfad-Negativnachtrag wird nochmals vollständig geprüft. Kein Stable. Historie bleibt erhalten, ausschließlich diese Liste ist operativ.
 Quelle: Nutzerauftrag NI-20261102-03, Issue #31 und `QUALITY_AUDIT_2026-11-02.md` (Auditnummern unten). Arbeitsstrategie: `ENTWICKLUNGSSTRATEGIE.md`.
 
 ## NI-20261104-01 · Scanwahl, sicherer Abschluss und sichtbarer Arbeitsablauf
@@ -10,7 +10,7 @@ Quelle: aktueller ausdrücklicher Nutzerauftrag, einschließlich Existenz einges
 - [x] ORDNER: Existenz und Verwendbarkeit der gewählten Ordner prüfen, nur bewusst anlegen, Verknüpfungen und Dateiblocker ablehnen.
 - [x] UX: wichtigste Aktionen direkt sichtbar, vier echte Arbeitsschritte, verständliche nächste Handlung; vollständige Chromium-Matrix und Tastatur/Kontrast prüfen.
 - [x] SPARSAM: unveränderte Eingänge über Metadaten erkennen, Sensor-/Statusbudget drosseln, Leerlauf-Scan verlängern; volle Quellprüfung vor Render erhalten.
-- [ ] MAIN: gesamte Regression, Chromium-Belege und ZIP prüfen; anschließend kontrolliert in main integrieren. Kein Stable und keine vorgetäuschte Kubuntu-Endabnahme.
+- [x] MAIN: kontrolliert in main integriert (e911159d), Main-CI #41743438515 erfolgreich: 192 Python-/Medientests, 20 Chromium-Verträge und je 20 Tastatur-/Kontrast-/Layoutfälle; ZIP mit 20 Programmdateien geprüft. Abschließender ..-Pfadschutz erhält eine weitere Gesamtprüfung auf neuem Main-SHA. Kein Stable und keine vorgetäuschte Kubuntu-Endabnahme.
 
 ## NI-20261103-01 · Vier Auditkorrekturen, danach Vorschau/Aufträge/Messung
 Quelle: ausdrücklicher Nutzerauftrag 03.11.2026. Basis main d8798d35. Ein Arbeitszweig, getrennte Korrektur-Commits, eine gemeinsame abschließende Prüfung und ein PR. Keine parallelen Schreiber.

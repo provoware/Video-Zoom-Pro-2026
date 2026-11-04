@@ -2,7 +2,7 @@
 
 ## 0.10.0-dev - 04.11.2026
 - Gesicherter Fundlisten-Reset und Neuscan; Audio/Bilder getrennt automatisch oder manuell mit geprüften Arbeitskopien.
-- Explizite Ordnerprüfung und sichere Anlage fehlender konfigurierter Verzeichnisse; Dateien/Verknüpfungen blockieren.
+- Explizite Ordnerprüfung und sichere Anlage fehlender konfigurierter Verzeichnisse; Dateien/Verknüpfungen und übergeordnete ..-Pfadschritte blockieren.
 - Zentrale Hauptaktionen, vier Arbeitsschritte und verständlicher nächster Schritt.
 - Autosave und eigener Serverabschluss bei Schließen, Fensterverlust und abfangbaren Signalen; Speicherfehler sichtbar statt Scheinerfolg.
 - Sparsamer Scan-/Sensor-/Statusbetrieb, volle Quellprüfung vor Render unverändert. 192 Medien-/Funktionstests und echte Chromium-Matrix vor Integration bestanden.

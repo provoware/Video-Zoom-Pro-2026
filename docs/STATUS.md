@@ -1,3 +1,13 @@
+# Main-Integration abgeschlossen · 0.10.0-dev
+
+Main `e911159d86050d3e230791a1924c2ab0a073bbd9`, Main-CI #41743438515 erfolgreich: vollständige Funktions-/Medienregression und Chromium-Prüfung. PR #43 ist geschlossen und als integriert erfasst, ohne Bereitschaltung und ohne Codex-Review-Auftrag. Paketprobe mit 20 Programmdateien erfolgreich; keine Benutzermedien im ZIP.
+
+Letzter kleiner Abschlussnachtrag: übergeordnete `..`-Pfadschritte dürfen die Ordnergrenze nicht umgehen. Konfiguration und Medien-/Ordnerprüfung weisen solche Pfade vor Dateianlage verständlich ab. Ein neuer Negativtest belegt die Grenze. Die vorherigen 192 Funktionstests werden damit um einen Fall erweitert. Der neue Main-Abschlusscommit wird nochmals vollständig nachgeprüft; tatsächlicher SHA und CI-Link stehen in der Abschlussmeldung und im mitgelieferten Bericht.
+
+Die zentralen Bedienungen und alle Anforderungen aus NI-20261104-01 sind umgesetzt. Größere Renderumstellung und echte Kubuntu-Endabnahme bleiben eigenständige spätere Gates. Kein Stable. Details und ältere Nachweise unten.
+
+---
+
 # Scanwahl, Ordner und sicherer Abschluss · 0.10.0-dev
 
 Nutzerauftrag NI-20261104-01 umgesetzt auf eigenem Zweig `feat/scan-reset-safe-exit`, ein Schreiber. Geprüfter Produktstand: `cfcf75ea56127b11cca56b51123993bae446da07`. PR #43 bleibt für die Vorabprüfung ein Entwurf; kein Codex-Review angefordert.

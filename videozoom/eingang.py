@@ -37,6 +37,8 @@ def audio_dateien(workflow, alle=False):
 
 def sicher(path):
     p = Path(path).expanduser().absolute()
+    if ".." in p.parts:
+        raise ValueError("Pfad enthält übergeordnete ..-Schritte. Bitte den vollständigen Zielpfad wählen.")
     if any(x.is_symlink() for x in (p, *p.parents)):
         raise RuntimeError('Verknüpfte Medienpfade sind nicht erlaubt.')
     return p
