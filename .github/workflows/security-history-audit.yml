@@ -1,6 +1,11 @@
 name: Manueller historischer Secret-Audit (nicht blockierend)
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/security-history-audit.yml
   push:
     branches:
       - security/ignore-local-secrets-20261110
