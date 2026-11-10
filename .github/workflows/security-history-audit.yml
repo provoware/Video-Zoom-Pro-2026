@@ -1,0 +1,41 @@
+name: Manueller historischer Secret-Audit (nicht blockierend)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - security/ignore-local-secrets-20261110
+    paths:
+      - .github/workflows/security-history-audit.yml
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Vollständige Historie laden
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Gitleaks installieren
+        env:
+          VERSION: "8.24.3"
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 --max-time 60 -o "$RUNNER_TEMP/gitleaks.tar.gz" "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz"
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" version
+      - name: Git-Historie prüfen, keine Geheimnisse ausgeben
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/gitleaks" git --redact --no-banner --report-format json --report-path "$RUNNER_TEMP/gitleaks-private.json" --exit-code 0 . > "$RUNNER_TEMP/gitleaks-private.log" 2>&1
+          python3 - <<'PY'
+          import json, os
+          path = os.environ["RUNNER_TEMP"] + "/gitleaks-private.json"
+          with open(path, encoding="utf-8") as f:
+              findings = json.load(f)
+          print("Historischer Scan abgeschlossen. Verdächtige Treffer:", len(findings))
+          print("Details bleiben auf dem Runner und werden nicht als Artefakt hochgeladen.")
+          PY
